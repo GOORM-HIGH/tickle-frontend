@@ -16,31 +16,17 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-export const authAPI = {
-  login: async (email: string, password: string) => {
-    const response = await api.post('/api/v1/signIn', { email, password });
-    return response.data;
+// 401 오류 시 로그인 페이지로 리다이렉트
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      alert('로그인이 필요합니다!');
+      localStorage.removeItem('accessToken');
+      // 실제로는 로그인 페이지로 이동
+    }
+    return Promise.reject(error);
   }
-};
+);
 
-export const chatAPI = {
-  getMessages: async (chatRoomId: number) => {
-    const response = await api.get(`/api/v1/chat/rooms/${chatRoomId}/messages`);
-    return response.data.data;
-  },
-  
-  sendMessage: async (chatRoomId: number, content: string) => {
-    const response = await api.post(`/api/v1/chat/rooms/${chatRoomId}/messages`, {
-      messageType: 'TEXT',
-      content
-    });
-    return response.data.data;
-  },
-  
-  joinRoom: async (chatRoomId: number) => {
-    const response = await api.post(`/api/v1/chat/participants/rooms/${chatRoomId}/join`, {
-      message: '채팅방에 입장했습니다.'
-    });
-    return response.data.data;
-  }
-};
+export default api;
