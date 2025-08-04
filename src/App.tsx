@@ -56,16 +56,22 @@ function App() {
     }
   };
 
-  // 내 채팅방 목록 로드
+  // 내 채팅방 목록 로드 - 디버깅 로그 추가
   const loadMyChatRooms = async () => {
     try {
+      console.log('🔍 채팅방 목록 로드 시작');
       const rooms = await chatService.getMyRooms();
+      console.log('🔍 백엔드에서 받은 채팅방 데이터:', rooms);
+      console.log('🔍 채팅방 개수:', rooms.length);
+      
       setChatRooms(rooms);
-      console.log('채팅방 목록:', rooms);
+      
+      console.log('🔍 상태 업데이트 완료, 현재 chatRooms:', rooms);
     } catch (error) {
-      console.error('채팅방 목록 로드 실패:', error);
+      console.error('🔍 채팅방 목록 로드 실패:', error);
     }
   };
+
 
   // 🆕 예매내역 로드
   const loadMyReservations = async () => {
@@ -109,50 +115,55 @@ function App() {
 
   // 🆕 채팅 참여 처리
   const handleJoinChatFromReservation = async (reservation: Reservation) => {
-    try {
-      setReservationLoading(true);
-      
-      // 해당 공연의 채팅방 조회 및 참여
-      const chatRoom = await chatService.getChatRoomByPerformance(reservation.performanceId);
-      await chatService.joinChatRoom(chatRoom.chatRoomId);
-      
-      // 예매 정보 업데이트
-      setReservations(prev => 
-        prev.map(r => 
-          r.reservationId === reservation.reservationId 
-            ? { ...r, hasJoinedChat: true, chatRoomId: chatRoom.chatRoomId }
-            : r
-        )
-      );
-      
-      // 채팅방 목록 새로고침
+  console.log('🔥 채팅 참여하기 버튼 클릭됨!', reservation);
+  
+  try {
+    setReservationLoading(true);
+    
+    console.log('🔥 현재 채팅방 목록 (참여 전):', chatRooms.length, '개');
+    
+    // 해당 공연의 채팅방 조회 및 참여
+    const chatRoom = await chatService.getChatRoomByPerformance(reservation.performanceId);
+    console.log('🔥 채팅방 조회 성공:', chatRoom);
+    
+    await chatService.joinChatRoom(chatRoom.chatRoomId);
+    console.log('🔥 채팅방 참여 성공');
+    
+    // 예매 정보 업데이트
+    setReservations(prev => 
+      prev.map(r => 
+        r.reservationId === reservation.reservationId 
+          ? { ...r, hasJoinedChat: true, chatRoomId: chatRoom.chatRoomId }
+          : r
+      )
+    );
+    
+    console.log('🔥 예매 정보 업데이트 완료');
+    
+    // 🆕 채팅방 목록 새로고침 강화
+    console.log('🔥 채팅방 목록 새로고침 시작');
+    await loadMyChatRooms();
+    
+    // 🆕 잠시 후 한 번 더 확인 (비동기 처리 때문에)
+    setTimeout(async () => {
+      console.log('🔥 1초 후 추가 새로고침');
       await loadMyChatRooms();
-      
-      alert(`${reservation.performanceTitle} 채팅방에 성공적으로 참여했습니다!`);
-      
-      // 예매 페이지 닫고 채팅 목록 열기
-      setIsReservationOpen(false);
-      setIsChatListOpen(true);
-      
-    } catch (error) {
-      console.error('채팅방 참여 실패:', error);
-      alert('채팅방 참여에 실패했습니다. 다시 시도해주세요.');
-    } finally {
-      setReservationLoading(false);
-    }
-  };
+    }, 1000);
+    
+    alert(`${reservation.performanceTitle} 채팅방에 성공적으로 참여했습니다!`);
+    
+    // 예매 페이지 닫고 채팅 목록 열기
+    setIsReservationOpen(false);
+    setIsChatListOpen(true);
+    
+  } catch (error) {
+    console.error('🔥 채팅방 참여 실패 오류:', error);
+    alert(`채팅방 참여에 실패했습니다: ${error.message}`);
+  } finally {
+    setReservationLoading(false);
+  }
+};
 
-  // 🆕 이미 참여한 채팅방 열기
-  const handleOpenExistingChat = async (reservation: Reservation) => {
-    if (reservation.chatRoomId) {
-      // 채팅방 목록에서 해당 채팅방 찾기
-      const room = chatRooms.find(r => r.chatRoomId === reservation.chatRoomId);
-      if (room) {
-        setIsReservationOpen(false);
-        await openChatRoom(room);
-      }
-    }
-  };
 
   // 채팅방 메시지 로드
   const loadMessages = async (chatRoomId: number) => {

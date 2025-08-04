@@ -65,4 +65,11 @@ export const chatService = {
       message: "채팅방에 참여했습니다."
     });
   },
+
+  getChatRoomByPerformance: async (performanceId: number): Promise<ChatRoom> => {
+      console.log('🔥 API 호출: getChatRoomByPerformance', performanceId);
+      const response = await api.get<{data: ChatRoom}>(`/api/v1/chat/rooms/performance/${performanceId}`);
+      return response.data.data;
+    },
+
 };
