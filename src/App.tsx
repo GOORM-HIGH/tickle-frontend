@@ -1,11 +1,7 @@
-import { LoginPage } from './pages/LoginPage';
-import { MainPage } from './pages/MainPage';
-import { useAuth } from './hooks/useAuth';
+import Router from "./routes";
 
 function App() {
-  const { isLoggedIn } = useAuth();
-  
-  return isLoggedIn ? <MainPage /> : <LoginPage />;
+  return <Router />;
 }
 
 export default App;
