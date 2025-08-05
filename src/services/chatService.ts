@@ -10,11 +10,15 @@ export interface ChatRoom {
   maxParticipants: number;
   participantCount?: number;
   unreadCount?: number;
+  createdAt?: string;
+  updatedAt?: string;
   lastMessage?: {
     id: number;
     content: string;
     senderNickname: string;
     createdAt: string;
+    isDeleted?: boolean;
+    senderStatus?: boolean;
   };
 }
 
@@ -27,6 +31,17 @@ export interface ChatMessage {
   createdAt: string;
   senderNickname: string;
   isMyMessage: boolean;
+  isRead?: boolean;
+  // ERD에 맞춘 추가 필드들
+  isDeleted?: boolean;
+  isEdited?: boolean;
+  editedAt?: string;
+  senderStatus?: boolean; // true: 활성 회원, false: 탈퇴 회원
+  // 파일 관련 필드들
+  filePath?: string;
+  fileName?: string;
+  fileSize?: number;
+  fileType?: string;
 }
 
 export const chatService = {
@@ -71,5 +86,59 @@ export const chatService = {
       const response = await api.get<{data: ChatRoom}>(`/api/v1/chat/rooms/performance/${performanceId}`);
       return response.data.data;
     },
+
+  // 메시지 삭제
+  deleteMessage: async (chatRoomId: number, messageId: number): Promise<void> => {
+    await api.delete(`/api/v1/chat/rooms/${chatRoomId}/messages/${messageId}`);
+  },
+
+  // 메시지 수정
+  editMessage: async (chatRoomId: number, messageId: number, content: string): Promise<ChatMessage> => {
+    const response = await api.put<{data: ChatMessage}>(`/api/v1/chat/rooms/${chatRoomId}/messages/${messageId}`, {
+      content
+    });
+    return response.data.data;
+  },
+
+  // 읽음 처리 (ERD에 맞춰 last_read_message_id와 last_read_at 업데이트)
+  markAsRead: async (chatRoomId: number, messageId: number): Promise<void> => {
+    await api.patch(`/api/v1/chat/participants/rooms/${chatRoomId}/read`, {
+      lastReadMessageId: messageId,
+      lastReadAt: new Date().toISOString()
+    });
+  },
+
+  // 읽지 않은 메시지 개수 조회
+  getUnreadCount: async (chatRoomId: number): Promise<{unreadCount: number}> => {
+    try {
+      const response = await api.get<{data: number}>(`/api/v1/chat/rooms/${chatRoomId}/messages/unread-count`);
+      return { unreadCount: response.data.data };
+    } catch (error) {
+      console.warn(`⚠️ 읽지 않은 메시지 개수 조회 실패 (채팅방 ${chatRoomId}):`, error);
+      // API 오류 시 기본값 반환
+      return { unreadCount: 0 };
+    }
+  },
+
+  // 파일 업로드
+  uploadFile: async (file: File): Promise<{fileId: string; fileName: string; fileUrl: string}> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    const response = await api.post<{data: {fileId: string; fileName: string; fileUrl: string}}>('/api/v1/chat/files/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data.data;
+  },
+
+  // 파일 다운로드
+  downloadFile: async (chatRoomId: number, messageId: number): Promise<Blob> => {
+    const response = await api.get(`/api/v1/chat/rooms/${chatRoomId}/messages/${messageId}/download`, {
+      responseType: 'blob'
+    });
+    return response.data;
+  },
 
 };

@@ -3,7 +3,10 @@ import { useAuth } from '../hooks/useAuth';
 import { useChat } from '../hooks/useChat';
 import { chatService } from '../services/chatService';
 import { stompWebSocketService } from '../services/stompWebSocketService';
-import type { ChatRoom, ChatMessage } from '../services/chatService';
+import { ChatRoom } from '../components/chat/ChatRoom';
+import { EnhancedChatRoomList } from '../components/chat/EnhancedChatRoomList';
+import { NotificationBadge } from '../components/chat/NotificationBadge';
+import type { ChatRoom as ChatRoomType, ChatMessage } from '../services/chatService';
 
 // 예매 내역 타입
 interface Reservation {
@@ -23,12 +26,20 @@ export const MainPage: React.FC = () => {
   // 모달 상태
   const [isChatListOpen, setIsChatListOpen] = useState(false);
   const [isReservationOpen, setIsReservationOpen] = useState(false);
-  const [selectedRoom, setSelectedRoom] = useState<ChatRoom | null>(null);
+  const [selectedRoom, setSelectedRoom] = useState<ChatRoomType | null>(null);
   
   // 🎯 채팅방별 메시지 상태 분리
   const [messagesByRoom, setMessagesByRoom] = useState<{ [chatRoomId: number]: ChatMessage[] }>({});
-  const [messageInput, setMessageInput] = useState('');
   const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
+
+  // 🎯 브라우저 세션 ID 생성 (각 창을 고유하게 식별)
+  useEffect(() => {
+    if (!sessionStorage.getItem('sessionId')) {
+      const sessionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      sessionStorage.setItem('sessionId', sessionId);
+      console.log(`🎯 새로운 브라우저 세션 생성: ${sessionId}`);
+    }
+  }, []);
   
   // 예매 관련 상태
   const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -113,7 +124,7 @@ export const MainPage: React.FC = () => {
   };
 
   // 🎯 채팅방 열기 (개선된 버전)
-  const handleOpenChatRoom = async (room: ChatRoom) => {
+  const handleOpenChatRoom = async (room: ChatRoomType) => {
     if (!room || !currentUser) {
       alert('채팅방 정보나 사용자 정보가 올바르지 않습니다.');
       return;
@@ -124,72 +135,31 @@ export const MainPage: React.FC = () => {
     try {
       setSelectedRoom(room);
       setIsChatListOpen(false);
-      
-      // 🎯 해당 채팅방의 메시지가 이미 로드되어 있는지 확인
-      if (!messagesByRoom[room.chatRoomId]) {
-        console.log(`💬 채팅방 ${room.chatRoomId} 메시지 새로 로드`);
-        const roomMessages = await chatService.getMessages(room.chatRoomId);
-        setMessagesForRoom(room.chatRoomId, roomMessages);
-      } else {
-        console.log(`💬 채팅방 ${room.chatRoomId} 기존 메시지 사용 (${messagesByRoom[room.chatRoomId].length}개)`);
-      }
-      
-      // 🎯 WebSocket 연결 (이전 연결이 있으면 자동으로 해제됨)
-      await stompWebSocketService.connect(
-        room.chatRoomId,
-        currentUser.id,
-        currentUser.nickname,
-        handleNewMessage
-      );
-      
       setIsWebSocketConnected(true);
-      console.log(`✅ 채팅방 ${room.chatRoomId} 연결 완료`);
+      console.log(`✅ 채팅방 ${room.chatRoomId} 열기 완료`);
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ 채팅방 열기 실패:', error);
       setIsWebSocketConnected(false);
       alert(`채팅방을 열 수 없습니다: ${error.message}`);
     }
   };
 
-  // 🎯 채팅방 닫기 (메시지 유지)
+  // 🎯 채팅방 닫기
   const handleCloseChatRoom = () => {
-    try {
-      stompWebSocketService.disconnect();
-    } catch (error) {
-      console.error('❌ STOMP 연결 해제 실패:', error);
-    }
-    
     setIsWebSocketConnected(false);
     setSelectedRoom(null);
-    setMessageInput('');
-    // 🎯 메시지는 초기화하지 않음 (messagesByRoom 상태 유지)
   };
 
-  // 🎯 메시지 전송 (현재 채팅방에만)
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!messageInput.trim() || !selectedRoom || !currentUser) return;
+  // 🎯 메시지 업데이트 처리
+  const handleMessageUpdate = (messageId: number, updatedMessage: ChatMessage) => {
+    addMessageToRoom(updatedMessage.chatRoomId, updatedMessage);
+  };
 
-    const messageContent = messageInput.trim();
-    setMessageInput(''); // 즉시 입력창 클리어
-
-    try {
-      if (isWebSocketConnected) {
-        // 🎯 STOMP로 실시간 전송
-        stompWebSocketService.sendMessage(messageContent);
-        console.log(`📤 채팅방 ${selectedRoom.chatRoomId}에 STOMP 메시지 전송:`, messageContent);
-      } else {
-        // REST API 사용
-        const newMessage = await chatService.sendMessage(selectedRoom.chatRoomId, messageContent);
-        addMessageToRoom(selectedRoom.chatRoomId, newMessage);
-        console.log(`📤 채팅방 ${selectedRoom.chatRoomId}에 REST API 메시지 전송:`, newMessage);
-      }
-    } catch (error) {
-      console.error('❌ 메시지 전송 실패:', error);
-      alert('메시지 전송에 실패했습니다.');
-      setMessageInput(messageContent); // 실패 시 입력 복원
-    }
+  // 🎯 메시지 삭제 처리
+  const handleMessageDelete = (messageId: number) => {
+    // 메시지 삭제 로직은 ChatRoom 컴포넌트에서 처리됨
+    console.log('메시지 삭제됨:', messageId);
   };
 
   // 🎯 채팅 참여 처리
@@ -219,7 +189,7 @@ export const MainPage: React.FC = () => {
       setIsReservationOpen(false);
       setIsChatListOpen(true);
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('🔥 채팅방 참여 실패 오류:', error);
       alert(`채팅방 참여에 실패했습니다: ${error.message}`);
     } finally {
@@ -249,14 +219,28 @@ export const MainPage: React.FC = () => {
         <h1>🎭 티클 메인 페이지</h1>
         <p>실시간 채팅 시스템 - 채팅방별 분리!</p>
         <button
-          onClick={logout}
+          onClick={() => {
+            logout();
+            // 로그아웃 후 상태 초기화
+            setSelectedRoom(null);
+            setIsChatListOpen(false);
+            setIsReservationOpen(false);
+            setMessagesByRoom({});
+          }}
           style={{
             padding: '8px 16px',
             backgroundColor: '#dc3545',
             color: 'white',
             border: 'none',
             borderRadius: '4px',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            transition: 'background-color 0.2s'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#c82333';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#dc3545';
           }}
         >
           로그아웃
@@ -279,6 +263,14 @@ export const MainPage: React.FC = () => {
         {selectedRoom && (
           <div>채팅방: {selectedRoom.chatRoomId}</div>
         )}
+        <div>사용자: {currentUser?.nickname || 'Unknown'} (ID: {currentUser?.id || 'N/A'})</div>
+        <div>채팅방 수: {Object.keys(messagesByRoom).length}</div>
+        <div>토큰: {localStorage.getItem('accessToken')?.substring(0, 20) || 'None'}...</div>
+        <div>현재 시간: {new Date().toLocaleTimeString()}</div>
+        <div>브라우저 세션: {sessionStorage.getItem('sessionId') || 'None'}</div>
+        <div>백엔드 수정 후 테스트</div>
+        <div>메시지 중복 제거 적용</div>
+        <div>플로팅 배지 제거</div>
       </div>
 
       {/* 🆕 메시지 개수 표시 */}
@@ -316,30 +308,27 @@ export const MainPage: React.FC = () => {
           fontSize: '24px',
           zIndex: 1000,
           color: 'white',
-          boxShadow: '0 4px 12px rgba(0,123,255,0.3)'
+          boxShadow: '0 4px 12px rgba(0,123,255,0.3)',
+          transition: 'all 0.2s ease'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'scale(1.1)';
+          e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,123,255,0.4)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'scale(1)';
+          e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,123,255,0.3)';
         }}
       >
         💬
-        
-        {totalUnreadCount > 0 && (
-          <span style={{
-            position: 'absolute',
-            top: '-5px',
-            right: '-5px',
-            backgroundColor: '#dc3545',
-            color: 'white',
-            borderRadius: '50%',
-            width: '24px',
-            height: '24px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '12px',
-            fontWeight: 'bold'
-          }}>
-            {totalUnreadCount > 99 ? '99+' : totalUnreadCount}
-          </span>
-        )}
+        {/* 🎯 플로팅 버튼의 NotificationBadge 제거 (중복 방지) */}
+        {/* {totalUnreadCount > 0 && (
+          <NotificationBadge 
+            count={totalUnreadCount} 
+            showAnimation={true}
+            size="large"
+          />
+        )} */}
       </div>
 
       {/* 채팅방 목록 모달 */}
@@ -388,100 +377,17 @@ export const MainPage: React.FC = () => {
               </button>
             </div>
 
-            <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
-              {chatRooms.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '40px' }}>
-                  <div style={{ fontSize: '48px', marginBottom: '20px' }}>💬</div>
-                  <h3 style={{ color: '#666' }}>참여한 채팅방이 없습니다</h3>
-                  <p style={{ color: '#999' }}>예매한 공연의 채팅방에 참여해보세요!</p>
-                  
-                  <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '20px' }}>
-                    <button
-                      onClick={loadMyChatRooms}
-                      style={{
-                        padding: '10px 20px',
-                        backgroundColor: '#007bff',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '6px',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      새로고침
-                    </button>
-                    
-                    <button
-                      onClick={() => {
-                        setIsChatListOpen(false);
-                        setIsReservationOpen(true);
-                        loadMyReservations();
-                      }}
-                      style={{
-                        padding: '10px 20px',
-                        backgroundColor: '#28a745',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '6px',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      📋 채팅 참여하러 가기
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                chatRooms.map((room) => (
-                  <div
-                    key={room.chatRoomId}
-                    onClick={() => handleOpenChatRoom(room)}
-                    style={{
-                      padding: '16px',
-                      border: selectedRoom?.chatRoomId === room.chatRoomId ? '2px solid #007bff' : '1px solid #eee',
-                      borderRadius: '8px',
-                      marginBottom: '12px',
-                      cursor: 'pointer',
-                      backgroundColor: selectedRoom?.chatRoomId === room.chatRoomId ? '#f0f8ff' : 'white',
-                      transition: 'all 0.2s ease'
-                    }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div>
-                        <h4 style={{ margin: '0 0 8px 0' }}>
-                          {room.name || room.chatRoomName || `채팅방 ${room.chatRoomId}`}
-                        </h4>
-                        <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>
-                          👥 {room.participantCount || 0}명 참여 중
-                          {/* 🎯 채팅방별 메시지 개수 표시 */}
-                          {messagesByRoom[room.chatRoomId] && (
-                            <span style={{ marginLeft: '10px' }}>
-                              💬 {messagesByRoom[room.chatRoomId].length}개 메시지
-                            </span>
-                          )}
-                        </p>
-                        {room.lastMessage && (
-                          <p style={{ margin: '5px 0 0', color: '#999', fontSize: '12px' }}>
-                            {room.lastMessage.senderNickname}: {room.lastMessage.content}
-                          </p>
-                        )}
-                      </div>
-                      
-                      {room.unreadCount && room.unreadCount > 0 && (
-                        <span style={{
-                          backgroundColor: '#dc3545',
-                          color: 'white',
-                          fontSize: '12px',
-                          padding: '4px 8px',
-                          borderRadius: '12px',
-                          minWidth: '20px',
-                          textAlign: 'center'
-                        }}>
-                          {room.unreadCount}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                ))
-              )}
+            <div style={{ flex: 1, overflowY: 'auto' }}>
+              <EnhancedChatRoomList
+                chatRooms={chatRooms}
+                onOpenChatRoom={handleOpenChatRoom}
+                onJoinChatRoom={(performanceId) => {
+                  setIsChatListOpen(false);
+                  setIsReservationOpen(true);
+                  loadMyReservations();
+                }}
+                currentUserId={currentUser?.id || 0}
+              />
             </div>
           </div>
         </div>
@@ -632,7 +538,7 @@ export const MainPage: React.FC = () => {
       )}
 
       {/* 개별 채팅방 모달 */}
-      {selectedRoom && (
+      {selectedRoom && currentUser && (
         <div style={{
           position: 'fixed',
           top: 0, left: 0, right: 0, bottom: 0,
@@ -643,150 +549,20 @@ export const MainPage: React.FC = () => {
           zIndex: 2500
         }}>
           <div style={{
-            backgroundColor: 'white',
-            borderRadius: '12px',
             width: '90%',
-            maxWidth: '600px',
-            height: '70%',
+            maxWidth: '800px',
+            height: '80%',
             display: 'flex',
             flexDirection: 'column'
           }}>
-            {/* 채팅방 헤더 */}
-            <div style={{
-              padding: '20px',
-              borderBottom: '1px solid #eee',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              backgroundColor: '#f8f9fa'
-            }}>
-              <div>
-                <h3 style={{ margin: 0 }}>
-                  {selectedRoom.name || selectedRoom.chatRoomName || `채팅방 ${selectedRoom.chatRoomId}`}
-                </h3>
-                <p style={{ margin: '5px 0 0', color: '#666', fontSize: '14px' }}>
-                  👥 {selectedRoom.participantCount || 0}명 참여 중 • 
-                  📋 채팅방 ID: {selectedRoom.chatRoomId} • 
-                  💬 메시지 {currentMessages.length}개
-                </p>
-              </div>
-              <button
-                onClick={handleCloseChatRoom}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  fontSize: '24px',
-                  cursor: 'pointer'
-                }}
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* 메시지 영역 */}
-            <div style={{
-              flex: 1,
-              padding: '20px',
-              backgroundColor: '#f8f9fa',
-              overflowY: 'auto'
-            }}>
-              {currentMessages.length === 0 ? (
-                <div style={{ textAlign: 'center', color: '#666', marginTop: '50px' }}>
-                  <div style={{ fontSize: '48px', marginBottom: '20px' }}>💬</div>
-                  <h3>메시지가 없습니다</h3>
-                  <p>첫 메시지를 보내보세요!</p>
-                </div>
-              ) : (
-                <>
-                  {currentMessages.map((message, index) => (
-                    <div
-                      key={`${message.id}-${index}`}
-                      style={{
-                        marginBottom: '15px',
-                        display: 'flex',
-                        justifyContent: message.isMyMessage ? 'flex-end' : 'flex-start'
-                      }}
-                    >
-                      <div style={{
-                        maxWidth: '70%',
-                        padding: '10px 15px',
-                        borderRadius: '18px',
-                        backgroundColor: message.messageType === 'SYSTEM' 
-                          ? '#e9ecef' 
-                          : message.isMyMessage ? '#007bff' : 'white',
-                        color: message.messageType === 'SYSTEM' 
-                          ? '#6c757d' 
-                          : message.isMyMessage ? 'white' : 'black',
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                        textAlign: message.messageType === 'SYSTEM' ? 'center' : 'left'
-                      }}>
-                        {!message.isMyMessage && message.messageType !== 'SYSTEM' && (
-                          <div style={{
-                            fontSize: '12px',
-                            fontWeight: 'bold',
-                            marginBottom: '5px',
-                            opacity: 0.8
-                          }}>
-                            {message.senderNickname}
-                          </div>
-                        )}
-                        <div>{message.content}</div>
-                        {message.messageType !== 'SYSTEM' && (
-                          <div style={{
-                            fontSize: '11px',
-                            marginTop: '5px',
-                            opacity: 0.7
-                          }}>
-                            {new Date(message.createdAt).toLocaleTimeString('ko-KR', {
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                  <div ref={messagesEndRef} />
-                </>
-              )}
-            </div>
-
-            {/* 메시지 입력 */}
-            <form onSubmit={handleSendMessage} style={{
-              padding: '20px',
-              borderTop: '1px solid #eee',
-              backgroundColor: 'white'
-            }}>
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <input
-                  type="text"
-                  value={messageInput}
-                  onChange={(e) => setMessageInput(e.target.value)}
-                  placeholder="메시지를 입력하세요..."
-                  style={{
-                    flex: 1,
-                    padding: '12px',
-                    border: '1px solid #ddd',
-                    borderRadius: '24px',
-                    outline: 'none'
-                  }}
-                />
-                <button
-                  type="submit"
-                  disabled={!messageInput.trim()}
-                  style={{
-                    padding: '12px 20px',
-                    backgroundColor: messageInput.trim() ? '#007bff' : '#ccc',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '24px',
-                    cursor: messageInput.trim() ? 'pointer' : 'not-allowed'
-                  }}
-                >
-                  전송
-                </button>
-              </div>
-            </form>
+            <ChatRoom
+              room={selectedRoom}
+              currentUserId={currentUser.id}
+              currentUserNickname={currentUser.nickname}
+              onClose={handleCloseChatRoom}
+              onMessageUpdate={handleMessageUpdate}
+              onMessageDelete={handleMessageDelete}
+            />
           </div>
         </div>
       )}

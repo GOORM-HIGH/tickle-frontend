@@ -17,6 +17,7 @@ export const useAuth = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState<{id: number, nickname: string} | null>(null);
   const [loading, setLoading] = useState(false);
+  const [authKey, setAuthKey] = useState(0); // 강제 리렌더링을 위한 키
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
@@ -52,6 +53,8 @@ export const useAuth = () => {
       }
       
       setIsLoggedIn(true);
+      setAuthKey(prev => prev + 1); // 강제 리렌더링
+      console.log('✅ 로그인 완료, 상태 업데이트됨');
       return response;
     } finally {
       setLoading(false);
@@ -63,7 +66,9 @@ export const useAuth = () => {
     localStorage.removeItem('accessToken');
     setIsLoggedIn(false);
     setCurrentUser(null);
+    setAuthKey(prev => prev + 1); // 강제 리렌더링
+    console.log('✅ 로그아웃 완료, 상태 업데이트됨');
   };
 
-  return { isLoggedIn, currentUser, loading, login, logout };
+  return { isLoggedIn, currentUser, loading, login, logout, authKey };
 };

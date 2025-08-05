@@ -27,13 +27,14 @@ class StompWebSocketService {
         this.disconnect();
       }
 
-      // 🎯 사용자 정보 저장
+      // 🎯 사용자 정보 저장 (토큰 기반으로 고유 식별)
+      const token = localStorage.getItem('accessToken');
       this.currentChatRoomId = chatRoomId;
       this.currentUserId = userId;
       this.currentUserNickname = userNickname;
       this.onMessageCallback = onMessage;
 
-      console.log(`🎯 사용자 정보 저장: ID=${userId}, 닉네임=${userNickname}`); // 🎯 디버깅 로그
+      console.log(`🎯 사용자 정보 저장: ID=${userId}, 닉네임=${userNickname}, 토큰=${token?.substring(0, 20)}...`); // 🎯 디버깅 로그
 
       // 🎯 SockJS 객체 생성 (Spring Boot 엔드포인트)
       const socket = new SockJS('http://localhost:8081/ws');
@@ -45,7 +46,8 @@ class StompWebSocketService {
           // 🎯 JWT 토큰을 헤더로 전송 (STOMP는 지원함)
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           'X-User-Id': userId.toString(),
-          'X-User-Nickname': userNickname
+          'X-User-Nickname': userNickname,
+          'X-Session-Id': sessionStorage.getItem('sessionId') || `${userId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}` // 브라우저 세션 ID
         },
         debug: (str) => {
           console.log('🔍 STOMP Debug:', str);
@@ -71,17 +73,10 @@ class StompWebSocketService {
             }
           });
 
-          // 🎯 사용자별 개인 메시지 구독 (옵션)
-          this.stompClient?.subscribe(`/user/queue/messages`, (message) => {
-            try {
-              console.log('🔔 개인 메시지 원본 수신:', message); // 🎯 디버깅 로그 추가
-              const personalMessage = JSON.parse(message.body);
-              console.log('📨 개인 메시지 수신:', personalMessage);
-              this.handleReceivedMessage(personalMessage);
-            } catch (error) {
-              console.error('❌ 개인 메시지 파싱 실패:', error);
-            }
-          });
+          // 🎯 개인 메시지 구독 제거 (중복 방지)
+          // this.stompClient?.subscribe(`/user/queue/messages`, (message) => {
+          //   // 중복 메시지 방지를 위해 제거
+          // });
 
           // 🎯 JOIN 메시지 전송
           this.sendJoinMessage(userId, userNickname);
@@ -176,16 +171,56 @@ class StompWebSocketService {
     console.log('🎯 handleReceivedMessage 시작, 원본 데이터:', data); // 🎯 디버깅 로그
 
     // 🎯 백엔드 응답을 ChatMessage 형태로 변환
+    const senderId = data.senderId || data.memberId || 0;
+    const currentToken = localStorage.getItem('accessToken');
+    
+    // 🎯 JWT 토큰에서 사용자 ID 추출 (백엔드 수정 후)
+    let currentUserIdFromToken = this.currentUserId;
+    try {
+      if (currentToken) {
+        const tokenPayload = JSON.parse(atob(currentToken.split('.')[1]));
+        console.log('🎯 토큰 페이로드:', tokenPayload);
+        
+        // 🎯 백엔드에서 수정된 후 - memberId가 숫자로 저장되어 있을 것
+        const memberId = tokenPayload.memberId || tokenPayload.sub || tokenPayload.id;
+        console.log('🎯 추출된 memberId:', memberId, '타입:', typeof memberId);
+        
+        if (typeof memberId === 'number') {
+          currentUserIdFromToken = memberId;
+        } else if (typeof memberId === 'string' && !isNaN(Number(memberId))) {
+          currentUserIdFromToken = Number(memberId);
+        } else {
+          // 🎯 저장된 사용자 ID 사용 (connect 시점에 저장된 값)
+          currentUserIdFromToken = this.currentUserId;
+          console.log('🎯 토큰에서 ID 추출 실패, 저장된 ID 사용:', currentUserIdFromToken);
+        }
+        console.log(`🎯 최종 사용자 ID: ${currentUserIdFromToken} (타입: ${typeof currentUserIdFromToken})`);
+      }
+    } catch (error) {
+      console.warn('토큰 파싱 실패, 저장된 사용자 ID 사용:', error);
+      currentUserIdFromToken = this.currentUserId;
+    }
+    
+    // 🎯 정확한 사용자 구분 (백엔드 senderId 문제 임시 해결)
+    // 백엔드에서 senderId가 모두 1로 설정되는 문제가 있음
+    // 임시로 발신자 닉네임으로 구분
+    const isMyMessage = data.senderNickname === this.currentUserNickname;
+    console.log(`🎯 비교: senderNickname("${data.senderNickname}") === currentUserNickname("${this.currentUserNickname}") = ${isMyMessage}`);
+    console.log(`🎯 발신자 닉네임: "${data.senderNickname}" (이제 닉네임이 표시되어야 함)`);
+    
     const chatMessage: ChatMessage = {
       id: data.messageId || data.id || Date.now(),
       chatRoomId: data.chatRoomId || this.currentChatRoomId!,
-      memberId: data.senderId || data.memberId || 0,
+      memberId: senderId,
       messageType: data.messageType || 'TEXT',
       content: data.content || data.message || '',
       createdAt: data.createdAt || new Date().toISOString(),
       senderNickname: data.senderNickname || data.sender || '알 수 없음',
-      isMyMessage: data.isMyMessage || false
+      isMyMessage: isMyMessage
     };
+
+    console.log(`🎯 메시지 발신자 ID: ${senderId}, 현재 사용자 ID: ${currentUserIdFromToken}, 내 메시지: ${isMyMessage}, 토큰: ${currentToken?.substring(0, 20)}...`);
+    console.log(`🎯 발신자 닉네임: "${data.senderNickname}" (원본: "${data.sender}")`);
 
     console.log('🎯 변환된 ChatMessage:', chatMessage); // 🎯 디버깅 로그
     this.onMessageCallback(chatMessage);

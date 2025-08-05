@@ -12,7 +12,14 @@ export const useChat = () => {
       console.log('🔍 채팅방 목록 로드 시작');
       const rooms = await chatService.getMyRooms();
       console.log('🔍 백엔드에서 받은 채팅방 데이터:', rooms);
-      setChatRooms(rooms);
+      
+      // 🎯 중복 제거 (chatRoomId 기준)
+      const uniqueRooms = rooms.filter((room, index, self) => 
+        index === self.findIndex(r => r.chatRoomId === room.chatRoomId)
+      );
+      
+      console.log('🔍 중복 제거 후 채팅방 데이터:', uniqueRooms);
+      setChatRooms(uniqueRooms);
     } catch (error) {
       console.error('🔍 채팅방 목록 로드 실패:', error);
       // 오류 시 빈 배열로 설정
@@ -30,7 +37,38 @@ export const useChat = () => {
     }
   }, []);
 
-  const totalUnreadCount = chatRooms.reduce((total, room) => total + (room.unreadCount || 0), 0);
+  // 🎯 실제 API를 호출해서 읽지 않은 메시지 개수 계산
+  const [totalUnreadCount, setTotalUnreadCount] = useState(0);
+
+  // 채팅방별 읽지 않은 메시지 개수 계산
+  useEffect(() => {
+    const calculateTotalUnreadCount = async () => {
+      if (chatRooms.length === 0) {
+        setTotalUnreadCount(0);
+        return;
+      }
+
+      try {
+        let total = 0;
+        for (const room of chatRooms) {
+          try {
+            const response = await chatService.getUnreadCount(room.chatRoomId);
+            total += response.unreadCount;
+            console.log(`🔍 채팅방 ${room.chatRoomId}: 읽지 않은 메시지 ${response.unreadCount}개`);
+          } catch (error: any) {
+            console.warn(`채팅방 ${room.chatRoomId} 읽지 않은 메시지 개수 조회 실패:`, error);
+          }
+        }
+        console.log(`🔍 전체 읽지 않은 메시지 개수: ${total}`);
+        setTotalUnreadCount(total);
+      } catch (error: any) {
+        console.error('전체 읽지 않은 메시지 개수 계산 실패:', error);
+        setTotalUnreadCount(0);
+      }
+    };
+
+    calculateTotalUnreadCount();
+  }, [chatRooms]);
 
   return { 
     chatRooms, 
