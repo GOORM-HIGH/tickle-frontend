@@ -113,12 +113,13 @@ const SignUpPage: React.FC = () => {
 
     // 인증번호 확인
     const handleVerifyEmailCode = async () => {
-        const codeError = validateEmailCode(emailAuthCode);
-        if (codeError) {
-            alert(codeError);
-            return;
-        }
         try {
+            const emailError : string = validateEmail(formData.email);
+            if (emailError) {
+                console.log("올바른 이메일 주소를 입력해주세요.");
+                return;
+            }
+
             await axios.post(
                 "http://127.0.0.1:8081/api/v1/auth/email-verification/confirm",
                 {email: formData.email, code: emailAuthCode},
