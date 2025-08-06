@@ -15,22 +15,23 @@ import {
 import { toInstant } from "../../utils/dateUtils.ts";
 import { toBigDecimalString } from "../../utils/numberUtils.ts";
 
-const bankList = ["국민은행", "신한은행", "우리은행", "하나은행", "농협은행"];
-const chargeList = [0, 5, 10, 15, 20];
+const bankList : string[] = ["국민은행", "신한은행", "우리은행", "하나은행", "농협은행"];
+const chargeList : number[] = [0, 5, 10, 15, 20];
 
 const HostSignUpPage: React.FC = () => {
     const navigate = useNavigate();
 
     // refs 추가
-    const emailRef = useRef<HTMLInputElement | null>(null);
-    const passwordRef = useRef<HTMLInputElement | null>(null);
-    const passwordConfirmRef = useRef<HTMLInputElement | null>(null);
-    const nicknameRef = useRef<HTMLInputElement | null>(null);
-    const bizNumberRef = useRef<HTMLInputElement | null>(null);
-    const bizNameRef = useRef<HTMLInputElement | null>(null);
-    const ecomNumberRef = useRef<HTMLInputElement | null>(null);
-    const depositorRef = useRef<HTMLInputElement | null>(null);
-    const bankNumberRef = useRef<HTMLInputElement | null>(null);
+    const emailRef = useRef<HTMLInputElement>(null!);
+    const passwordRef = useRef<HTMLInputElement>(null!);
+    const passwordConfirmRef = useRef<HTMLInputElement>(null!);
+    const nicknameRef = useRef<HTMLInputElement>(null!);
+    const bizNumberRef = useRef<HTMLInputElement>(null!);
+    const bizNameRef = useRef<HTMLInputElement>(null!);
+    const ecomNumberRef = useRef<HTMLInputElement>(null!);
+    const depositorRef = useRef<HTMLInputElement>(null!);
+    const bankNumberRef = useRef<HTMLInputElement>(null!);
+
 
     // 입력값
     const [formData, setFormData] = useState<SignUpRequest>({
@@ -293,7 +294,74 @@ const HostSignUpPage: React.FC = () => {
                     <input ref={bankNumberRef} type="text" name="hostBizBankNumber" placeholder="계좌번호" value={formData.hostBizBankNumber} onChange={handleChange} style={styles.input} />
                     {errors.hostBizBankNumber && <p style={styles.error}>{errors.hostBizBankNumber}</p>}
 
-                    {/* 나머지 필드 동일... */}
+                    {/* 사업장 주소 */}
+                    <input
+                        type="text"
+                        name="hostBizAddress"
+                        placeholder="사업장 주소"
+                        value={formData.hostBizAddress}
+                        onChange={handleChange}
+                        style={styles.input}
+                    />
+
+                    {/* 대표자명 */}
+                    <input
+                        type="text"
+                        name="hostBizCeoName"
+                        placeholder="대표자명"
+                        value={formData.hostBizCeoName}
+                        onChange={handleChange}
+                        style={styles.input}
+                    />
+
+                    {/* 은행명 (선택) */}
+                    <select
+                        name="hostBizBank"
+                        value={formData.hostBizBank}
+                        onChange={handleChange}
+                        style={styles.input}
+                    >
+                        <option value="">은행 선택</option>
+                        {bankList.map((bank) => (
+                            <option key={bank} value={bank}>
+                                {bank}
+                            </option>
+                        ))}
+                    </select>
+
+                    {/* 수수료율 (선택) */}
+                    <select
+                        name="hostContractCharge"
+                        value={formData.hostContractCharge}
+                        onChange={handleChange}
+                        style={styles.input}
+                    >
+                        {chargeList.map((charge) => (
+                            <option key={charge} value={charge}>
+                                {charge}%
+                            </option>
+                        ))}
+                    </select>
+
+                    {/* 프로필 이미지 */}
+                    <div style={styles.profileBox}>
+                        <label htmlFor="profileImage" style={styles.profileLabel}>
+                            <img
+                                src={profileImage ? URL.createObjectURL(profileImage) : "/default-avatar.png"}
+                                alt="프로필"
+                                style={styles.profileImage}
+                            />
+                            사진변경
+                        </label>
+                        <input
+                            type="file"
+                            id="profileImage"
+                            name="profileImage"
+                            accept="image/*"
+                            onChange={handleChange}
+                            style={{ display: "none" }}
+                        />
+                    </div>
 
                     <button type="submit" style={{ ...styles.button, backgroundColor: emailVerified ? "#007bff" : "#ccc" }} disabled={!emailVerified}>
                         회원가입
@@ -322,4 +390,3 @@ const styles: { [key: string]: React.CSSProperties } = {
     error: { fontSize: "12px", color: "red", marginTop: "-8px" },
     footer: { marginTop: "auto", display: "flex", justifyContent: "center", gap: "20px", padding: "20px", fontSize: "14px", color: "#666" },
 };
-
