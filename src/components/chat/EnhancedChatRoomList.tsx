@@ -135,30 +135,8 @@ export const EnhancedChatRoomList: React.FC<Props> = ({
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {sortedRooms.map((room) => {
-            // 🎯 실제 API에서 읽지 않은 메시지 개수 가져오기 (백엔드 수정 후)
-            const [unreadCount, setUnreadCount] = useState(0);
-            
-            // 채팅방별 읽지 않은 메시지 개수 조회
-            useEffect(() => {
-              const fetchUnreadCount = async () => {
-                try {
-                  const response = await chatService.getUnreadCount(room.chatRoomId);
-                  setUnreadCount(response.unreadCount);
-                  console.log(`🔍 채팅방 ${room.chatRoomId} 읽지 않은 메시지: ${response.unreadCount}개 (백엔드 수정 후)`);
-                } catch (error: any) {
-                  console.warn(`채팅방 ${room.chatRoomId} 읽지 않은 메시지 조회 실패:`, error);
-                  setUnreadCount(0);
-                }
-              };
-              
-              // 🎯 즉시 조회
-              fetchUnreadCount();
-              
-              // 🎯 주기적으로 업데이트 (3초마다)
-              const interval = setInterval(fetchUnreadCount, 3000);
-              return () => clearInterval(interval);
-            }, [room.chatRoomId]);
-            
+            // 🎯 백엔드 수정 후 - 원래 방식으로 복원
+            const unreadCount = readStatus[room.chatRoomId]?.unreadCount || 0;
             const isSelected = selectedRoomId === room.chatRoomId;
             
             return (

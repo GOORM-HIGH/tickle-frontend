@@ -40,7 +40,7 @@ export const useChat = () => {
   // 🎯 실제 API를 호출해서 읽지 않은 메시지 개수 계산
   const [totalUnreadCount, setTotalUnreadCount] = useState(0);
 
-  // 채팅방별 읽지 않은 메시지 개수 계산
+  // 채팅방별 읽지 않은 메시지 개수 계산 (백엔드 수정 후)
   useEffect(() => {
     const calculateTotalUnreadCount = async () => {
       if (chatRooms.length === 0) {
@@ -54,12 +54,14 @@ export const useChat = () => {
           try {
             const response = await chatService.getUnreadCount(room.chatRoomId);
             total += response.unreadCount;
-            console.log(`🔍 채팅방 ${room.chatRoomId}: 읽지 않은 메시지 ${response.unreadCount}개`);
+            console.log(`🔍 채팅방 ${room.chatRoomId}: 읽지 않은 메시지 ${response.unreadCount}개 (백엔드 수정 후)`);
           } catch (error: any) {
             console.warn(`채팅방 ${room.chatRoomId} 읽지 않은 메시지 개수 조회 실패:`, error);
+            // 🎯 API 에러 시 기본값 사용
+            total += 0;
           }
         }
-        console.log(`🔍 전체 읽지 않은 메시지 개수: ${total}`);
+        console.log(`🔍 전체 읽지 않은 메시지 개수: ${total} (백엔드 수정 후)`);
         setTotalUnreadCount(total);
       } catch (error: any) {
         console.error('전체 읽지 않은 메시지 개수 계산 실패:', error);
@@ -67,7 +69,12 @@ export const useChat = () => {
       }
     };
 
+    // 🎯 초기 로드만 실행 (주기적 업데이트 비활성화)
     calculateTotalUnreadCount();
+    
+    // 🎯 주기적 업데이트 비활성화 (API 에러 방지)
+    // const interval = setInterval(calculateTotalUnreadCount, 10000);
+    // return () => clearInterval(interval);
   }, [chatRooms]);
 
   return { 

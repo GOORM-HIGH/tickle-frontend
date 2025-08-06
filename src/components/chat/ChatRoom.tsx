@@ -22,7 +22,7 @@ export const ChatRoom: React.FC<Props> = ({
   currentUserNickname,
   onClose,
   onMessageUpdate,
-  onMessageDelete
+  onMessageDelete,
 }) => {
   const [messages, setMessages] = useState<ChatMessageType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -40,9 +40,23 @@ export const ChatRoom: React.FC<Props> = ({
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const scrollPositionRef = useRef<number>(0);
 
-  // 자동 스크롤
+  // 자동 스크롤 (강화)
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
+
+  const scrollToBottomImmediate = useCallback(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
+  }, []);
+
+  // 🎯 자동 스크롤 체크
+  const shouldAutoScroll = useCallback(() => {
+    if (!messagesContainerRef.current) return false;
+    
+    const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
+    const isNearBottom = scrollTop + clientHeight >= scrollHeight - 100; // 100px 이내면 맨 아래로 간주
+    
+    return isNearBottom;
   }, []);
 
   // 스크롤 위치 저장
@@ -59,15 +73,38 @@ export const ChatRoom: React.FC<Props> = ({
     }
   }, []);
 
-  // 메시지 로드
+  // 🎯 메시지 변경 시 부모 컴포넌트에 알림
+  useEffect(() => {
+    // 메시지 변경 시 displayedMessages 업데이트
+    setDisplayedMessages(messages);
+  }, [messages]);
+
+  // 🎯 초기 메시지가 있으면 로딩 상태 해제
+  useEffect(() => {
+    if (messages.length > 0) {
+      setIsLoading(false);
+      console.log(`📄 초기 메시지 ${messages.length}개 로드됨`);
+    }
+  }, [messages]);
+
+  // 메시지 로드 (백엔드 수정 후)
   const loadMessages = useCallback(async (page: number = 0, append: boolean = false) => {
     try {
       setIsLoadingMore(true);
+      console.log(`📄 메시지 로딩 시작: 채팅방 ${room.chatRoomId}, 페이지 ${page}`);
+      
       const newMessages = await chatService.getMessages(room.chatRoomId, page, 20);
+      console.log(`📄 로딩된 메시지: ${newMessages.length}개`);
       
       if (append) {
-        // 이전 메시지를 앞에 추가 (최신 메시지가 아래로 오도록)
-        setMessages(prev => [...newMessages, ...prev]);
+        // 이전 메시지를 앞에 추가 (중복 제거 포함)
+        setMessages(prev => {
+          const existingIds = new Set(prev.map(msg => msg.id));
+          const uniqueNewMessages = newMessages.filter(msg => !existingIds.has(msg.id));
+          const combined = [...uniqueNewMessages, ...prev];
+          console.log(`📄 추가 페이지 메시지 병합: 기존 ${prev.length}개 + 새로 ${uniqueNewMessages.length}개 = ${combined.length}개`);
+          return combined;
+        });
         setHasMoreMessages(newMessages.length === 20);
       } else {
         // 초기 로드 시 메시지를 시간순으로 정렬 (최신이 아래로)
@@ -78,13 +115,12 @@ export const ChatRoom: React.FC<Props> = ({
         setHasMoreMessages(newMessages.length === 20);
       }
       
-      setCurrentPage(page);
+      setIsLoading(false);
+      setIsLoadingMore(false);
     } catch (error) {
       console.error('메시지 로드 실패:', error);
-      setError('메시지를 불러올 수 없습니다.');
-    } finally {
-      setIsLoadingMore(false);
       setIsLoading(false);
+      setIsLoadingMore(false);
     }
   }, [room.chatRoomId]);
 
@@ -139,7 +175,7 @@ export const ChatRoom: React.FC<Props> = ({
     }
   }, [messages, room.chatRoomId]);
 
-  // 새 메시지 수신 처리 (중복 제거 포함)
+  // 새 메시지 수신 처리 (중복 제거 강화)
   const handleNewMessage = useCallback((message: ChatMessageType) => {
     console.log('📨 새 메시지 수신:', message);
     console.log(`🎯 현재 채팅방: ${room.chatRoomId}, 메시지 채팅방: ${message.chatRoomId}`);
@@ -151,6 +187,17 @@ export const ChatRoom: React.FC<Props> = ({
         const isDuplicate = prev.some(existingMessage => existingMessage.id === message.id);
         if (isDuplicate) {
           console.log(`⚠️ 중복 메시지 무시: ID=${message.id}`);
+          return prev;
+        }
+        
+        // 🎯 추가 중복 체크 (내용과 시간으로도 체크)
+        const isContentDuplicate = prev.some(existingMessage => 
+          existingMessage.content === message.content && 
+          Math.abs(new Date(existingMessage.createdAt).getTime() - new Date(message.createdAt).getTime()) < 1000
+        );
+        
+        if (isContentDuplicate) {
+          console.log(`⚠️ 내용 중복 메시지 무시: ID=${message.id}, 내용="${message.content}"`);
           return prev;
         }
         
@@ -246,21 +293,6 @@ export const ChatRoom: React.FC<Props> = ({
       stompWebSocketService.disconnect();
     };
   }, [loadMessages, connectWebSocket]);
-
-  // 메시지 변경 시 displayedMessages 업데이트
-  useEffect(() => {
-    setDisplayedMessages(messages);
-  }, [messages]);
-
-  // 새 메시지 시 자동 스크롤
-  useEffect(() => {
-    if (messages.length > 0) {
-      const lastMessage = messages[messages.length - 1];
-      if (lastMessage.memberId === currentUserId) {
-        scrollToBottom();
-      }
-    }
-  }, [messages, currentUserId, scrollToBottom]);
 
   // 연결 상태 모니터링
   useEffect(() => {

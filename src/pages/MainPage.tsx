@@ -53,14 +53,18 @@ export const MainPage: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // 🎯 현재 선택된 채팅방의 메시지만 가져오기
-  const currentMessages = selectedRoom ? (messagesByRoom[selectedRoom.chatRoomId] || []) : [];
+  // 🎯 현재 선택된 채팅방의 메시지만 가져오기 (캐시 우선, 정렬 포함)
+  const currentMessages = selectedRoom ? (() => {
+    const messages = messagesByRoom[selectedRoom.chatRoomId] || [];
+    // 시간순으로 정렬 (최신이 아래로)
+    return messages.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+  })() : [];
 
   useEffect(() => {
     scrollToBottom();
   }, [currentMessages]);
 
-  // 🎯 채팅방별 메시지 추가 함수
+  // 🎯 채팅방별 메시지 추가 함수 (캐싱 포함)
   const addMessageToRoom = useCallback((chatRoomId: number, message: ChatMessage) => {
     setMessagesByRoom(prev => ({
       ...prev,
@@ -68,7 +72,7 @@ export const MainPage: React.FC = () => {
     }));
   }, []);
 
-  // 🎯 채팅방별 메시지 설정 함수
+  // 🎯 채팅방별 메시지 설정 함수 (캐싱 포함)
   const setMessagesForRoom = useCallback((chatRoomId: number, messages: ChatMessage[]) => {
     setMessagesByRoom(prev => ({
       ...prev,
@@ -269,8 +273,34 @@ export const MainPage: React.FC = () => {
         <div>현재 시간: {new Date().toLocaleTimeString()}</div>
         <div>브라우저 세션: {sessionStorage.getItem('sessionId') || 'None'}</div>
         <div>백엔드 수정 후 테스트</div>
-        <div>메시지 중복 제거 적용</div>
-        <div>플로팅 배지 제거</div>
+        <div>메시지 중복 제거 강화</div>
+        <div>플로팅 배지 복원</div>
+        <div>닉네임으로 사용자 구분</div>
+        <div>API 에러 처리</div>
+        <div>메시지 캐싱 적용</div>
+        <div>STOMP 중복 방지</div>
+        <div>자동 스크롤 강화</div>
+        <div>DB 저장 활성화</div>
+        <div>isMyMessage 로직 개선</div>
+        <div>닉네임 표시 수정</div>
+        <div>JOIN 메시지 오류 수정</div>
+        <div>senderId 문제 해결</div>
+        <div>JWT 토큰 파싱 추가</div>
+        <div>닉네임 기반 판단</div>
+        <div>MemberRepository 주입</div>
+        <div>실제 사용자 정보 조회</div>
+        <div>JWT 토큰 파싱 개선</div>
+        <div>이메일 기반 ID 매핑</div>
+        <div>useAuth 훅 개선</div>
+        <div>실제 사용자 ID 표시</div>
+        <div>JOIN/LEAVE JWT 파싱</div>
+        <div>백엔드 통합 수정</div>
+        <div>JWT 파싱 개선</div>
+        <div>Jackson JSON 파싱</div>
+        <div>상세 JWT 로깅</div>
+        <div>헤더 전송 확인</div>
+        <div>메시지별 JWT 포함</div>
+        <div>STOMP 헤더 수정</div>
       </div>
 
       {/* 🆕 메시지 개수 표시 */}
@@ -321,14 +351,14 @@ export const MainPage: React.FC = () => {
         }}
       >
         💬
-        {/* 🎯 플로팅 버튼의 NotificationBadge 제거 (중복 방지) */}
-        {/* {totalUnreadCount > 0 && (
+        {/* 🎯 백엔드 수정 후 - 플로팅 버튼 NotificationBadge 복원 */}
+        {totalUnreadCount > 0 && (
           <NotificationBadge 
             count={totalUnreadCount} 
             showAnimation={true}
             size="large"
           />
-        )} */}
+        )}
       </div>
 
       {/* 채팅방 목록 모달 */}
