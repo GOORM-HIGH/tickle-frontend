@@ -183,6 +183,16 @@ export const ChatRoom: React.FC<Props> = ({
     // 현재 채팅방의 메시지만 처리
     if (message.chatRoomId === room.chatRoomId) {
       setMessages(prev => {
+        // 🎯 삭제된 메시지 처리
+        if (message.isDeleted) {
+          console.log(`🗑️ 삭제된 메시지 처리: ID=${message.id}`);
+          return prev.map(existingMessage => 
+            existingMessage.id === message.id 
+              ? { ...existingMessage, isDeleted: true, content: '삭제된 메시지입니다.' }
+              : existingMessage
+          );
+        }
+        
         // 🎯 중복 메시지 제거 (messageId 기준)
         const isDuplicate = prev.some(existingMessage => existingMessage.id === message.id);
         if (isDuplicate) {
