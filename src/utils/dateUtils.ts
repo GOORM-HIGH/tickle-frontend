@@ -3,7 +3,7 @@
  * @param dateStr '2025-08-06' 형식 문자열
  * @param toKST KST(Asia/Seoul)로 변환할지 여부 (기본 false: UTC)
  */
-export async function toInstant(dateStr: string, toKST: boolean = false): Promise<string | null> {
+export function toInstant(dateStr: string, toKST: boolean = false): string | null {
     if (!dateStr) return null;
 
     if (toKST) {
