@@ -174,10 +174,11 @@ export const ChatMessage: React.FC<Props> = ({
     if (message.isDeleted) {
       return (
         <div style={{
-          color: '#999',
+          color: '#666',  // 더 밝은 회색으로 변경
           fontStyle: 'italic',
-          opacity: 0.5,
-          textAlign: 'center'
+          opacity: 0.8,   // 투명도 증가
+          textAlign: 'center',
+          fontWeight: '500'  // 약간 더 굵게
         }}>
           삭제된 메시지입니다.
         </div>
@@ -266,14 +267,14 @@ export const ChatMessage: React.FC<Props> = ({
           style={{
             padding: '10px 15px',
             borderRadius: '18px',
-            backgroundColor: isMyMessage ? '#007bff' : 'white',
-            color: isMyMessage ? 'white' : 'black',
+            backgroundColor: isMyMessage ? '#87CEEB' : 'white',  // 연한 하늘색으로 변경
+            color: isMyMessage ? 'black' : 'black',  // 텍스트 색상도 검정으로 변경
             boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
             position: 'relative',
-            cursor: isMyMessage ? 'pointer' : 'default'
+            cursor: isMyMessage && !message.isDeleted ? 'pointer' : 'default'
           }}
-          onMouseEnter={() => isMyMessage && setShowOptions(true)}
-          onMouseLeave={() => isMyMessage && setTimeout(() => setShowOptions(false), 1000)}
+          onMouseEnter={() => isMyMessage && !message.isDeleted && setShowOptions(true)}
+          onMouseLeave={() => isMyMessage && !message.isDeleted && setTimeout(() => setShowOptions(false), 1000)}
         >
           {isEditing ? (
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
@@ -354,7 +355,7 @@ export const ChatMessage: React.FC<Props> = ({
         </div>
 
         {/* 옵션 메뉴 */}
-        {isMyMessage && showOptions && !isEditing && (
+        {isMyMessage && showOptions && !isEditing && !message.isDeleted && (
           <div
             ref={optionsRef}
             style={{

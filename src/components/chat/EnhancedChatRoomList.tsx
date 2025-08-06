@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { NotificationBadge } from './NotificationBadge';
-import { useReadStatus } from '../../hooks/useReadStatus';
 import { chatService } from '../../services/chatService';
 import type { ChatRoom } from '../../services/chatService';
 
@@ -17,18 +16,8 @@ export const EnhancedChatRoomList: React.FC<Props> = ({
   onJoinChatRoom,
   currentUserId
 }) => {
-  const { readStatus, getUnreadCount, initializeReadStatus } = useReadStatus();
   const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
   const [sortBy, setSortBy] = useState<'recent' | 'unread' | 'name'>('recent');
-
-  // 채팅방별 읽음 상태 초기화
-  useEffect(() => {
-    chatRooms.forEach(room => {
-      if (!readStatus[room.chatRoomId]) {
-        initializeReadStatus(room.chatRoomId);
-      }
-    });
-  }, [chatRooms, readStatus, initializeReadStatus]);
 
   // 채팅방 정렬 (중복 제거 포함)
   const getSortedRooms = () => {
@@ -45,8 +34,8 @@ export const EnhancedChatRoomList: React.FC<Props> = ({
     switch (sortBy) {
       case 'unread':
         return sorted.sort((a, b) => {
-          const aUnread = readStatus[a.chatRoomId]?.unreadCount || 0;
-          const bUnread = readStatus[b.chatRoomId]?.unreadCount || 0;
+          const aUnread = a.unreadMessageCount || 0;
+          const bUnread = b.unreadMessageCount || 0;
           return bUnread - aUnread;
         });
       case 'name':
@@ -135,8 +124,8 @@ export const EnhancedChatRoomList: React.FC<Props> = ({
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {sortedRooms.map((room) => {
-            // 🎯 백엔드 수정 후 - 원래 방식으로 복원
-            const unreadCount = readStatus[room.chatRoomId]?.unreadCount || 0;
+            // 🎯 백엔드에서 계산된 unreadMessageCount 사용
+            const unreadCount = room.unreadMessageCount || 0;
             const isSelected = selectedRoomId === room.chatRoomId;
             
             return (
