@@ -272,35 +272,6 @@ export const MainPage: React.FC = () => {
         <div>토큰: {localStorage.getItem('accessToken')?.substring(0, 20) || 'None'}...</div>
         <div>현재 시간: {new Date().toLocaleTimeString()}</div>
         <div>브라우저 세션: {sessionStorage.getItem('sessionId') || 'None'}</div>
-        <div>백엔드 수정 후 테스트</div>
-        <div>메시지 중복 제거 강화</div>
-        <div>플로팅 배지 복원</div>
-        <div>닉네임으로 사용자 구분</div>
-        <div>API 에러 처리</div>
-        <div>메시지 캐싱 적용</div>
-        <div>STOMP 중복 방지</div>
-        <div>자동 스크롤 강화</div>
-        <div>DB 저장 활성화</div>
-        <div>isMyMessage 로직 개선</div>
-        <div>닉네임 표시 수정</div>
-        <div>JOIN 메시지 오류 수정</div>
-        <div>senderId 문제 해결</div>
-        <div>JWT 토큰 파싱 추가</div>
-        <div>닉네임 기반 판단</div>
-        <div>MemberRepository 주입</div>
-        <div>실제 사용자 정보 조회</div>
-        <div>JWT 토큰 파싱 개선</div>
-        <div>이메일 기반 ID 매핑</div>
-        <div>useAuth 훅 개선</div>
-        <div>실제 사용자 ID 표시</div>
-        <div>JOIN/LEAVE JWT 파싱</div>
-        <div>백엔드 통합 수정</div>
-        <div>JWT 파싱 개선</div>
-        <div>Jackson JSON 파싱</div>
-        <div>상세 JWT 로깅</div>
-        <div>헤더 전송 확인</div>
-        <div>메시지별 JWT 포함</div>
-        <div>STOMP 헤더 수정</div>
       </div>
 
       {/* 🆕 메시지 개수 표시 */}
