@@ -203,6 +203,7 @@ const SignUpPage: React.FC = () => {
                     {errors.email && <p style={styles.error}>{errors.email}</p>}
 
                     {/* 인증번호 */}
+                    {/* 인증번호 */}
                     <div>
                         <div style={styles.row}>
                             <input
@@ -212,29 +213,24 @@ const SignUpPage: React.FC = () => {
                                 value={emailAuthCode}
                                 onChange={(e) => {
                                     setEmailAuthCode(e.target.value);
-                                    handleChange(e); // 기존 검증 로직 호출
+                                    handleChange(e);
                                 }}
                                 style={{...styles.input, flex: 1}}
                                 disabled={!isCodeSent || emailVerified}
                             />
-                            {!isCodeSent ? (
-                                <button type="button" style={styles.verifyButton} onClick={handleSendEmailCode}>
-                                    인증번호 발송
-                                </button>
-                            ) : (
-                                <button
-                                    type="button"
-                                    style={{
-                                        ...styles.verifyButton,
-                                        background: emailVerified ? "#28a745" : "#ccc",
-                                        cursor: emailVerified ? "not-allowed" : "pointer",
-                                    }}
-                                    onClick={handleVerifyEmailCode}
-                                    disabled={emailVerified}
-                                >
-                                    {emailVerified ? "인증완료" : "인증하기"}
-                                </button>
-                            )}
+                            <button
+                                type="button"
+                                style={{
+                                    ...styles.verifyButton,
+                                    background: !isCodeSent ? "#007bff" : emailVerified ? "#28a745" : "#ccc",
+                                    color: "#fff",
+                                    cursor: emailVerified ? "not-allowed" : "pointer",
+                                }}
+                                onClick={!isCodeSent ? handleSendEmailCode : handleVerifyEmailCode}
+                                disabled={emailVerified}
+                            >
+                                {!isCodeSent ? "인증번호 발송" : emailVerified ? "인증완료" : "인증하기"}
+                            </button>
                         </div>
                         {errors.emailCode && <p style={styles.error}>{errors.emailCode}</p>}
                     </div>
@@ -301,10 +297,18 @@ const SignUpPage: React.FC = () => {
                     </div>
 
                     {/* 회원가입 버튼 */}
-                    <button type="submit" style={{...styles.button, opacity: emailVerified ? 1 : 0.6}}
-                            disabled={!emailVerified}>
+                    <button
+                        type="submit"
+                        style={{
+                            ...styles.button,
+                            backgroundColor: emailVerified ? "#007bff" : "#ccc",
+                            cursor: emailVerified ? "pointer" : "not-allowed",
+                        }}
+                        disabled={!emailVerified}
+                    >
                         회원가입
                     </button>
+
                 </form>
             </div>
             <footer style={styles.footer}>
@@ -354,14 +358,12 @@ const styles: { [key: string]: React.CSSProperties } = {
     profileLabel: {display: "flex", flexDirection: "column", alignItems: "center", cursor: "pointer"},
     profileImage: {width: "80px", height: "80px", borderRadius: "50%", objectFit: "cover", marginBottom: "5px"},
     button: {
-        backgroundColor: "#007bff",
         color: "#fff",
         padding: "12px",
         border: "none",
         borderRadius: "6px",
-        cursor: "pointer",
         fontSize: "16px",
-        fontWeight: "bold"
+        fontWeight: "bold",
     },
     error: {fontSize: "12px", color: "red", marginTop: "-8px"},
     footer: {
