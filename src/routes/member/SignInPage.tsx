@@ -95,7 +95,7 @@ const SignInPage: React.FC = () => {
             회원가입
           </Link>{" "}
           |{" "}
-          <Link to="/host-sign-up" style={styles.link}>
+          <Link to="/host-sign-in" style={styles.link}>
             사업자 회원가입
           </Link>
         </div>
