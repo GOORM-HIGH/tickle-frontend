@@ -1,17 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { validateEmail, validateEmailCode, validateNickName, validatePassword } from "../../utils/validations";
-import { toInstant } from "../../utils/dateUtils";
-import Button from "../../components/common/Button";
-import Input from "../../components/common/Input";
-import ProfileImageUploader from "../../components/member/ProfileImageUploader";
-import AuthCard from "../../components/member/AuthCard";
+import { validateEmail, validateEmailCode, validateNickName, validatePassword } from "../../utils/validations.ts";
+import { toInstant } from "../../utils/dateUtils.ts";
+import AuthCard from "../../components/member/AuthCard.tsx";
+import ProfileImageUploader from "../../components/member/ProfileImageUploader.tsx";
+import AuthInput from "../../components/member/AuthInput.tsx";
+import Button from "../../components/common/Button.tsx";
 
 const SignUpPage: React.FC = () => {
     const navigate = useNavigate();
 
-    // 입력값
     const [formData, setFormData] = useState<SignUpRequest>({
         email: "",
         password: "",
@@ -44,10 +43,13 @@ const SignUpPage: React.FC = () => {
         emailCode: "",
     });
 
-    // 입력값 변경
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        const { name, value, files } = e.target;
+        if (name === "profileImage" && files) {
+            setProfileImage(files[0]);
+        } else {
+            setFormData((prev) => ({ ...prev, [name]: value }));
+        }
 
         // 실시간 검증
         if (name === "email") setErrors((prev) => ({ ...prev, email: value === "" ? "" : validateEmail(value) || "" }));
@@ -57,7 +59,6 @@ const SignUpPage: React.FC = () => {
         if (name === "emailCode") setErrors((prev) => ({ ...prev, emailCode: value === "" ? "" : validateEmailCode(value) || "" }));
     };
 
-    // 인증번호 발송
     const handleSendEmailCode = async () => {
         try {
             const response = await axios.post(
@@ -66,10 +67,8 @@ const SignUpPage: React.FC = () => {
                 { headers: { "Content-Type": "application/json" } }
             );
 
-            if (response.data.status !== 201) {
-                new Error("인증번호 발송 실패");
-                return;
-            }
+            if (response.data.status !== 201) throw new Error("인증번호 발송 실패");
+
             alert("인증번호가 발송되었습니다.");
             setIsCodeSent(true);
         } catch (error) {
@@ -78,9 +77,14 @@ const SignUpPage: React.FC = () => {
         }
     };
 
-    // 인증번호 확인
     const handleVerifyEmailCode = async () => {
         try {
+            const emailError: string = validateEmail(formData.email);
+            if (emailError) {
+                alert("올바른 이메일 주소를 입력해주세요.");
+                return;
+            }
+
             await axios.post(
                 "http://127.0.0.1:8081/api/v1/auth/email-verification/confirm",
                 { email: formData.email, code: emailAuthCode },
@@ -94,13 +98,16 @@ const SignUpPage: React.FC = () => {
         }
     };
 
-    // 프로필 이미지 업로드
     const uploadProfileImage = async (): Promise<string | null> => {
         if (!profileImage) return null;
         const imageData = new FormData();
         imageData.append("file", profileImage);
         try {
-            const response = await axios.post("http://127.0.0.1:8081/api/v1/upload", imageData, { headers: { "Content-Type": "multipart/form-data" } });
+            const response = await axios.post(
+                "http://127.0.0.1:8081/api/v1/upload",
+                imageData,
+                { headers: { "Content-Type": "multipart/form-data" } }
+            );
             return response.data.url;
         } catch (error) {
             alert("이미지 업로드 실패");
@@ -109,9 +116,9 @@ const SignUpPage: React.FC = () => {
         }
     };
 
-    // 회원가입
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
         if (!emailVerified) {
             alert("이메일 인증이 필요합니다.");
             return;
@@ -122,7 +129,11 @@ const SignUpPage: React.FC = () => {
             const imageUrl = await uploadProfileImage();
             const payload = { ...formData, img: imageUrl || "", birthday };
 
-            const response = await axios.post("http://127.0.0.1:8081/api/v1/sign-up", payload, { headers: { "Content-Type": "application/json" } });
+            const response = await axios.post(
+                "http://127.0.0.1:8081/api/v1/sign-up",
+                payload,
+                { headers: { "Content-Type": "application/json" } }
+            );
 
             if (response.data.status !== 201) {
                 alert("회원가입 실패");
@@ -138,7 +149,7 @@ const SignUpPage: React.FC = () => {
     };
 
     return (
-        <AuthCard title="회원가입">
+        <AuthCard title="회원가입" minWidth="1000px">
             <form onSubmit={handleSubmit} className="flex flex-col items-center gap-6">
                 {/* 프로필 업로더 */}
                 <ProfileImageUploader
@@ -148,17 +159,75 @@ const SignUpPage: React.FC = () => {
 
                 {/* 입력칸 + 버튼 */}
                 <div className="flex flex-col gap-4">
-                    <Input variant="large" placeholder="이메일" name="email" value={formData.email} onChange={handleChange} />
-                    <div className="flex justify-between w-[460px] gap-2">
-                        <Input variant="large" placeholder="이메일 인증" name="emailCode" value={emailAuthCode} onChange={(e) => setEmailAuthCode(e.target.value)} />
-                        <Button size="small" type="button" onClick={!isCodeSent ? handleSendEmailCode : handleVerifyEmailCode}>
-                            {!isCodeSent ? "인증번호 전송" : emailVerified ? "인증완료" : "인증하기"}
-                        </Button>
+                    <AuthInput
+                        label="이메일"
+                        variant="large"
+                        placeholder="이메일"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        error={errors.email}
+                    />
+                    {/* 이메일 인증 */}
+                    <div className="flex flex-col w-[460px]">
+                        <label className="mb-1 text-sm font-medium text-gray-700">이메일 인증</label>
+                        <div className="flex gap-2 items-start">
+                            <input
+                                type="text"
+                                className="border border-gray-300 rounded px-3 text-base h-11 flex-grow focus:outline-none focus:border-[#006ff5]"
+                                style={{ fontFamily: "NEXON Lv1 Gothic OTF, sans-serif" }}
+                                placeholder="인증번호"
+                                name="emailCode"
+                                value={emailAuthCode}
+                                onChange={(e) => setEmailAuthCode(e.target.value)}
+                            />
+                            <Button
+                                size="small"
+                                type="button"
+                                onClick={!isCodeSent ? handleSendEmailCode : handleVerifyEmailCode}
+                            >
+                                {!isCodeSent ? "인증번호 전송" : emailVerified ? "인증완료" : "인증하기"}
+                            </Button>
+                        </div>
+                        {errors.emailCode && <span className="mt-1 text-sm text-red-500">{errors.emailCode}</span>}
                     </div>
-                    <Input variant="large" type="password" placeholder="비밀번호" name="password" value={formData.password} onChange={handleChange} />
-                    <Input variant="large" type="password" placeholder="비밀번호 확인" name="passwordConfirm" onChange={handleChange} />
-                    <Input variant="large" type="date" name="birthday" value={formData.birthday} onChange={handleChange} />
-                    <Input variant="large" placeholder="닉네임" name="nickname" value={formData.nickname} onChange={handleChange} />
+
+                    <AuthInput
+                        label="비밀번호"
+                        type="password"
+                        variant="large"
+                        placeholder="비밀번호"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        error={errors.password}
+                    />
+                    <AuthInput
+                        label="비밀번호 확인"
+                        type="password"
+                        variant="large"
+                        placeholder="비밀번호 확인"
+                        name="passwordConfirm"
+                        onChange={handleChange}
+                        error={errors.passwordConfirm}
+                    />
+                    <AuthInput
+                        label="생년월일"
+                        type="date"
+                        variant="large"
+                        name="birthday"
+                        value={formData.birthday}
+                        onChange={handleChange}
+                    />
+                    <AuthInput
+                        label="닉네임"
+                        variant="large"
+                        placeholder="닉네임"
+                        name="nickname"
+                        value={formData.nickname}
+                        onChange={handleChange}
+                        error={errors.nickname}
+                    />
                     <Button size="large" type="submit" disabled={!emailVerified}>
                         회원가입
                     </Button>
