@@ -20,26 +20,22 @@ const ProfileImageUploader: React.FC<ProfileImageUploaderProps> = ({ imageUrl, o
     };
 
     return (
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
+        <div className="flex flex-col items-center gap-2">
             <img
                 src={imageUrl || "/default-avatar.png"}
                 alt="프로필"
-                style={{
-                    width: "120px",
-                    height: "120px",
-                    borderRadius: "50%",
-                    objectFit: "cover",
-                    border: "1px solid #ccc",
-                }}
+                className="w-[120px] h-[120px] rounded-full object-cover border border-gray-300"
             />
             <input
                 ref={fileInputRef}
                 type="file"
                 accept="image/*"
-                style={{ display: "none" }}
+                className="hidden"
                 onChange={handleFileChange}
             />
-            <Button size="small" onClick={handleButtonClick}>사진 업로드</Button>
+            <Button size="small" onClick={handleButtonClick}>
+                사진 업로드
+            </Button>
         </div>
     );
 };
