@@ -13,7 +13,7 @@ export const LoginForm: React.FC<Props> = ({ onLogin, loading }) => {
     e.preventDefault();
     try {
       await onLogin(form.email, form.password);
-      alert('로그인 성공!');
+      // 로그인 성공 시 alert 제거 (자동으로 MainPage로 이동됨)
     } catch (error) {
       alert('로그인 실패!');
     }
