@@ -1,15 +1,5 @@
 import api from './api';
-
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface LoginResponse {
-  accessToken: string;
-  tokenType: string;
-  expiresIn: number;
-}
+import { LoginRequest, LoginResponse } from '../types/auth';
 
 export const authService = {
   login: async (credentials: LoginRequest): Promise<LoginResponse> => {
