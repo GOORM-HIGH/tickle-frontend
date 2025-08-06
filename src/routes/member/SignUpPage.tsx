@@ -161,7 +161,7 @@ const SignUpPage: React.FC = () => {
         }
 
         try {
-            const birthday = await toInstant(formData.birthday, false);
+            const birthday = toInstant(formData.birthday, false);
             const imageUrl = await uploadProfileImage();
             const payload = { ...formData, img: imageUrl || "", birthday };
 
