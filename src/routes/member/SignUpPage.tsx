@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
-import {validateEmail, validateEmailCode, validateNickName, validatePassword,} from "../../utils/validation";
+import {validateEmail, validateEmailCode, validateNickName, validatePassword,} from "../../utils/validations.ts";
 import {toInstant} from "../../utils/dateUtils.ts";
 
 const SignUpPage: React.FC = () => {

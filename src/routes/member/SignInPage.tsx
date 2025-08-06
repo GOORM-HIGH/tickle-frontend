@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import axios from "axios";
-import {setAccessToken} from "../../utils/token";
-import {validateEmail, validatePassword} from "../../utils/validation";
+import {setAccessToken} from "../../utils/tokens.ts";
+import {validateEmail, validatePassword} from "../../utils/validations.ts";
 
 const SignInPage: React.FC = () => {
     const navigate = useNavigate();
