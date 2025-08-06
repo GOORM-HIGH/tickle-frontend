@@ -22,7 +22,7 @@ const Button: React.FC<ButtonProps> = ({ size = "normal", children, ...props }) 
                 hover:bg-blue-700
                 transition-colors duration-200 ease-in-out
             `}
-            style={{ fontFamily: "NEXON Lv1 Gothic OTF, sans-serif" }}
+            style={{ fontFamily: "GmarketSansMedium, sans-serif" }}
         >
             <span className="w-full h-full flex justify-center items-center text-base">
                 {children}
