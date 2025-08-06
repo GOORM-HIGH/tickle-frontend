@@ -148,6 +148,20 @@ export const ChatRoom: React.FC<Props> = ({
     }
   }, [room.chatRoomId]);
 
+  // 🎯 채팅방 입장 시 자동 읽음 처리
+  useEffect(() => {
+    if (messages.length > 0 && !isLoading) {
+      const lastMessage = messages[messages.length - 1];
+      // 🎯 메시지 ID가 유효한 경우에만 읽음 처리
+      if (lastMessage.id && lastMessage.id > 0) {
+        console.log(`📖 채팅방 입장 시 자동 읽음 처리: 메시지 ID ${lastMessage.id}`);
+        handleMarkAsRead(lastMessage.id);
+      } else {
+        console.log(`⚠️ 유효하지 않은 메시지 ID: ${lastMessage.id}, 읽음 처리 건너뜀`);
+      }
+    }
+  }, [messages, isLoading, handleMarkAsRead]);
+
   // 채팅방 나갈 때 화면에 보이는 마지막 메시지 읽음 처리
   const handleLeaveChatRoom = useCallback(async () => {
     console.log(`🚪 채팅방 나가기 시작: ${room.chatRoomId}`);
@@ -158,7 +172,7 @@ export const ChatRoom: React.FC<Props> = ({
       const visibleMessages = messages.filter(msg => !msg.isDeleted);
       const lastVisibleMessage = visibleMessages[visibleMessages.length - 1];
       
-      if (lastVisibleMessage) {
+      if (lastVisibleMessage && lastVisibleMessage.id && lastVisibleMessage.id > 0) {
         console.log(`🚪 화면 마지막 메시지 읽음 처리 시작: ID=${lastVisibleMessage.id}, 내용="${lastVisibleMessage.content}"`);
         
         try {
@@ -168,7 +182,7 @@ export const ChatRoom: React.FC<Props> = ({
           console.error(`❌ 읽음 처리 실패:`, error);
         }
       } else {
-        console.log(`🚪 화면에 보이는 메시지가 없음: 채팅방 ${room.chatRoomId}`);
+        console.log(`🚪 유효하지 않은 메시지 ID: ${lastVisibleMessage?.id}, 읽음 처리 건너뜀`);
       }
     } else {
       console.log(`🚪 읽을 메시지가 없음: 채팅방 ${room.chatRoomId}`);
@@ -296,8 +310,19 @@ export const ChatRoom: React.FC<Props> = ({
 
   // 초기화
   useEffect(() => {
-    loadMessages();
-    connectWebSocket();
+    const initializeChatRoom = async () => {
+      try {
+        // 1. 메시지 로드
+        await loadMessages();
+        
+        // 2. WebSocket 연결
+        await connectWebSocket();
+      } catch (error) {
+        console.error('채팅방 초기화 실패:', error);
+      }
+    };
+
+    initializeChatRoom();
 
     return () => {
       stompWebSocketService.disconnect();

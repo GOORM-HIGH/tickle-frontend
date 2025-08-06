@@ -276,7 +276,7 @@ class StompWebSocketService {
     }
     
     const chatMessage: ChatMessage = {
-      id: data.messageId || data.id || Date.now(),
+      id: data.messageId || data.id || 0,
       chatRoomId: data.chatRoomId || this.currentChatRoomId!,
       memberId: senderId,
       messageType: data.messageType || 'TEXT',

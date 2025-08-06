@@ -21,7 +21,17 @@ interface Reservation {
 
 export const MainPage: React.FC = () => {
   const { logout, currentUser } = useAuth();
-  const { chatRooms, totalUnreadCount, loadMyChatRooms } = useChat();
+  const { 
+    chatRooms, 
+    totalUnreadCount, 
+    loadMyChatRooms,
+    incrementUnreadCount,  // ✅ 새 메시지 수신 시 증가
+    decrementUnreadCount   // ✅ 읽음 처리 시 감소
+  } = useChat();
+  
+  // 🎯 totalUnreadCount 디버깅
+  console.log('🎯 MainPage - totalUnreadCount:', totalUnreadCount);
+  console.log('🎯 MainPage - chatRooms 개수:', chatRooms.length);
   
   // 모달 상태
   const [isChatListOpen, setIsChatListOpen] = useState(false);
@@ -81,14 +91,41 @@ export const MainPage: React.FC = () => {
   }, []);
 
   // 🎯 메시지 핸들러 (채팅방 ID 포함)
-  const handleNewMessage = useCallback((message: ChatMessage) => {
+  const handleNewMessage = useCallback(async (message: ChatMessage) => {
     console.log('📨 새 메시지 수신:', message);
     
     // 🎯 해당 채팅방에만 메시지 추가
     if (message.chatRoomId) {
       addMessageToRoom(message.chatRoomId, message);
+      
+      // 🎯 내가 보낸 메시지가 아니고, 현재 선택된 채팅방이 아닌 경우에만 읽지 않은 메시지 개수 증가
+      if (!message.isMyMessage && selectedRoom?.chatRoomId !== message.chatRoomId) {
+        incrementUnreadCount(message.chatRoomId);
+        
+        // 🎯 새 메시지 수신 시 채팅방 목록 새로고침 (읽지 않은 메시지 개수 반영)
+        try {
+          await loadMyChatRooms();
+          console.log('🔄 새 메시지 수신으로 인한 채팅방 목록 새로고침');
+        } catch (error) {
+          console.error('❌ 새 메시지 수신 시 채팅방 목록 새로고침 실패:', error);
+        }
+      }
     }
-  }, [addMessageToRoom]);
+  }, [addMessageToRoom, selectedRoom, incrementUnreadCount, loadMyChatRooms]);
+
+  // 🎯 주기적 채팅방 목록 새로고침 (읽지 않은 메시지 개수 동기화)
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        await loadMyChatRooms();
+        console.log('🔄 주기적 채팅방 목록 새로고침 (30초마다)');
+      } catch (error) {
+        console.error('❌ 주기적 채팅방 목록 새로고침 실패:', error);
+      }
+    }, 30000); // 30초마다
+
+    return () => clearInterval(interval);
+  }, [loadMyChatRooms]);
 
   // 예매내역 로드
   const loadMyReservations = async () => {
@@ -140,6 +177,15 @@ export const MainPage: React.FC = () => {
       setSelectedRoom(room);
       setIsChatListOpen(false);
       setIsWebSocketConnected(true);
+      
+      // 🎯 채팅방 입장 시 읽지 않은 메시지 개수 감소
+      // 실제 읽음 처리는 ChatRoom 컴포넌트에서 자동으로 수행됨
+      // 여기서는 UI 업데이트만 수행
+      if (room.unreadMessageCount && room.unreadMessageCount > 0) {
+        decrementUnreadCount(room.chatRoomId, room.unreadMessageCount);
+        console.log(`📉 채팅방 입장으로 인한 읽지 않은 메시지 개수 감소: ${room.unreadMessageCount}개`);
+      }
+      
       console.log(`✅ 채팅방 ${room.chatRoomId} 열기 완료`);
       
     } catch (error: any) {
@@ -150,9 +196,17 @@ export const MainPage: React.FC = () => {
   };
 
   // 🎯 채팅방 닫기
-  const handleCloseChatRoom = () => {
+  const handleCloseChatRoom = async () => {
     setIsWebSocketConnected(false);
     setSelectedRoom(null);
+    
+    // 🎯 채팅방을 닫을 때 채팅방 목록 새로고침 (읽음 상태 반영)
+    try {
+      await loadMyChatRooms();
+      console.log('🔄 채팅방 목록 새로고침 완료 (읽음 상태 반영)');
+    } catch (error) {
+      console.error('❌ 채팅방 목록 새로고침 실패:', error);
+    }
   };
 
   // 🎯 메시지 업데이트 처리
@@ -322,6 +376,26 @@ export const MainPage: React.FC = () => {
         }}
       >
         💬
+        {/* 🎯 디버깅용 - 직접 숫자 표시 */}
+        {totalUnreadCount > 0 && (
+          <div style={{
+            position: 'absolute',
+            top: '-8px',
+            right: '-8px',
+            backgroundColor: 'red',
+            color: 'white',
+            borderRadius: '50%',
+            width: '20px',
+            height: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '12px',
+            fontWeight: 'bold'
+          }}>
+            {totalUnreadCount}
+          </div>
+        )}
         {/* 🎯 백엔드 수정 후 - 플로팅 버튼 NotificationBadge 복원 */}
         {totalUnreadCount > 0 && (
           <NotificationBadge 
