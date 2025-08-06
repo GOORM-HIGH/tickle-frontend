@@ -22,7 +22,7 @@ const ProfileImageUploader: React.FC<ProfileImageUploaderProps> = ({ imageUrl, o
     return (
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
             <img
-                src={imageUrl || "/default-avatar.svg"}
+                src={imageUrl || "/default-avatar.png"}
                 alt="프로필"
                 style={{
                     width: "120px",
