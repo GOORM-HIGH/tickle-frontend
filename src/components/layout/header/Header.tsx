@@ -6,6 +6,7 @@ import AuthMenu from "../../common/header/AuthMenu";
 import FeatureMenu from "../../common/header/FeatureMenu";
 import GenreMenu from "../../common/header/GenreMenu";
 import { getAccessToken, removeTokens } from "../../../utils/tokens";
+import { connectSSE } from "../../../utils/connectSSE";
 
 export default function Header() {
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -29,12 +30,25 @@ export default function Header() {
     navigate("/"); // 홈으로 리디렉션
   };
 
+  const handleSseMessage = (message: string) => {};
+
   useEffect(() => {
-    const accessToken = getAccessToken();
-    if (accessToken) {
-      setIsSignIn(true);
-    }
+    const token = getAccessToken();
+
+    if (!token) return;
+
+    const eventSource = connectSSE(token, handleSseMessage);
+
+    return () => {
+      eventSource.close();
+      console.log("🔌 SSE 연결 종료");
+    };
   }, []);
+
+  return (
+    // ...
+    <></>
+  );
 
   return (
     <header className="w-full bg-white border-b border-gray-200 shadow-sm sticky top-0 z-10">

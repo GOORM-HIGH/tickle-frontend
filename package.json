@@ -13,6 +13,7 @@
     "@stomp/stompjs": "^7.1.1",
     "@tailwindcss/vite": "^4.1.11",
     "axios": "^1.11.0",
+    "event-source-polyfill": "^1.0.31",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.536.0",
     "react": "~19.1.0",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
+    "@types/event-source-polyfill": "^1.0.5",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^24.1.0",
     "@types/react": "^19.1.9",
