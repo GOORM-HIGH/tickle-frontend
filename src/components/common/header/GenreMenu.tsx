@@ -11,6 +11,7 @@ export default function GenreMenu() {
               key={genre.id}
               to={`/performance/${genre.id}`}
               className="px-3 py-1.5 rounded-full text-sm text-gray-800 hover:bg-blue-100 hover:text-blue-600 transition whitespace-nowrap"
+              style={{ fontFamily: "GmarketSansMedium, sans-serif" }}
             >
               {genre.name}
             </Link>
