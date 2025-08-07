@@ -17,6 +17,7 @@ export default function SearchBar({ keyword, onChange, onSubmit }: Props) {
         value={keyword}
         onChange={(e) => onChange(e.target.value)}
         placeholder="어떤 공연을 찾으시나요?"
+        style={{ fontFamily: "NEXON Lv1 Gothic OTF, sans-serif" }}
         className="w-full px-4 py-2.5 pr-10 rounded-lg border border-gray-300 bg-gray-100 text-sm text-black focus:outline-none focus:border-blue-500"
       />
       <button
