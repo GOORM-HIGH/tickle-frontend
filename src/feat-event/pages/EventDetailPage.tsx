@@ -16,7 +16,8 @@ import PromotionalBanner from '../_components/event/PromotionalBanner';
 
 export default function EventDetailPage() {
   const navigate = useNavigate();
-  const { eventId } = useParams<{ eventId: string }>();
+  const { id } = useParams<{ id: string }>();
+  const eventId = id; // eventId 변수명을 유지하기 위해 별칭 사용
   const [isLiked, setIsLiked] = useState(false);
   const [showResultPopup, setShowResultPopup] = useState(false);
   const [isWinner, setIsWinner] = useState(false);
@@ -27,6 +28,8 @@ export default function EventDetailPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log('EventDetailPage - eventId:', eventId);
+    
     const fetchEventDetail = async () => {
       if (!eventId) {
         setError('이벤트 ID가 없습니다.');
