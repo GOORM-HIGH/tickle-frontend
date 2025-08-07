@@ -16,6 +16,13 @@ export default function FeatureMenu() {
     setIsNotificationOpen((prev) => !prev);
   };
 
+  // 알림 읽음 핸들러
+  const handleNotificationRead = (id: number) => {
+    setNotificationList((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
+    );
+  };
+
   // 알림 불러오기
   useEffect(() => {
     const accessToken = getAccessToken();
@@ -74,11 +81,11 @@ export default function FeatureMenu() {
           )}
         </button>
       </div>
-
       {/* 알림 패널 */}
       <NotificationPopover
         isOpen={isNotificationOpen}
         notificationList={notificationList}
+        onRead={handleNotificationRead}
       />
     </div>
   );

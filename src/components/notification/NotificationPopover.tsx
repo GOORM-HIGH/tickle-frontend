@@ -1,23 +1,27 @@
 import { format } from "date-fns";
-
-interface Notification {
-  id: number;
-  title: string;
-  content: string;
-  createdAt: string;
-  isRead: boolean;
-}
+import { markNotificationAsRead } from "../../services/notificationService";
 
 interface NotificationPopoverProps {
   isOpen: boolean;
-  notificationList: Notification[];
+  notificationList: NotificationResponse[];
+  onRead: (id: number) => void; // ← 콜백 추가
 }
 
 export default function NotificationPopover({
   isOpen,
   notificationList,
+  onRead,
 }: NotificationPopoverProps) {
   if (!isOpen) return null;
+
+  const handleClick = async (id: number) => {
+    try {
+      await markNotificationAsRead(id);
+      onRead(id); // 부모 컴포넌트에 상태 업데이트 요청
+    } catch (err) {
+      console.error("알림 읽음 처리 실패:", err);
+    }
+  };
 
   return (
     <div className="absolute right-8 top-[60px] w-80 bg-white border border-gray-200 rounded-xl shadow-lg z-20 p-4 text-sm">
@@ -31,10 +35,14 @@ export default function NotificationPopover({
             return (
               <li
                 key={notification.id}
-                className={`p-4 rounded-md shadow-sm border-l-4 ${
+                // ✅ 읽지 않은 경우에만 클릭 이벤트 추가
+                onClick={
+                  isUnread ? () => handleClick(notification.id) : undefined
+                }
+                className={`p-4 rounded-md shadow-sm border-l-4 transition ${
                   isUnread
-                    ? "border-blue-500 bg-blue-50"
-                    : "border-transparent bg-white"
+                    ? "cursor-pointer hover:bg-gray-50 border-blue-500 bg-blue-50"
+                    : "cursor-default border-transparent bg-white"
                 }`}
               >
                 <div className="flex justify-between items-center mb-1">
