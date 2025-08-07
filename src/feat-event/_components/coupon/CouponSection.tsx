@@ -55,12 +55,27 @@ export default function CouponSection({ title, description, type }: Props) {
           console.log('현재 진행중인 쿠폰 로드 시작...');
           const data = await getCouponEvents(0, 5);
           console.log('현재 진행중인 쿠폰 로드 성공:', data);
+          console.log('데이터 타입:', typeof data);
+          console.log('데이터 구조:', JSON.stringify(data, null, 2));
+          
+          // data가 존재하고 content가 있는지 확인
+          if (!data || !data.content) {
+            console.warn('쿠폰 데이터가 올바르지 않습니다:', data);
+            setActiveCoupons([]);
+            return;
+          }
+          
+          // content가 배열인지 확인
+          if (!Array.isArray(data.content)) {
+            console.warn('쿠폰 content가 배열이 아닙니다:', data.content);
+            setActiveCoupons([]);
+            return;
+          }
           
           // 쿠폰 ID 1, 2, 3을 제외하고 필터링
           const filteredCoupons = data.content.filter(coupon => 
-            coupon.id !== 1 && coupon.id !== 2 && coupon.id !== 3
+            coupon && coupon.id && coupon.id !== 1 && coupon.id !== 2 && coupon.id !== 3
           );
-          
           console.log('필터링된 쿠폰:', filteredCoupons);
           setActiveCoupons(filteredCoupons);
         } catch (e) {
@@ -75,26 +90,30 @@ export default function CouponSection({ title, description, type }: Props) {
 
   const coupons: CouponCardData[] =
     type === 'special'
-      ? specialCoupons.map(coupon => {
-          console.log('특별 쿠폰 매핑:', { id: coupon.id, eventId: coupon.eventId, name: coupon.name });
-          return {
-            title: coupon.name,
-            description: '특별 할인 혜택',
-            discount: `${coupon.rate}%`,
-            date: '2025.12.31까지',
-            eventId: coupon.eventId
-          };
-        })
-      : activeCoupons.map(coupon => {
-          console.log('활성 쿠폰 매핑:', { id: coupon.id, eventId: coupon.eventId, name: coupon.name });
-          return {
-            title: coupon.name,
-            description: '진행중인 할인 혜택',
-            discount: `${coupon.rate}%`,
-            date: '2025.12.31까지',
-            eventId: coupon.eventId
-          };
-        });
+      ? specialCoupons
+          .filter(coupon => coupon && coupon.id && coupon.name && coupon.rate !== undefined)
+          .map(coupon => {
+            console.log('특별 쿠폰 매핑:', { id: coupon.id, eventId: coupon.eventId, name: coupon.name });
+            return {
+              title: coupon.name,
+              description: '특별 할인 혜택',
+              discount: `${coupon.rate}%`,
+              date: '2025.12.31까지',
+              eventId: coupon.eventId
+            };
+          })
+      : activeCoupons
+          .filter(coupon => coupon && coupon.id && coupon.name && coupon.rate !== undefined)
+          .map(coupon => {
+            console.log('활성 쿠폰 매핑:', { id: coupon.id, eventId: coupon.eventId, name: coupon.name });
+            return {
+              title: coupon.name,
+              description: '진행중인 할인 혜택',
+              discount: `${coupon.rate}%`,
+              date: '2025.12.31까지',
+              eventId: coupon.eventId
+            };
+          });
 
   // 디버깅 정보 출력
   console.log('CouponSection 렌더링:', {
