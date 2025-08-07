@@ -1,13 +1,36 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaBell, FaUser, FaTicketAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { getAccessToken } from "../../../utils/tokens";
+import api from "../../../services/api";
 
 export default function FeatureMenu() {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
+  const [notifications, setNotifications] = useState<
+    NotificationResponse[] | null
+  >(null);
+
   const toggleNotifications = () => {
     setIsNotificationOpen((prev) => !prev);
   };
+
+  const fetchNotifications = async () => {
+    const token = getAccessToken();
+    if (!token) return;
+
+    try {
+      const response = await api.get("/api/v1/notifications");
+      console.log(response);
+      setNotifications(response.data);
+    } catch (error) {
+      console.error("알림 API 조회 실패:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
 
   return (
     <div className="relative bg-gradient-to-r from-white to-[#f9fbff] border-t border-gray-100 px-8 py-3">
