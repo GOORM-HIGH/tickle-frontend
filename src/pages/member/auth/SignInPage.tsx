@@ -10,7 +10,7 @@ import { validateEmail, validatePassword } from "../../../utils/validations";
 const SignInPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from || "/home";
+  const from = location.state?.from;
 
   const [formData, setFormData] = useState<SignInRequest>({
     email: "",
@@ -44,11 +44,8 @@ const SignInPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { email, password } = formData;
-
-    console.log("요청 데이터:", { email, password });
-
     try {
+      const { email, password } = formData;
       const response = await axios.post(
         "http://127.0.0.1:8081/api/v1/sign-in",
         { email, password },
@@ -61,7 +58,8 @@ const SignInPage: React.FC = () => {
 
       const { accessToken } = response.data;
       setAccessToken(accessToken);
-      navigate(from, { replace: true });
+
+      navigate(typeof from === "string" ? from : "/", { replace: true });
     } catch (error: any) {
       let errorMessage: string = "";
 
