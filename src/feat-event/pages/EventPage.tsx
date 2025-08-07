@@ -20,6 +20,8 @@ export function EventPage() {
   const [error, setError] = useState<string | null>(null);
   const cardsPerPage = 9;
 
+  console.log('EventPage 렌더링됨');
+
   useEffect(() => {
     const fetchTicketEvents = async () => {
       setLoading(true);
