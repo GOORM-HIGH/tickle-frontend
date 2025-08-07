@@ -1,10 +1,10 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import SignInPage from "./member/SignInPage";
-import SignUpPage from "./member/SignUpPage";
-import FindPasswordPage from "./member/FindPasswordPage";
-import HostSignUpPage from "./member/HostSignUpPage";
-import Default from "./layouts/Default";
-import Home from "./Home";
+import Default from "./layouts/Default.tsx";
+import SignInPage from "../pages/member/SignInPage.tsx";
+import SignUpPage from "../pages/member/SignUpPage.tsx";
+import FindPasswordPage from "../pages/member/FindPasswordPage.tsx";
+import HostSignUpPage from "../pages/member/HostSignUpPage.tsx";
+import Home from "../pages/Home.tsx";
 
 const router = createBrowserRouter([
   {
