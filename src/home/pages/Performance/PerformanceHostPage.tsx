@@ -255,6 +255,10 @@ const PerformanceHostPage: React.FC = () => {
                           <span className={styles.label}>생성일:</span>
                           <span className={styles.value}>{formatDate(performance.createdDate)}</span>
                         </div>
+                        <div className={styles.detailItem}>
+                          <span className={styles.label}>상태:</span>
+                          <span className={styles.value}>{performance.statusDescription}</span>
+                        </div>
                       </div>
                       
                       <div className={styles.performanceActions}>
