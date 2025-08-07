@@ -48,7 +48,7 @@ const ImageWithSkeleton: React.FC<{ src: string; alt: string }> = ({ src, alt })
 
 const SearchPage: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const keyword = searchParams.get('/keyword') || '';
+  const keyword = searchParams.get('keyword') || '';
   const { convertUTCToKST } = useTimeConversion();
   
   const [performances, setPerformances] = useState<PerformanceDto[]>([]);
