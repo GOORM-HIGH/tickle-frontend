@@ -1,9 +1,10 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import SignInPage from "../pages/member/SignInPage";
-import SignUpPage from "../pages/member/SignUpPage";
-import FindPasswordPage from "../pages/member/FindPasswordPage";
-import HostSignUpPage from "../pages/member/HostSignUpPage";
+import SignInPage from "../pages/member/auth/SignInPage";
+import SignUpPage from "../pages/member/auth/SignUpPage";
+import FindPasswordPage from "../pages/member/auth/FindPasswordPage";
+import HostSignUpPage from "../pages/member/auth/HostSignUpPage";
+
 const AuthRouter: React.FC = () => {
   return (
     <Routes>

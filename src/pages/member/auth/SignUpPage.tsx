@@ -6,12 +6,12 @@ import {
   validateEmailCode,
   validateNickName,
   validatePassword,
-} from "../../utils/validations.ts";
-import { toInstant } from "../../utils/dateUtils.ts";
-import AuthCard from "../../components/member/AuthCard.tsx";
-import ProfileImageUploader from "../../components/member/ProfileImageUploader.tsx";
-import AuthInput from "../../components/member/AuthInput.tsx";
-import Button from "../../components/common/Button.tsx";
+} from "../../../utils/validations";
+import { toInstant } from "../../../utils/dateUtils";
+import ProfileImageUploader from "../../../components/member/ProfileImageUploader";
+import AuthInput from "../../../components/member/AuthInput";
+import AuthCard from "../../../components/member/AuthCard";
+import Button from "../../../components/common/Button";
 
 const SignUpPage: React.FC = () => {
   const navigate = useNavigate();

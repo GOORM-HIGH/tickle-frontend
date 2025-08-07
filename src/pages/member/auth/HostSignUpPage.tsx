@@ -2,23 +2,23 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
+  validateBankNumber,
+  validateBizName,
+  validateBizNumber,
+  validateDepositor,
+  validateEcommerceNumber,
   validateEmail,
   validateEmailCode,
   validateNickName,
   validatePassword,
-  validateBizNumber,
-  validateBizName,
-  validateEcommerceNumber,
-  validateDepositor,
-  validateBankNumber,
-} from "../../utils/validations.ts";
-import { toInstant } from "../../utils/dateUtils.ts";
-import { toBigDecimalString } from "../../utils/numberUtils.ts";
-import AuthCard from "../../components/member/AuthCard.tsx";
-import ProfileImageUploader from "../../components/member/ProfileImageUploader.tsx";
-import AuthInput from "../../components/member/AuthInput.tsx";
-import Button from "../../components/common/Button.tsx";
-import Select from "../../components/common/Select.tsx";
+} from "../../../utils/validations";
+import { toInstant } from "../../../utils/dateUtils";
+import { toBigDecimalString } from "../../../utils/numberUtils";
+import ProfileImageUploader from "../../../components/member/ProfileImageUploader";
+import AuthInput from "../../../components/member/AuthInput";
+import AuthCard from "../../../components/member/AuthCard";
+import Button from "../../../components/common/Button";
+import Select from "../../../components/common/Select";
 
 const bankList: string[] = [
   "국민은행",

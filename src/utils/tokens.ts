@@ -10,7 +10,7 @@ export const setAccessToken = (token: string) => {
 
 export const getAccessToken = () => Cookies.get("accessToken");
 
-export const clearTokens = () => {
+export const removeTokens = () => {
   Cookies.remove("accessToken");
-  //   Cookies.remove("refreshToken");
+  Cookies.remove("refreshToken");
 };
