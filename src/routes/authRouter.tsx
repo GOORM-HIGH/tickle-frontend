@@ -1,10 +1,9 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import SignInPage from "./member/SignInPage";
-import SignUpPage from "./member/SignUpPage";
-import FindPasswordPage from "./member/FindPasswordPage";
-import HostSignUpPage from "./member/HostSignUpPage";
-
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import SignInPage from "../pages/member/SignInPage";
+import SignUpPage from "../pages/member/SignUpPage";
+import FindPasswordPage from "../pages/member/FindPasswordPage";
+import HostSignUpPage from "../pages/member/HostSignUpPage";
 const AuthRouter: React.FC = () => {
   return (
     <Routes>
@@ -16,4 +15,4 @@ const AuthRouter: React.FC = () => {
   );
 };
 
-export default AuthRouter; 
+export default AuthRouter;
