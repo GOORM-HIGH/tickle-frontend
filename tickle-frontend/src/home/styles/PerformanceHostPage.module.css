@@ -1,0 +1,350 @@
+.performanceHostPage {
+  background-color: #f5f5f5;
+  padding: 20px 0;
+}
+
+.pageContainer {
+  display: flex;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  gap: 30px;
+}
+
+/* 사이드바 스타일 */
+.sidebar {
+  width: 200px;
+  flex-shrink: 0;
+}
+
+.sidebarContent {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f1f5f9;
+}
+
+.sidebarContent h3 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.sidebarMenu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebarMenu li {
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: color 0.2s;
+  font-size: 14px;
+}
+
+.sidebarMenu li:last-child {
+  border-bottom: none;
+}
+
+.sidebarMenu li:hover {
+  color: #007bff;
+}
+
+.sidebarMenu li.active {
+  color: #007bff;
+  font-weight: 600;
+}
+
+/* 메인 콘텐츠 스타일 */
+.mainContent {
+  flex: 1;
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f1f5f9;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.pageTitle {
+  margin: 0;
+  color: #1f2937;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.createButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.createButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* 로딩 컨테이너 */
+.loadingContainer {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.loadingSpinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 에러 컨테이너 */
+.errorContainer {
+  text-align: center;
+  padding: 40px 20px;
+  color: #dc3545;
+}
+
+.errorContainer button {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* 빈 상태 컨테이너 */
+.emptyContainer {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.emptyIcon {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.emptyContainer h3 {
+  margin: 0 0 10px 0;
+  color: #6b7280;
+  font-size: 18px;
+}
+
+.emptyContainer p {
+  margin: 0 0 20px 0;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+/* 공연 그리드 */
+.performanceGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+/* 공연 카드 */
+.performanceCard {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 1px solid #e5e7eb;
+}
+
+.performanceCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* 공연 이미지 */
+.performanceImage {
+  position: relative;
+  height: 80px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.performanceImg {
+  width: 60%;
+  height: 60%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.noImage {
+  width: 60%;
+  height: 60%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  font-size: 24px;
+  color: #d1d5db;
+  border-radius: 4px;
+}
+
+.performanceStatus {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.statusBadge {
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.statusBadge.active {
+  background: #10b981;
+  color: white;
+}
+
+.statusBadge.inactive {
+  background: #6b7280;
+  color: white;
+}
+
+.statusBadge.deleted {
+  background: #ef4444;
+  color: white;
+}
+
+/* 공연 정보 */
+.performanceInfo {
+  padding: 8px;
+}
+
+.performanceTitle {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+  line-height: 1.3;
+}
+
+.performanceDetails {
+  margin-bottom: 16px;
+}
+
+.detailItem {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  font-size: 11px;
+}
+
+.detailItem:last-child {
+  margin-bottom: 0;
+}
+
+.label {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.value {
+  color: #374151;
+  font-weight: 600;
+}
+
+/* 공연 액션 버튼 */
+.performanceActions {
+  display: flex;
+  gap: 8px;
+}
+
+.editButton,
+.deleteButton {
+  flex: 1;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.editButton {
+  background: #3b82f6;
+  color: white;
+}
+
+.editButton:hover {
+  background: #2563eb;
+}
+
+.deleteButton {
+  background: #ef4444;
+  color: white;
+}
+
+.deleteButton:hover {
+  background: #dc2626;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .pageContainer {
+    flex-direction: column;
+    padding: 15px;
+  }
+  
+  .sidebar {
+    width: 100%;
+    order: 2;
+  }
+  
+  .mainContent {
+    order: 1;
+    padding: 15px;
+  }
+  
+  .pageHeader {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .performanceGrid {
+    grid-template-columns: 1fr;
+  }
+}
