@@ -13,6 +13,7 @@
     "@stomp/stompjs": "^7.1.1",
     "@tailwindcss/vite": "^4.1.11",
     "axios": "^1.11.0",
+    "date-fns": "^4.1.0",
     "event-source-polyfill": "^1.0.31",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.536.0",
