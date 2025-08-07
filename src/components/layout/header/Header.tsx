@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { FaBell, FaUser, FaTicketAlt, FaSearch, FaChevronDown } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
-import { PERFORMANCE_GENRES } from '../../../constants/categories';
+import { PERFORMANCE_GENRES } from '../../../home/constants/categories';
 
 export default function Header() {
   const navigate = useNavigate();
