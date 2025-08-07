@@ -7,30 +7,41 @@ import NotificationPopover from "../../notification/NotificationPopover";
 
 export default function FeatureMenu() {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-
   const [notificationList, setNotificationList] = useState<
-    NotificationResponse[] | null
-  >(null);
+    NotificationResponse[]
+  >([]);
 
+  // 알림 토글
   const toggleNotifications = () => {
     setIsNotificationOpen((prev) => !prev);
   };
 
-  const fetchNotifications = async () => {
-    const token = getAccessToken();
-    if (!token) return;
-
-    try {
-      const response = await api.get("/api/v1/notifications");
-      setNotificationList(response.data.data);
-    } catch (error) {
-      console.error("알림 API 조회 실패:", error);
-    }
-  };
-
+  // 알림 불러오기
   useEffect(() => {
-    fetchNotifications();
+    const accessToken = getAccessToken();
+    console.log("accessToken:", accessToken);
+    if (!accessToken) return;
+
+    const fetchNotificationList = async () => {
+      try {
+        const response = await api.get("/api/v1/notifications", {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          withCredentials: true,
+        });
+        console.log("🔔 알림 조회 성공");
+        setNotificationList(response.data.data);
+      } catch (error) {
+        console.error("❌ 알림 API 조회 실패:", error);
+      }
+    };
+
+    fetchNotificationList();
   }, []);
+
+  // 읽지 않은 알림이 하나라도 있는지
+  const hasUnread = notificationList.some((n) => !n.isRead);
 
   return (
     <div className="relative bg-gradient-to-r from-white to-[#f9fbff] border-t border-gray-100 px-8 py-3">
@@ -58,6 +69,9 @@ export default function FeatureMenu() {
           className="hover:text-blue-600 relative"
         >
           <FaBell />
+          {hasUnread && (
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-ping" />
+          )}
         </button>
       </div>
 
