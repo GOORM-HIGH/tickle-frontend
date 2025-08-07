@@ -93,7 +93,7 @@ const SignUpPage: React.FC = () => {
         return;
       }
 
-      const response = await axios.post(
+      await axios.post(
         "http://127.0.0.1:8081/api/v1/auth/email-verification",
         { email: formData.email },
         { headers: { "Content-Type": "application/json" } }
