@@ -1,23 +1,23 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { setAccessToken } from "./../../../utils/tokens.ts";
-import {
-  validateEmail,
-  validatePassword,
-} from "./../../../utils/validations.ts";
+import AuthCard from "../../../components/member/AuthCard";
+import AuthInput from "../../../components/member/AuthInput";
+import Button from "../../../components/common/Button";
+import { setAccessToken } from "../../../utils/tokens";
+import { validateEmail, validatePassword } from "../../../utils/validations";
 
 const SignInPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from || "/home"; // 기본값은 /home
+  const from = location.state?.from || "/home";
 
   const [formData, setFormData] = useState<SignInRequest>({
     email: "",
     password: "",
   });
 
-  const [errors, setErrors] = useState({
+  const [errors, setErrors] = useState<SignInRequest>({
     email: "",
     password: "",
   });
@@ -26,13 +26,13 @@ const SignInPage: React.FC = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    // 값이 비어있으면 에러 메시지를 없앰
     if (name === "email") {
       setErrors((prev) => ({
         ...prev,
         email: value === "" ? "" : validateEmail(value) || "",
       }));
     }
+
     if (name === "password") {
       setErrors((prev) => ({
         ...prev,
@@ -44,158 +44,91 @@ const SignInPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const { email, password } = formData;
+
+    console.log("요청 데이터:", { email, password });
+
     try {
       const response = await axios.post(
         "http://127.0.0.1:8081/api/v1/sign-in",
-        formData,
+        { email, password },
         {
           headers: { "Content-Type": "application/json" },
         }
       );
 
-      if (response.data.status !== 201) {
-        new Error("로그인에 실패했습니다. 이메일과 비밀번호를 확인하세요.");
-        return;
-      }
+      console.log(response.data);
 
       const { accessToken } = response.data;
       setAccessToken(accessToken);
-      navigate(from, { replace: true }); // 이전 페이지로 이동
-    } catch (error: unknown) {
-      alert("로그인에 실패했습니다. 이메일과 비밀번호를 확인하세요.");
-      console.log(error);
+      navigate(from, { replace: true });
+    } catch (error: any) {
+      let errorMessage: string = "";
+
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+
+        if (status === 401) {
+          errorMessage =
+            "로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.";
+        }
+      }
+
+      alert(errorMessage);
+      console.error(errorMessage);
+      console.error(error);
     }
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.formBox}>
-        <img src="/logo.png" alt="Ticket Cloud" style={styles.logo} />
-        <h1 style={styles.title}>Ticket Cloud</h1>
-        <form onSubmit={handleSubmit} style={styles.form}>
-          <input
-            type="text"
+    <AuthCard title="로그인" minWidth="460px">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col items-center gap-6"
+      >
+        <div className="flex flex-col gap-4 w-[460px]">
+          <AuthInput
+            label="이메일"
             name="email"
-            placeholder="아이디"
+            type="text"
+            variant="large"
+            placeholder="이메일"
             value={formData.email}
             onChange={handleChange}
-            style={styles.input}
+            error={errors.email}
           />
-          {errors.email && <p style={styles.error}>{errors.email}</p>}
-
-          <input
-            type="password"
+          <AuthInput
+            label="비밀번호"
             name="password"
+            type="password"
+            variant="large"
             placeholder="비밀번호"
             value={formData.password}
             onChange={handleChange}
-            style={styles.input}
+            error={errors.password}
           />
-          {errors.password && <p style={styles.error}>{errors.password}</p>}
+        </div>
 
-          <button type="submit" style={styles.button}>
-            로그인
-          </button>
-        </form>
-        <div style={styles.links}>
-          <Link to="/find-password" style={styles.link}>
+        <Button size="large" type="submit">
+          로그인
+        </Button>
+
+        <div className="text-sm text-gray-700 flex gap-2">
+          <Link to="/find-password" className="text-blue-600 hover:underline">
             비밀번호 찾기
-          </Link>{" "}
-          |{" "}
-          <Link to="/sign-up" style={styles.link}>
+          </Link>
+          <span>|</span>
+          <Link to="/sign-up" className="text-blue-600 hover:underline">
             회원가입
-          </Link>{" "}
-          |{" "}
-          <Link to="/host-sign-in" style={styles.link}>
+          </Link>
+          <span>|</span>
+          <Link to="/host-sign-in" className="text-blue-600 hover:underline">
             사업자 회원가입
           </Link>
         </div>
-      </div>
-      <footer style={styles.footer}>
-        <span>© 2023 Your Company</span>
-        <a href="#">Privacy Policy</a>
-        <a href="#">Terms of Service</a>
-      </footer>
-    </div>
+      </form>
+    </AuthCard>
   );
 };
 
 export default SignInPage;
-
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    minHeight: "100vh",
-    justifyContent: "center",
-    alignItems: "center",
-    background: "linear-gradient(135deg, #f3f4f6, #dce3f0)",
-  },
-  formBox: {
-    backgroundColor: "#fff",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    padding: "50px 40px",
-    borderRadius: "12px",
-    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
-  },
-  logo: {
-    width: "70px",
-    marginBottom: "20px",
-  },
-  title: {
-    fontSize: "30px",
-    fontWeight: "bold",
-    marginBottom: "35px",
-    color: "#333",
-  },
-  form: {
-    width: "320px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "14px",
-  },
-  input: {
-    padding: "12px",
-    border: "1px solid #ccc",
-    borderRadius: "6px",
-    fontSize: "14px",
-    transition: "all 0.2s ease",
-  },
-  error: {
-    fontSize: "12px",
-    color: "red",
-    marginTop: "-8px",
-    marginBottom: "5px",
-  },
-  button: {
-    backgroundColor: "#007bff",
-    color: "#fff",
-    padding: "12px",
-    border: "none",
-    borderRadius: "6px",
-    cursor: "pointer",
-    fontSize: "16px",
-    fontWeight: "bold",
-    transition: "all 0.2s ease",
-  },
-  links: {
-    marginTop: "20px",
-    fontSize: "14px",
-    color: "#555",
-  },
-  link: {
-    color: "#007bff",
-    textDecoration: "none",
-  },
-  footer: {
-    marginTop: "auto",
-    display: "flex",
-    justifyContent: "center",
-    gap: "20px",
-    padding: "20px",
-    fontSize: "14px",
-    color: "#666",
-  },
-};
