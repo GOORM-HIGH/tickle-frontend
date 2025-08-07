@@ -16,7 +16,7 @@ type SignUpRequest = {
     hostBizName: string;
     hostBizAddress: string;
     hostBizEcommerceRegistrationNumber: string;
-    hostBizBank: string;
+    hostBizBankName: string;
     hostBizDepositor: string;
     hostBizBankNumber: string;
     hostContractCharge: number;
