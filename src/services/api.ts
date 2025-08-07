@@ -2,7 +2,7 @@ import axios from 'axios';
 import Cookies from "js-cookie";
 
 const api = axios.create({
-  baseURL: '',
+  baseURL: 'http://localhost:8081',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -47,24 +47,35 @@ if (process.env.NODE_ENV === 'development') {
 
 // JWT 토큰 자동 추가
 api.interceptors.request.use((config) => {
-  const token = Cookies.get("accessToken");
+  const token = localStorage.getItem("accessToken");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  console.log('API 요청:', config.method?.toUpperCase(), config.url, config.params);
   return config;
 });
 
-// 401 오류 시 로그인 페이지로 리다이렉트
-// api.interceptors.response.use(
-//   (response) => response,
-//   (error) => {
-//     if (error.response?.status === 401) {
-//       alert('로그인이 필요합니다!');
-//       localStorage.removeItem('accessToken');
-//       // 실제로는 로그인 페이지로 이동
-//     }
-//     return Promise.reject(error);
-//   }
-// );
+// API 응답 인터셉터
+api.interceptors.response.use(
+  (response) => {
+    console.log('API 응답 성공:', response.config.url, response.status);
+    return response;
+  },
+  (error) => {
+    console.error('API 오류:', {
+      url: error.config?.url,
+      method: error.config?.method,
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message
+    });
+    
+    if (error.response?.status === 401) {
+      console.log('인증 오류: 토큰이 유효하지 않습니다.');
+      localStorage.removeItem('accessToken');
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default api;
