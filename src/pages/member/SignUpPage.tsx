@@ -29,7 +29,7 @@ const SignUpPage: React.FC = () => {
     hostBizName: "",
     hostBizAddress: "",
     hostBizEcommerceRegistrationNumber: "",
-    hostBizBank: "",
+    hostBizBankName: "",
     hostBizDepositor: "",
     hostBizBankNumber: "",
     hostContractCharge: 0,
