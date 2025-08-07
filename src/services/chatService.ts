@@ -10,6 +10,7 @@ export interface ChatRoom {
   maxParticipants: number;
   participantCount?: number;
   unreadCount?: number;
+  unreadMessageCount?: number;  // ✅ 백엔드 응답과 일치
   createdAt?: string;
   updatedAt?: string;
   lastMessage?: {
@@ -103,8 +104,7 @@ export const chatService = {
   // 읽음 처리 (ERD에 맞춰 last_read_message_id와 last_read_at 업데이트)
   markAsRead: async (chatRoomId: number, messageId: number): Promise<void> => {
     await api.patch(`/api/v1/chat/participants/rooms/${chatRoomId}/read`, {
-      lastReadMessageId: messageId,
-      lastReadAt: new Date().toISOString()
+      lastReadMessageId: messageId
     });
   },
 

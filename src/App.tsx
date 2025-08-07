@@ -1,7 +1,13 @@
-import Router from "./routes";
+import { LoginPage } from './pages/LoginPage';
+import { MainPage } from './pages/MainPage';
+import TotalRouter from './routes/totalRouter';
+import { useAuth } from './hooks/useAuth';
 
 function App() {
-  return <Router />;
+  // const { isLoggedIn } = useAuth();
+  
+  
+  return <TotalRouter />;
 }
 
 export default App;

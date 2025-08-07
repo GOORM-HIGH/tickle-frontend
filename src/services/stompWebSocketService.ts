@@ -202,7 +202,25 @@ class StompWebSocketService {
   private handleReceivedMessage(data: any): void {
     if (!this.onMessageCallback) return;
 
-    console.log('🎯 handleReceivedMessage 시작, 원본 데이터:', data); // 🎯 디버깅 로그
+    console.log('🎯 handleReceivedMessage 시작, 원본 데이터:', data); // �� 디버깅 로그
+
+    // 🎯 삭제 이벤트 처리
+    if (data.type === 'DELETE') {
+      console.log('🗑️ 삭제 이벤트 수신:', data);
+      const deleteMessage: ChatMessage = {
+        id: data.messageId,
+        chatRoomId: data.chatRoomId || this.currentChatRoomId!,
+        memberId: data.senderId || 0,
+        messageType: 'TEXT',
+        content: '삭제된 메시지입니다.',
+        createdAt: new Date().toISOString(),
+        senderNickname: data.senderNickname || '알 수 없음',
+        isMyMessage: false,
+        isDeleted: true // 삭제된 메시지 표시
+      };
+      this.onMessageCallback(deleteMessage);
+      return;
+    }
 
     // 🎯 백엔드 응답을 ChatMessage 형태로 변환
     const senderId = data.senderId || data.memberId || 0;
@@ -258,7 +276,7 @@ class StompWebSocketService {
     }
     
     const chatMessage: ChatMessage = {
-      id: data.messageId || data.id || Date.now(),
+      id: data.messageId || data.id || 0,
       chatRoomId: data.chatRoomId || this.currentChatRoomId!,
       memberId: senderId,
       messageType: data.messageType || 'TEXT',

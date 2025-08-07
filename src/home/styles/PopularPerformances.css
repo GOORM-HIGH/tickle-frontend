@@ -1,0 +1,257 @@
+.popular-performances {
+  padding: 2rem 0;
+  background: #f8f9fa;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+  
+  .popular-performances-header {
+    padding: 0 1rem;
+    margin-bottom: 1.5rem;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .popular-performances-header h2 {
+    font-size: 30px;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+  }
+  
+  .performances-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  overflow: hidden;
+}
+  
+  .performances-scroll {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  flex: 1;
+  width: 100%;
+  max-width: 100%;
+  align-items: stretch;
+  grid-auto-columns: 1fr;
+}
+  
+  .performances-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .performance-item {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.performance-card-link {
+  display: flex;
+  width: 100%;
+  text-decoration: none;
+  color: inherit;
+  flex: 1;
+}
+  
+  .performance-card {
+  background: transparent;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+  
+  .performance-card:hover {
+  transform: translateY(-2px);
+}
+  
+  .performance-poster {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+  
+  .performance-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  background-color: #f0f0f0;
+  min-width: 100%;
+  opacity: 0;
+}
+
+.performance-poster img.loaded {
+  opacity: 1;
+}
+
+.image-skeleton {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.image-placeholder,
+.image-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+}
+  
+  .image-placeholder {
+    color: #999;
+  }
+  
+  .image-loading {
+    color: #666;
+  }
+  
+  .performance-card:hover .performance-poster img {
+    transform: scale(1.05);
+  }
+  
+  .performance-rank {
+    position: absolute;
+    bottom: 5px;
+    left: 10px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 50px;
+  }
+  
+  .performance-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background: transparent;
+  overflow: visible;
+  margin-top: 0.5rem;
+  gap: 0;
+}
+  
+  .performance-title {
+  font-size: 1rem !important;
+  color: black;
+  overflow: visible;
+  margin: 0 !important;
+  padding: 0;
+  line-height: 1;
+  font-weight: 700 !important;
+  word-wrap: break-word;
+  word-break: break-word;
+  transform: scale(0.9);
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+  
+  .performance-date {
+  font-size: 0.8rem;
+  color: #333;
+  overflow: visible;
+  font-weight: 500;
+  margin: 0 !important;
+  padding-top: 0 !important;
+  transform: scale(0.9);
+
+}
+  
+  .nav-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: white;
+    border: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .nav-button:hover {
+    background: #f8f9fa;
+    border-color: #ccc;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .nav-button svg {
+    color: #666;
+    transition: color 0.2s ease;
+  }
+  
+  .nav-button:hover svg {
+    color: #333;
+  }
+  
+  .prev-button {
+    left: 0.5rem;
+  }
+  
+  .next-button {
+    right: 0.5rem;
+  }
+  
+  .loading,
+  .error {
+    text-align: center;
+    padding: 2rem;
+    font-size: 1rem;
+  }
+  
+  .loading {
+    color: #666;
+  }
+  
+  .error {
+    color: #dc3545;
+  }
+  
