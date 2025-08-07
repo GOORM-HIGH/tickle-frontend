@@ -38,7 +38,13 @@ export default function FeatureMenu() {
           withCredentials: true,
         });
         console.log("🔔 알림 조회 성공");
-        setNotificationList(response.data.data);
+        const formatted = response.data.data.map((item: any) => ({
+          ...item,
+          isRead: item.read,
+        }));
+        setNotificationList(formatted);
+
+        console.log(response.data.data);
       } catch (error) {
         console.error("❌ 알림 API 조회 실패:", error);
       }
