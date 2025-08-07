@@ -77,6 +77,17 @@ const PerformanceDetail: React.FC = () => {
     }
   };
 
+  const handleReservation = () => {
+    if (!isLoggedIn) {
+      alert('로그인이 필요합니다.');
+      navigate('/auth/sign-in');
+      return;
+    }
+    
+    // 예매 페이지로 이동
+    navigate(`/performance/${performance.performanceId}/reservation`);
+  };
+
   return (
     <div className="performance-detail-page">
       <div className="title-section">
@@ -129,7 +140,9 @@ const PerformanceDetail: React.FC = () => {
               </div>
             </div>
             <div className="performance-actions">
-              <button className="reserve-button">예매하기</button>
+              <button className="reserve-button" onClick={handleReservation}>
+                예매하기
+              </button>
               <button className="share-button">공유하기</button>
               <div className="info-grid">
               </div>

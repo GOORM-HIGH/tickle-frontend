@@ -12,6 +12,7 @@ import TraditionalPage from '../home/pages/Gnere/TraditionalPage';
 import PopularDancePage from '../home/pages/Gnere/PopularDancePage';
 import PerformanceDetailPage from '../home/pages/Performance/PerformanceDetailPage';
 import SearchPage from '../home/pages/Main/SearchPage';
+import ReservationPage from '../pages/reservation/ReservationPage';
 
 const PerformanceRouter: React.FC = () => {
   return (
@@ -29,6 +30,8 @@ const PerformanceRouter: React.FC = () => {
       <Route path="/popular-dance" element={<PopularDancePage />} />
       <Route path="/:id" element={<PerformanceDetailPage />} />
       <Route path="/search" element={<SearchPage />} />
+      {/* 예매 페이지 */}
+      <Route path="/:performanceId/reservation" element={<ReservationPage />} />
     </Routes>
   );
 };
