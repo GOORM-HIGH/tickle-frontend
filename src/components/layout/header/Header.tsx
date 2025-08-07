@@ -99,7 +99,7 @@ export default function Header() {
               cursor: 'pointer',
             }}
           >
-            <Link to="/sign-up" style={{ color: '#222', textDecoration: 'none' }}>회원가입</Link>
+            <Link to="/auth/sign-up" style={{ color: '#222', textDecoration: 'none' }}>회원가입</Link>
           </button>
           <button
             style={{
@@ -112,7 +112,7 @@ export default function Header() {
               cursor: 'pointer',
             }}
           >
-            <Link to="/sign-in" style={{ color: '#222', textDecoration: 'none' }}>로그인</Link>
+            <Link to="/auth/sign-in" style={{ color: '#222', textDecoration: 'none' }}>로그인</Link>
           </button>
         </div>
       </div>

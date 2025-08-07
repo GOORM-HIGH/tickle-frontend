@@ -6,7 +6,7 @@ import AuthRouter from './authRouter';
 const TotalRouter: React.FC = () => {
   return (
     <Routes>
-      <Route path="/*" element={<AuthRouter />} />
+      <Route path="/auth/*" element={<AuthRouter />} />
 
       {/* 루트 경로를 /performance로 리다이렉트 */}
       <Route path="/" element={<Navigate to="/performance" replace />} />
