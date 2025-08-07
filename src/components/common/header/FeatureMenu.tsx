@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { FaBell, FaUser, FaTicketAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { getAccessToken } from "../../../utils/tokens";
+import { getAccessToken } from "../../../utils/tokenUtils";
 import api from "../../../services/api";
+import NotificationPopover from "../../notification/NotificationPopover";
 
 export default function FeatureMenu() {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
-  const [notifications, setNotifications] = useState<
+  const [notificationList, setNotificationList] = useState<
     NotificationResponse[] | null
   >(null);
 
@@ -21,8 +22,7 @@ export default function FeatureMenu() {
 
     try {
       const response = await api.get("/api/v1/notifications");
-      console.log(response);
-      setNotifications(response.data);
+      setNotificationList(response.data.data);
     } catch (error) {
       console.error("알림 API 조회 실패:", error);
     }
@@ -62,16 +62,10 @@ export default function FeatureMenu() {
       </div>
 
       {/* 알림 패널 */}
-      {isNotificationOpen && (
-        <div className="absolute right-8 top-[60px] w-72 bg-white border border-gray-200 rounded-lg shadow-lg z-20 p-4 text-sm">
-          <p className="text-gray-800 font-semibold mb-2">🔔 알림</p>
-          <ul className="space-y-2">
-            <li className="text-gray-600">새로운 쿠폰이 발급되었습니다.</li>
-            <li className="text-gray-600">예매한 공연의 시간이 다가옵니다.</li>
-            <li className="text-gray-600">공지사항을 확인해주세요.</li>
-          </ul>
-        </div>
-      )}
+      <NotificationPopover
+        isOpen={isNotificationOpen}
+        notificationList={notificationList}
+      />
     </div>
   );
 }

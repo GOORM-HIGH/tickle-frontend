@@ -5,7 +5,7 @@ import SearchBar from "../../common/SearchBar";
 import AuthMenu from "../../common/header/AuthMenu";
 import FeatureMenu from "../../common/header/FeatureMenu";
 import GenreMenu from "../../common/header/GenreMenu";
-import { getAccessToken, removeTokens } from "../../../utils/tokens";
+import { getAccessToken, removeTokens } from "../../../utils/tokenUtils";
 import { connectSSE } from "../../../utils/connectSSE";
 
 export default function Header() {
