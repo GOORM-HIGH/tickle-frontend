@@ -57,7 +57,7 @@ export default function Header() {
         />
         <AuthMenu isSignIn={isSignIn} onSignOut={handleSignOut} />
       </div>
-      <FeatureMenu />
+      <FeatureMenu isSignIn={isSignIn}/>
       <GenreMenu />
     </header>
   );
