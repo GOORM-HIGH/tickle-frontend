@@ -11,7 +11,7 @@ export default function Header() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchKeyword.trim()) {
-      navigate(`/search?keyword=${encodeURIComponent(searchKeyword.trim())}`);
+      navigate(`/performance/search?keyword=${encodeURIComponent(searchKeyword.trim())}`);
     }
   };
 
@@ -99,7 +99,7 @@ export default function Header() {
               cursor: 'pointer',
             }}
           >
-            회원가입
+            <Link to="/sign-up" style={{ color: '#222', textDecoration: 'none' }}>회원가입</Link>
           </button>
           <button
             style={{
@@ -112,7 +112,7 @@ export default function Header() {
               cursor: 'pointer',
             }}
           >
-            로그인
+            <Link to="/sign-in" style={{ color: '#222', textDecoration: 'none' }}>로그인</Link>
           </button>
         </div>
       </div>
