@@ -232,18 +232,23 @@
   letter-spacing: 0.5px;
 }
 
-.statusBadge.active {
+.statusBadgeActive {
   background: #10b981;
   color: white;
 }
 
-.statusBadge.inactive {
+.statusBadgeInactive {
   background: #6b7280;
   color: white;
 }
 
-.statusBadge.deleted {
+.statusBadgeDeleted {
   background: #ef4444;
+  color: white;
+}
+
+.statusBadgeDefault {
+  background: #9ca3af;
   color: white;
 }
 

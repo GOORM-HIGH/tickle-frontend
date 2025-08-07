@@ -102,6 +102,23 @@ const PerformanceHostPage: React.FC = () => {
     });
   };
 
+  const getStatusBadgeClass = (statusDescription: string) => {
+    const status = statusDescription.toLowerCase();
+    switch (status) {
+      case '활성':
+      case 'active':
+        return styles.statusBadgeActive;
+      case '비활성':
+      case 'inactive':
+        return styles.statusBadgeInactive;
+      case '삭제됨':
+      case 'deleted':
+        return styles.statusBadgeDeleted;
+      default:
+        return styles.statusBadgeDefault;
+    }
+  };
+
   const handleCreatePerformance = () => {
     navigate('/performance/create');
   };
@@ -217,7 +234,7 @@ const PerformanceHostPage: React.FC = () => {
                         <div className={styles.noImage}>🎭</div>
                       )}
                       <div className={styles.performanceStatus}>
-                        <span className={`${styles.statusBadge} ${styles[performance.statusDescription.toLowerCase()]}`}>
+                        <span className={`${styles.statusBadge} ${getStatusBadgeClass(performance.statusDescription)}`}>
                           {performance.statusDescription}
                         </span>
                       </div>
