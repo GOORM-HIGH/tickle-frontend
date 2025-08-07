@@ -37,6 +37,7 @@ export default function Header() {
 
     if (!token) return;
 
+    setIsSignIn(true);
     const eventSource = connectSSE(token, handleSseMessage);
 
     return () => {
@@ -44,11 +45,6 @@ export default function Header() {
       console.log("🔌 SSE 연결 종료");
     };
   }, []);
-
-  return (
-    // ...
-    <></>
-  );
 
   return (
     <header className="w-full bg-white border-b border-gray-200 shadow-sm sticky top-0 z-10">
