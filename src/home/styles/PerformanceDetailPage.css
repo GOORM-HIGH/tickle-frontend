@@ -176,6 +176,25 @@
   background: #545b62;
 }
 
+.reserve-button.btn-not-started {
+  background: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.reserve-button.btn-ended {
+  background: #f8d7da; /* 연한 레드 */
+  color: #a94442;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.reserve-button.btn-not-started:hover,
+.reserve-button.btn-ended:hover {
+  background: inherit;
+}
+
 
 .loading, .error {
   text-align: center;

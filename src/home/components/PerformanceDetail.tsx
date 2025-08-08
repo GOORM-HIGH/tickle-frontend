@@ -6,7 +6,6 @@ import RelatedPerformances from './RelatedPerformances';
 import { Bookmark } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { scrapService } from '../api/scrapService';
-import ReservationButton from '../../components/common/ReservationButton';
 import '../styles/PerformanceDetailPage.css';
 
 const PerformanceDetail: React.FC = () => {
@@ -113,6 +112,18 @@ const PerformanceDetail: React.FC = () => {
     }
   };
 
+  // 예매 버튼 상태: 단순 날짜 비교
+  const now = new Date();
+  const start = new Date(performance.startDate);
+  const end = new Date(performance.endDate);
+  const isNotStarted = now < start;
+  const isEnded = now > end;
+  const isInProgress = !isNotStarted && !isEnded;
+
+  const reserveLabel = isNotStarted ? '예매 예정' : isEnded ? '예매종료' : '예매하기';
+  const reserveDisabled = isNotStarted || isEnded;
+  const reserveClassName = `reserve-button ${reserveDisabled ? (isNotStarted ? 'btn-not-started' : 'btn-ended') : ''}`;
+
   console.log('🔍 PerformanceDetail - isLoggedIn:', isLoggedIn);
   
   return (
@@ -169,16 +180,17 @@ const PerformanceDetail: React.FC = () => {
               </div>
             </div>
             <div className="performance-actions">
-              <ReservationButton
-                startDate={performance.startDate}
-                endDate={performance.endDate}
+              <button
+                className={reserveClassName}
                 onClick={() => {
-                  // 예매 페이지로 이동하는 로직
+                  if (reserveDisabled) return;
                   console.log('예매하기 클릭');
                 }}
-                size="large"
-                showMessage={true}
-              />
+                disabled={reserveDisabled}
+                title={isNotStarted ? `예매 시작: ${formatDate(performance.startDate, 'date')}` : undefined}
+              >
+                {reserveLabel}
+              </button>
               <button className="share-button">공유하기</button>
               <div className="info-grid">
               </div>
