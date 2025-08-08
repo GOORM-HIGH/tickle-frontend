@@ -11,6 +11,11 @@
   gap: 30px;
 }
 
+.date-input-container {
+
+  width: 100px;
+}
+
 /* 사이드바 스타일 */
 .sidebar {
   width: 200px;

@@ -114,6 +114,40 @@ export const mapComingSoonDtoToCard = (dto: ComingSoonDto): ComingSoonCard => {
   };
 };
 
+// 공연 생성 요청 DTO (백엔드 PerformanceRequestDto와 일치)
+export interface CreatePerformanceRequestDto {
+  title: string;
+  genreId: number;
+  date: string; // Instant 형식 (ISO 8601)
+  runtime: number;
+  hallType: string; // 'A', 'B', 'C' 등
+  hallAddress: string;
+  startDate: string; // Instant 형식 (ISO 8601)
+  endDate: string; // Instant 형식 (ISO 8601)
+  isEvent: boolean;
+  img: string;
+  // createdAt, updatedAt은 서버에서 자동 설정되므로 제외
+}
+
+// 날짜 입력 시 시간 자동 설정 함수
+export const formatDateWithTime = (dateString: string, timeType: 'performance' | 'start' | 'end'): string => {
+  const date = new Date(dateString);
+  
+  switch (timeType) {
+    case 'performance':
+      // 공연 날짜: 00:00:00
+      return `${dateString}T00:00:00Z`;
+    case 'start':
+      // 예매 시작: 09:00:00
+      return `${dateString}T09:00:00Z`;
+    case 'end':
+      // 예매 종료: 23:59:59
+      return `${dateString}T23:59:59Z`;
+    default:
+      return dateString;
+  }
+};
+
 // 공연 관련 API 함수들
 export const performanceApi = {
   // 인기 공연 목록 조회
@@ -210,6 +244,17 @@ export const performanceApi = {
   // 장르 목록 조회
   getGenres: async (): Promise<ResultResponse<GenreDto[]>> => {
     const response = await api.get('/api/v1/performance/genre', {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      }
+    });
+    return response.data;
+  },
+
+  // 공연 생성
+  createPerformance: async (data: CreatePerformanceRequestDto): Promise<ResultResponse<PerformanceDetailDto>> => {
+    const response = await api.post('/api/v1/performance', data, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',

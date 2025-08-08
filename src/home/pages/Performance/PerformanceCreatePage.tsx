@@ -83,6 +83,8 @@ const PerformanceCreatePage: React.FC = () => {
     }));
   };
 
+
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -100,14 +102,52 @@ const PerformanceCreatePage: React.FC = () => {
     fileInputRef.current?.click();
   };
 
-  // 날짜를 ISO 8601 형식으로 변환하는 함수
-  const formatDateToISO = (dateString: string): string => {
+  // 날짜를 ISO 8601 형식으로 변환하는 함수 (한국시간 -> UTC)
+  const formatDateToISO = (dateString: string, isEndDate: boolean = false): string => {
     if (!dateString) return '';
-    const date = new Date(dateString);
-    // 한국 시간대 (UTC+9)로 설정
-    const koreanTime = new Date(date.getTime() + (9 * 60 * 60 * 1000));
-    return koreanTime.toISOString().replace('Z', '+09:00');
+    
+    // 날짜 문자열을 파싱
+    const [year, month, day] = dateString.split('-').map(Number);
+    
+    let result: string;
+    
+    if (isEndDate) {
+      // 예매 종료일: 해당 날짜의 한국시간 23:59:59 -> UTC로 변환
+      // 한국시간 23:59:59 = UTC 14:59:59 (같은 날)
+      result = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}T14:59:59.999Z`;
+    } else {
+      // 예매 시작일: 해당 날짜의 한국시간 18:00:00 -> UTC로 변환
+      // 한국시간 18:00:00 = UTC 09:00:00 (같은 날)
+      result = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}T09:00:00.000Z`;
+    }
+    
+    console.log(`🔍 ${isEndDate ? '예매종료일' : '예매시작일'} 변환:`, {
+      원본날짜: dateString,
+      변환결과: result
+    });
+    
+    return result;
   };
+
+  // 공연 날짜를 한국시간 기준으로 변환하는 함수 (한국시간 -> UTC)
+  const formatPerformanceDateToISO = (dateString: string): string => {
+    if (!dateString) return '';
+    
+    // 날짜 문자열을 파싱
+    const [year, month, day] = dateString.split('-').map(Number);
+    
+    // 공연 날짜: 해당 날짜의 한국시간 18:00:00 -> UTC로 변환
+    // 한국시간 18:00:00 = UTC 09:00:00 (같은 날)
+    const result = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}T09:00:00.000Z`;
+    
+    console.log(`🎭 공연날짜 변환:`, {
+      원본날짜: dateString,
+      변환결과: result
+    });
+    
+    return result;
+  };
+    const nowISO = new Date().toISOString();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -117,17 +157,21 @@ const PerformanceCreatePage: React.FC = () => {
       const requestData: PerformanceRequestDto = {
         title: formData.title,
         genreId: formData.genreId,
-        date: formatDateToISO(formData.date),
+        date: formatPerformanceDateToISO(formData.date),
         runtime: formData.runtime,
         hallType: formData.hallType,
         hallAddress: formData.hallAddress,
         startDate: formatDateToISO(formData.startDate),
-        endDate: formatDateToISO(formData.endDate),
+        endDate: formatDateToISO(formData.endDate, true),
         isEvent: formData.isEvent,
         img: imagePreview || ''
       };
       
-      console.log('공연 생성 요청 데이터:', requestData);
+      console.log('=== 공연 생성 요청 데이터 ===');
+      console.log('전체 요청 데이터:', requestData);
+      console.log('공연 날짜 (date):', requestData.date);
+      console.log('예매 시작일 (startDate):', requestData.startDate);
+      console.log('예매 종료일 (endDate):', requestData.endDate);
       
       // API 호출
       const response = await performanceService.createPerformance(requestData);
@@ -267,12 +311,12 @@ const PerformanceCreatePage: React.FC = () => {
                     name="date"
                     value={formData.date}
                     onChange={handleInputChange}
-                    min={new Date().toISOString().split('T')[0]}
+                    min={nowISO}
                     required
                     className="date-input"
                   />
                   <small style={{ color: '#666', fontSize: '12px', marginTop: '4px' }}>
-                    오늘 이후의 날짜를 선택해주세요
+                    오늘 이후의 날짜를 선택해주세요 (공연시간: 오후 6시)
                   </small>
                 </div>
 
@@ -364,32 +408,36 @@ const PerformanceCreatePage: React.FC = () => {
                 </div>
 
                 <div className="form-group">
-                  <label>예매 시작/종료일자</label>
                   <div className="date-range">
-                    <div>
-                      <label style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>시작일</label>
+                    <div className='date-input-container'>
+                      <label style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>예매 시작일</label>
                       <input
                         type="date"
                         name="startDate"
                         value={formData.startDate}
                         onChange={handleInputChange}
-                        min={new Date().toISOString().split('T')[0]}
+                        min={nowISO}
                         required
                         className="date-input"
                       />
+                      <small style={{ color: '#666', fontSize: '11px', marginTop: '2px' }}>
+                        해당 날짜의 18:00으로 설정됩니다
+                      </small>
                     </div>
-                    <span className="date-separator">~</span>
-                    <div>
-                      <label style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>종료일</label>
+                    <div className='date-input-container'>
+                      <label style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>예매 종료일</label>
                       <input
                         type="date"
                         name="endDate"
                         value={formData.endDate}
                         onChange={handleInputChange}
-                        min={formData.startDate || new Date().toISOString().split('T')[0]}
+                        min={formData.startDate || nowISO}
                         required
                         className="date-input"
                       />
+                      <small style={{ color: '#666', fontSize: '11px', marginTop: '2px' }}>
+                        해당 날짜의 23:59로 설정됩니다
+                      </small>
                     </div>
                   </div>
                   <small style={{ color: '#666', fontSize: '12px', marginTop: '4px' }}>
