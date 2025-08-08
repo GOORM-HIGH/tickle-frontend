@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { performanceService, PerformanceListItem } from '../services/performanceService';
+import { performanceService, PerformanceListItem } from '../api/performanceService';
 import Layout from '../../components/layout/Layout';
-import './MyPage.css';
+import '../styles/MyPage.css';
 
 const MyPage: React.FC = () => {
   const navigate = useNavigate();
@@ -101,6 +101,9 @@ const MyPage: React.FC = () => {
                   onClick={() => setActiveTab('reservations')}
                 >
                   예매/취소 내역
+                </li>
+                <li onClick={() => navigate('/performance/scraps')}>
+                  스크랩한 공연
                 </li>
                 <li 
                   className={activeTab === 'performances' ? 'active' : ''}
