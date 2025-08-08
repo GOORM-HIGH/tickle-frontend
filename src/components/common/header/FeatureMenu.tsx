@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { FaBell, FaUser, FaTicketAlt } from "react-icons/fa";
-import { useState } from "react";
 import { FaBell, FaUser, FaTicketAlt, FaMusic } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { getAccessToken } from "../../../utils/tokenUtils";
@@ -80,84 +78,57 @@ export default function FeatureMenu({
       <div className="max-w-[1440px] mx-auto flex justify-between items-center text-sm text-gray-900">
         {/* 왼쪽: 장르 메뉴 */}
         <GenreMenu variant="inline" />
+        <div className="w-full max-w-[1440px] mx-auto flex justify-end items-center text-sm text-gray-900 gap-6">
+          {isSignIn && (
+            <>
+              <Link
+                to="/events"
+                className="flex items-center gap-1 hover:text-blue-600"
+              >
+                <FaTicketAlt /> 쿠폰
+              </Link>
+            </>
+          )}
 
-        {/* 오른쪽: 기타 메뉴들 */}
-        <div className="flex items-center gap-6">
-          <Link
-            to="/events"
-            className="flex items-center gap-1 hover:text-blue-600"
-          >
-            <FaTicketAlt /> 쿠폰
-          </Link>
           <Link
             to="/event-ticket"
             className="flex items-center gap-1 hover:text-blue-600"
           >
             🎉 이벤트
           </Link>
-          <Link
-            to="/mypage"
-            className="flex items-center gap-1 hover:text-blue-600"
-          >
-            <FaUser /> 마이페이지
-          </Link>
-          <button
-            onClick={toggleNotifications}
-            className="hover:text-blue-600 relative"
-          >
-            <FaBell />
-          </button>
-        </div>
-      <div className="w-full max-w-[1440px] mx-auto flex justify-end items-center text-sm text-gray-900 gap-6">
-        {isSignIn && (
-          <>
+
+          {isSignIn && (
             <Link
-              to="/events"
+              to="/mypage"
               className="flex items-center gap-1 hover:text-blue-600"
             >
-              <FaTicketAlt /> 쿠폰
+              <FaUser /> 마이페이지
             </Link>
-          </>
-        )}
+          )}
 
-        <Link
-          to="/event-ticket"
-          className="flex items-center gap-1 hover:text-blue-600"
-        >
-          🎉 이벤트
-        </Link>
+          {isSignIn && (
+            <button
+              onClick={toggleNotifications}
+              className="flex items-center gap-1 hover:text-blue-600 relative"
+            >
+              <FaBell />
+              <span>알림</span>
+              {hasUnread && (
+                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-ping" />
+              )}
+            </button>
+          )}
+        </div>
 
+        {/* 알림 패널 */}
         {isSignIn && (
-          <Link
-            to="/mypage"
-            className="flex items-center gap-1 hover:text-blue-600"
-          >
-            <FaUser /> 마이페이지
-          </Link>
-        )}
-
-        {isSignIn && (
-          <button
-            onClick={toggleNotifications}
-            className="flex items-center gap-1 hover:text-blue-600 relative"
-          >
-            <FaBell />
-            <span>알림</span>
-            {hasUnread && (
-              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-ping" />
-            )}
-          </button>
+          <NotificationPopover
+            isOpen={isNotificationOpen}
+            notificationList={notificationList}
+            onRead={handleNotificationRead}
+          />
         )}
       </div>
-
-      {/* 알림 패널 */}
-      {isSignIn && (
-        <NotificationPopover
-          isOpen={isNotificationOpen}
-          notificationList={notificationList}
-          onRead={handleNotificationRead}
-        />
-      )}
     </div>
   );
 }
