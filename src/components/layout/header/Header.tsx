@@ -4,7 +4,6 @@ import Logo from "../../common/Logo";
 import SearchBar from "../../common/SearchBar";
 import AuthMenu from "../../common/header/AuthMenu";
 import FeatureMenu from "../../common/header/FeatureMenu";
-import GenreMenu from "../../common/header/GenreMenu";
 import { getAccessToken, removeTokens } from "../../../utils/tokens";
 
 export default function Header() {
@@ -37,7 +36,7 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="w-full bg-white border-b border-gray-200 shadow-sm sticky top-0 z-10">
+    <header className="w-full bg-white border-b border-gray-200 shadow-sm sticky top-0 z-10 header-container">
       <div className="max-w-full mx-auto px-8 py-4 flex items-center justify-between">
         <Logo />
         <SearchBar
@@ -48,7 +47,6 @@ export default function Header() {
         <AuthMenu isSignIn={isSignIn} onSignOut={handleSignOut} />
       </div>
       <FeatureMenu />
-      <GenreMenu />
     </header>
   );
 }

@@ -26,8 +26,13 @@ export interface PerformanceRequestDto {
 
 export interface UpdatePerformanceRequestDto {
   title?: string;
+  genreId?: number;
   date?: string; // ISO 8601 형식
   runtime?: number;
+  hallType?: string;
+  hallAddress?: string;
+  startDate?: string; // ISO 8601 형식
+  endDate?: string; // ISO 8601 형식
   img?: string;
   isEvent?: boolean;
 }
