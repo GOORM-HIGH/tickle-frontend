@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaBell, FaUser, FaTicketAlt, FaMusic } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { PERFORMANCE_GENRES } from "../../../home/constants/categories";
+import GenreMenu from "./GenreMenu";
 
 export default function FeatureMenu() {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -14,17 +14,7 @@ export default function FeatureMenu() {
     <div className="relative bg-gradient-to-r from-white to-[#f9fbff] border-t border-gray-100 px-8 py-3">
       <div className="max-w-[1440px] mx-auto flex justify-between items-center text-sm text-gray-900">
         {/* 왼쪽: 장르 메뉴 */}
-        <div className="flex items-center gap-2">
-          {PERFORMANCE_GENRES.map((genre) => (
-            <Link
-              key={genre.id}
-              to={`/performance/${genre.id}`}
-              className="px-2 py-1 text-xs text-gray-700 hover:text-blue-600 transition whitespace-nowrap"
-            >
-              {genre.name}
-            </Link>
-          ))}
-        </div>
+        <GenreMenu variant="inline" />
 
         {/* 오른쪽: 기타 메뉴들 */}
         <div className="flex items-center gap-6">

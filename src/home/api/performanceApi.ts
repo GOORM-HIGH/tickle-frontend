@@ -8,27 +8,39 @@ export interface PerformanceDto {
   img: string;
 }
 
-// 공연 상세 정보 타입 정의 (실제 API 응답에 맞춤)
+// 장르 DTO 타입 정의 (백엔드 GenreDto와 일치)
+export interface GenreDto {
+  genreId: string;  // 백엔드에서 문자열로 오고 있음
+  title: string;    // "genreTitle"이 아니라 "title"
+}
+
+// 공연 상세 정보 타입 정의 (백엔드 PerformanceDetailDto와 정확히 일치)
 export interface PerformanceDetailDto {
   performanceId: number;
   title: string;
   img: string;
   date: string;
+  statusDescription: string;
   runtime: number;
+  event: boolean; // 백엔드에서 event 필드로 응답
   price: string;
   hallAddress: string;
   hostBizName: string;
   startDate: string;
   endDate: string;
-  statusDescription: string;
+  // 추가 필드들 (API 응답에 있을 수 있음)
+  genreTitle?: string;
+  hallType?: string;
 }
 
-// 오픈예정 공연 타입 정의 (인기공연과 동일한 구조)
+// 오픈예정 공연 타입 정의 (예매 기간 정보 포함)
 export interface ComingSoonDto {
   performanceId: number;
   title: string;
   date: string;
   img: string;
+  startDate: string;
+  endDate: string;
 }
 
 // 백엔드 ResultResponse 타입 정의
@@ -72,6 +84,8 @@ export interface ComingSoonCard {
   reservationType: string;
   buttonType: string;
   buttonText: string;
+  startDate: string;
+  endDate: string;
 }
 
 // 백엔드 응답을 프론트엔드 타입으로 변환하는 함수
@@ -94,7 +108,9 @@ export const mapComingSoonDtoToCard = (dto: ComingSoonDto): ComingSoonCard => {
     img: dto.img,
     reservationType: '일반예매', // 기본값
     buttonType: 'default',
-    buttonText: '단독판매'
+    buttonText: '단독판매',
+    startDate: dto.startDate,
+    endDate: dto.endDate
   };
 };
 
@@ -183,6 +199,17 @@ export const performanceApi = {
         page,
         size
       },
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      }
+    });
+    return response.data;
+  },
+
+  // 장르 목록 조회
+  getGenres: async (): Promise<ResultResponse<GenreDto[]>> => {
+    const response = await api.get('/api/v1/performance/genre', {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
