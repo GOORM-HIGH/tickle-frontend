@@ -5,7 +5,17 @@ import { getAccessToken } from "../../../utils/tokenUtils";
 import api from "../../../services/api";
 import NotificationPopover from "../../notification/NotificationPopover";
 
-export default function FeatureMenu({ isSignIn }: { isSignIn: boolean }) {
+interface FeatureMenuProps {
+  isSignIn: boolean;
+  shouldRefreshNotificationList?: boolean; // SSE 알림 수신 여부
+  onNotificationRefreshed?: () => void; // 알림 새로고침 후 콜백
+}
+
+export default function FeatureMenu({
+  isSignIn,
+  shouldRefreshNotificationList,
+  onNotificationRefreshed,
+}: FeatureMenuProps) {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [notificationList, setNotificationList] = useState<
     NotificationResponse[]
@@ -21,32 +31,44 @@ export default function FeatureMenu({ isSignIn }: { isSignIn: boolean }) {
     );
   };
 
+  const fetchNotificationList = async () => {
+    try {
+      const accessToken = getAccessToken();
+      if (!accessToken) return;
+
+      const response = await api.get("/api/v1/notifications", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        withCredentials: true,
+      });
+
+      const formatted = response.data.data.map((item: any) => ({
+        ...item,
+        isRead: item.read,
+      }));
+
+      setNotificationList(formatted);
+    } catch (error) {
+      console.error("❌ 알림 API 조회 실패:", error);
+    }
+  };
+
+  // 로그인 시 최초 호출
   useEffect(() => {
-    if (!isSignIn) return;
-
-    const accessToken = getAccessToken();
-    if (!accessToken) return;
-
-    const fetchNotificationList = async () => {
-      try {
-        const response = await api.get("/api/v1/notifications", {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          withCredentials: true,
-        });
-        const formatted = response.data.data.map((item: any) => ({
-          ...item,
-          isRead: item.read,
-        }));
-        setNotificationList(formatted);
-      } catch (error) {
-        console.error("❌ 알림 API 조회 실패:", error);
-      }
-    };
-
-    fetchNotificationList();
+    if (isSignIn) {
+      fetchNotificationList();
+    }
   }, [isSignIn]);
+
+  // SSE로 새 알림 도착했을 때 다시 호출
+  useEffect(() => {
+    if (isSignIn && shouldRefreshNotificationList) {
+      fetchNotificationList().then(() => {
+        onNotificationRefreshed?.(); // 상태 초기화 콜백 호출
+      });
+    }
+  }, [shouldRefreshNotificationList, isSignIn]);
 
   const hasUnread = notificationList.some((n) => !n.isRead);
 
