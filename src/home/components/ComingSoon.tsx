@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { performanceApi, ComingSoonCard } from '../api/performanceApi';
 import { useTimeConversion } from '../../hooks/useTimeConversion';
+import ReservationButton from '../../components/common/ReservationButton';
 import '../styles/ComingSoon.css';
 
 // 이미지 로딩 상태를 관리하는 컴포넌트
@@ -19,8 +20,8 @@ const ImageWithSkeleton: React.FC<{ src: string; alt: string }> = ({ src, alt })
   };
 
   return (
-    <div className="card-image">
-      {!isLoaded && <div className="image-skeleton" />}
+    <div className="performance-soon-image">
+      {!isLoaded && <div className="performance-soon-skeleton" />}
       <img 
         src={src} 
         alt={alt}
@@ -62,15 +63,17 @@ const ComingSoon: React.FC = () => {
         
         if (response.data && Array.isArray(response.data)) {
           const mappedEvents = response.data.map(dto => ({
-            id: dto.performanceId,
-            title: dto.title,
-            date: formatDate(dto.date, 'date'),
-            time: formatDate(dto.date, 'time'),
-            img: dto.img,
-            reservationType: '일반예매',
-            buttonType: 'default',
-            buttonText: '단독판매'
-          }));
+              id: dto.performanceId,
+              title: dto.title,
+              date: formatDate(dto.date, 'date'),
+              time: formatDate(dto.date, 'time'),
+              img: dto.img,
+              reservationType: '일반예매',
+              buttonType: 'default',
+              buttonText: '단독판매',
+              startDate: dto.startDate,
+              endDate: dto.endDate
+            }));
           setComingSoonEvents(mappedEvents);
         } else {
           console.error('API 응답 데이터가 올바르지 않습니다:', response);
@@ -89,9 +92,9 @@ const ComingSoon: React.FC = () => {
 
   if (loading) {
     return (
-      <section className="coming-soon">
+      <section className="performance-soon">
         <div className="container">
-          <h2 className="section-title">오픈 예정</h2>
+          <h2 className="performance-soon-title">오픈 예정</h2>
           <div className="loading">로딩 중...</div>
         </div>
       </section>
@@ -100,9 +103,9 @@ const ComingSoon: React.FC = () => {
 
   if (error) {
     return (
-      <section className="coming-soon">
+      <section className="performance-soon">
         <div className="container">
-          <h2 className="section-title">오픈 예정</h2>
+          <h2 className="performance-soon-title">오픈 예정</h2>
           <div className="error">{error}</div>
         </div>
       </section>
@@ -110,20 +113,20 @@ const ComingSoon: React.FC = () => {
   }
 
   return (
-    <section className="coming-soon">
+    <section className="performance-soon">
       <div className="container">
-        <h2 className="section-title">오픈 예정</h2>
-        <div className="coming-soon-grid">
+        <h2 className="performance-soon-title">오픈 예정</h2>
+        <div className="performance-soon-grid">
           {comingSoonEvents.map((event) => (
-            <div key={event.id} className="coming-soon-card">
+            <div key={event.id} className="performance-soon-card">
               <Link to={`/performance/${event.id}`}>
                 <ImageWithSkeleton src={event.img} alt={event.title} />
-                <div className="card-details">
-                  <div className="date-time">
+                <div className="performance-soon-details">
+                  <div className="performance-soon-date">
                     {event.date} {event.time}
                   </div>
-                  <h3 className="concert-title">{event.title}</h3>
-                  <p className="reservation-type">{event.reservationType}</p>
+                  <h3 className="performance-soon-name">{event.title}</h3>
+                  <p className="performance-soon-type">{event.reservationType}</p>
                   <button className={`reservation-button ${event.buttonType}`}>
                     {event.buttonText}
                   </button>

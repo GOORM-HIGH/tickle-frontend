@@ -6,6 +6,7 @@ import RelatedPerformances from './RelatedPerformances';
 import { Bookmark } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { scrapService } from '../api/scrapService';
+import ReservationButton from '../../components/common/ReservationButton';
 import '../styles/PerformanceDetailPage.css';
 
 const PerformanceDetail: React.FC = () => {
@@ -24,9 +25,26 @@ const PerformanceDetail: React.FC = () => {
       
       try {
         setLoading(true);
+        console.log('🔍 로그인 상태:', isLoggedIn);
         const response = await performanceApi.getPerformanceDetail(parseInt(id));
         if (response.data) {
           setPerformance(response.data);
+          console.log('🔍 공연 정보 로드 완료:', response.data.performanceId);
+          
+          // 로그인한 사용자인 경우 스크랩 상태 확인
+          if (isLoggedIn) {
+            try {
+              console.log('🔍 스크랩 상태 확인 시작...');
+              const scrapStatus = await scrapService.checkScrapStatus(response.data.performanceId);
+              console.log('🔍 스크랩 상태 확인 결과:', scrapStatus);
+              setIsScrapped(scrapStatus);
+            } catch (error) {
+              console.error('스크랩 상태 확인 실패:', error);
+              setIsScrapped(false);
+            }
+          } else {
+            console.log('🔍 로그인하지 않은 사용자 - 스크랩 상태 확인 건너뜀');
+          }
         }
       } catch (err) {
         setError('공연 정보를 불러오는데 실패했습니다.');
@@ -37,7 +55,7 @@ const PerformanceDetail: React.FC = () => {
     };
 
     fetchPerformanceDetail();
-  }, [id]);
+  }, [id, isLoggedIn]);
 
   if (loading) {
     return (
@@ -59,38 +77,60 @@ const PerformanceDetail: React.FC = () => {
   }
 
   const handleScrapToggle = async () => {        
+    console.log('🔍 스크랩 토글 버튼 클릭됨');
+    console.log('🔍 현재 스크랩 상태:', isScrapped);
+    console.log('🔍 공연 ID:', performance.performanceId);
+    
     try {
       if (!isScrapped) {
         // 스크랩 추가
+        console.log('🔍 스크랩 추가 시도...');
         await scrapService.addScrap(performance.performanceId);
         setIsScrapped(true);
         console.log('스크랩 추가 완료');
       } else {
         // 스크랩 제거
+        console.log('🔍 스크랩 제거 시도...');
         await scrapService.removeScrap(performance.performanceId);
         setIsScrapped(false);
         console.log('스크랩 제거 완료');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('스크랩 토글 실패:', error);
-      alert('스크랩 처리 중 오류가 발생했습니다.');
+      console.error('에러 상세:', error.response?.data);
+      
+      if (error.response?.status === 500) {
+        const errorMessage = error.response?.data?.message || error.message;
+        if (errorMessage.includes('unique result') || errorMessage.includes('duplicate')) {
+          alert('스크랩 데이터에 문제가 있습니다. 페이지를 새로고침 후 다시 시도해주세요.');
+          window.location.reload();
+        } else {
+          alert('서버에 일시적인 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
+        }
+      } else {
+        alert('스크랩 처리 중 오류가 발생했습니다.');
+      }
     }
   };
 
+  console.log('🔍 PerformanceDetail - isLoggedIn:', isLoggedIn);
+  
   return (
     <div className="performance-detail-page">
       <div className="title-section">
         <h1 className="performance-detail-title">{performance.title}</h1>
-        <button 
-          className={`scrap-button ${isScrapped ? 'scrapped' : ''}`}
-          onClick={handleScrapToggle}
-          aria-label={isScrapped ? '스크랩 해제' : '스크랩 추가'}
-        >
-          <Bookmark size={24} />
-        </button>
+        {isLoggedIn && (
+          <button 
+            className={`scrap-button ${isScrapped ? 'scrapped' : ''}`}
+            onClick={handleScrapToggle}
+            aria-label={isScrapped ? '스크랩 해제' : '스크랩 추가'}
+          >
+            <Bookmark size={24} />
+          </button>
+        )}
       </div>
       <div className="performance-header">
-          <div className="performance-image">
+          <div className="performance-detail-image">
             <img src={performance.img} alt={performance.title} />
           </div>
           <div className="performance-info">
@@ -129,7 +169,16 @@ const PerformanceDetail: React.FC = () => {
               </div>
             </div>
             <div className="performance-actions">
-              <button className="reserve-button">예매하기</button>
+              <ReservationButton
+                startDate={performance.startDate}
+                endDate={performance.endDate}
+                onClick={() => {
+                  // 예매 페이지로 이동하는 로직
+                  console.log('예매하기 클릭');
+                }}
+                size="large"
+                showMessage={true}
+              />
               <button className="share-button">공유하기</button>
               <div className="info-grid">
               </div>

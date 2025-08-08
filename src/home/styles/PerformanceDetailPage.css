@@ -75,7 +75,7 @@
   align-items: flex-start;
 }
 
-.performance-image {
+.performance-detail-image {
   flex-shrink: 0;
   width: 350px !important;
   height: 450px !important;
@@ -84,7 +84,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.performance-detail-page .performance-image img {
+.performance-detail-page .performance-detail-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
