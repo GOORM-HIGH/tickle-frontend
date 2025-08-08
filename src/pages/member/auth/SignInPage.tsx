@@ -4,7 +4,7 @@ import axios from "axios";
 import AuthCard from "../../../components/member/AuthCard";
 import AuthInput from "../../../components/member/AuthInput";
 import Button from "../../../components/common/Button";
-import { setAccessToken } from "../../../utils/tokens";
+import { setAccessToken } from "../../../utils/tokenUtils";
 import { validateEmail, validatePassword } from "../../../utils/validations";
 
 const SignInPage: React.FC = () => {
