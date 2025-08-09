@@ -5,6 +5,9 @@ import Cookies from 'js-cookie';
 import Layout from '../../../components/layout/Layout';
 import { useAuth } from '../../../hooks/useAuth';
 import { scrapService, PerformanceScrapDto } from '../../api/scrapService';
+import MyPageSidebar from '../../components/mypage/MyPageSidebar';
+import SectionHeader from '../../components/mypage/SectionHeader';
+import ScrapGrid from '../../components/mypage/ScrapGrid';
 
 import '../../styles/ScrapPage.css';
 
@@ -123,88 +126,16 @@ const ScrapPage: React.FC = () => {
     <Layout>
       <div className="scrap-page">
         <div className="page-container">
-          <div className="sidebar">
-            <div className="sidebar-content">
-              <h3>마이페이지</h3>
-              <ul className="sidebar-menu">
-                <li onClick={() => navigate('/mypage')}>내정보</li>
-                <li onClick={() => navigate('/mypage/reservations')}>예매/취소 내역</li>
-                <li onClick={() => navigate('/mypage/tickets')}>예매권</li>
-                <li onClick={() => navigate('/mypage/coupons')}>쿠폰</li>
-                <li className="active">스크랩한 공연</li>
-                <li onClick={() => navigate('/performance/host')}>공연관리</li>
-                <li onClick={() => navigate('/mypage/settlements')}>정산내역</li>
-              </ul>
-            </div>
-          </div>
+          <MyPageSidebar activeTab={'scraps'} />
 
           <div className="main-content">
-            <div className="page-header">
-              <h2 className="page-title">
-                <Bookmark className="title-icon" />
-                스크랩한 공연
-              </h2>
-              <p className="page-subtitle">관심있는 공연을 모아서 확인해보세요</p>
-            </div>
+            <SectionHeader title={<><Bookmark className="title-icon" /> 스크랩한 공연</>} subtitle="관심있는 공연을 모아서 확인해보세요" />
 
-            {scraps.length === 0 ? (
-              <div className="empty-state">
-                <Bookmark size={64} className="empty-icon" />
-                <h3>스크랩한 공연이 없습니다</h3>
-                <p>관심있는 공연을 스크랩하여 쉽게 찾아보세요!</p>
-                <button 
-                  className="browse-button"
-                  onClick={() => navigate('/')}
-                >
-                  공연 둘러보기
-                </button>
-              </div>
-            ) : (
-              <div className="scraps-grid">
-                {scraps.map((scrap) => (
-                  <div key={scrap.performanceId} className="scrap-card">
-                    <div className="scrap-image-container">
-                      <img 
-                        src={scrap.img || '/default-performance.png'} 
-                        alt={scrap.title}
-                        className="scrap-image"
-                        onClick={() => handleViewDetails(scrap.performanceId)}
-                      />
-                      {scrap.event && (
-                        <div className="event-badge">EVENT</div>
-                      )}
-                      <button 
-                        className="remove-scrap-btn"
-                        onClick={() => handleRemoveScrap(scrap.performanceId)}
-                        title="스크랩 제거"
-                      >
-                        <Bookmark fill="currentColor" />
-                      </button>
-                    </div>
-                    
-                    <div className="scrap-content">
-                      <h3 
-                        className="scrap-title"
-                        onClick={() => handleViewDetails(scrap.performanceId)}
-                      >
-                        {scrap.title}
-                      </h3>
-                      
-
-                      
-                      <div className="scrap-actions">
-                        <button 
-                          className="view-button"
-                          onClick={() => handleViewDetails(scrap.performanceId)}
-                        >
-                          상세보기
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+            <ScrapGrid
+              scraps={scraps}
+              onViewDetails={(id) => (id ? handleViewDetails(id) : navigate('/'))}
+              onRemoveScrap={handleRemoveScrap}
+            />
           </div>
         </div>
       </div>

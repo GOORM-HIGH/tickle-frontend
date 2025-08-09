@@ -18,9 +18,11 @@ const decodeJWT = (token: string) => {
   }
 };
 
+type CurrentUser = { id: number; nickname: string; role?: string };
+
 export const useAuth = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentUser, setCurrentUser] = useState<{id: number, nickname: string} | null>(null);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [loading, setLoading] = useState(false);
   const [authKey, setAuthKey] = useState(0); // 강제 리렌더링을 위한 키
 
@@ -37,7 +39,8 @@ export const useAuth = () => {
         if (decoded && decoded.userId && decoded.nickname) {
           setCurrentUser({ 
             id: decoded.userId,
-            nickname: decoded.nickname
+            nickname: decoded.nickname,
+            role: decoded.role || decoded.memberRole || decoded.auth,
           });
           setIsLoggedIn(true);
           console.log('🔍 useAuth - 로그인 상태 설정됨:', decoded.nickname);
@@ -70,7 +73,8 @@ export const useAuth = () => {
         localStorage.setItem('userInfo', JSON.stringify(response.user));
         setCurrentUser({ 
           id: response.user.id,
-          nickname: response.user.nickname
+          nickname: response.user.nickname,
+          role: (response.user as any).memberRole || (response.user as any).role,
         });
       }
       
