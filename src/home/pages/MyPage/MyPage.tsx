@@ -7,7 +7,7 @@ import Layout from '../../../components/layout/Layout';
 import '../styles/MyPage.css';
 import MyPageSidebar from '../../components/mypage/MyPageSidebar';
 import PerformanceManagementList from '../../components/mypage/PerformanceManagementList';
-import UserInfoPanel from '../../components/mypage/UserInfoPanel';
+// import UserInfoPanel from '../../components/mypage/UserInfoPanel';
 
 const MyPage: React.FC = () => {
   const navigate = useNavigate();
@@ -85,9 +85,9 @@ const MyPage: React.FC = () => {
 
           {/* 메인 콘텐츠 */}
           <div className="main-content">
-            {activeTab === 'info' && (
+            {/* {activeTab === 'info' && (
               <UserInfoPanel nickname={currentUser?.nickname} role={currentUser?.role} />
-            )}
+            )} */}
 
             {activeTab === 'performances' && (
               <PerformanceManagementList
