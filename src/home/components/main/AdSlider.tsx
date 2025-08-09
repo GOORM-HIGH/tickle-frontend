@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/AdSlider.css';
-import ad1Gif from '../../assets/home/ad1.gif';
-import ad2Gif from '../../assets/home/ad2.gif';
-import ad3Gif from '../../assets/home/ad3.gif';
+import '../../styles/AdSlider.css';
+import ad1Gif from '../../../assets/home/ad1.gif';
+import ad2Gif from '../../../assets/home/ad2.gif';
+import ad3Gif from '../../../assets/home/ad3.gif';
 
 interface AdSlide {
   id: number;

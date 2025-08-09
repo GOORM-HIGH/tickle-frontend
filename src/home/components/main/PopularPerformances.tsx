@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { performanceApi, PerformanceCard } from '../api/performanceApi';
-import { useTimeConversion } from '../../hooks/useTimeConversion';
-import '../styles/PopularPerformances.css';
+import { performanceApi, PerformanceCard } from '../../api/performanceApi';
+import { useTimeConversion } from '../../../hooks/useTimeConversion';
+import '../../styles/PopularPerformances.css';
 
 // 이미지 로딩 상태를 관리하는 컴포넌트
 const ImageWithSkeleton: React.FC<{ src: string; alt: string; rank: number }> = ({ src, alt, rank }) => {
