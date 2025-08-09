@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { performanceApi, PerformanceDto } from '../../api/performanceApi';
 import { useTimeConversion } from '../../../hooks/useTimeConversion';
-import '../../styles/CategoryRanking.css';
+import '../../styles/GenreRanking.css';
 
 // 이미지 로딩 상태를 관리하는 컴포넌트
 const ImageWithSkeleton: React.FC<{ src: string; alt: string; rank: number }> = ({ src, alt, rank }) => {
@@ -45,7 +45,7 @@ interface CategoryRankingProps {
   category: string;
 }
 
-const CategoryRanking: React.FC<CategoryRankingProps> = ({ category }) => {
+const GenreRanking: React.FC<CategoryRankingProps> = ({ category }) => {
   const { convertUTCToKST } = useTimeConversion();
   const [performances, setPerformances] = useState<PerformanceDto[]>([]);
   const [loading, setLoading] = useState(true);
@@ -198,4 +198,4 @@ const CategoryRanking: React.FC<CategoryRankingProps> = ({ category }) => {
   );
 };
 
-export default CategoryRanking; 
+export default GenreRanking; 

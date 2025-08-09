@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
-import { performanceService, PerformanceListItem } from '../api/performanceService';
-import Layout from '../../components/layout/Layout';
+import { useAuth } from '../../../hooks/useAuth';
+import { performanceService } from '../../api/performanceService';
+import { PerformanceListItem } from '../../api/performanceApi';
+import Layout from '../../../components/layout/Layout';
 import '../styles/MyPage.css';
 
 const MyPage: React.FC = () => {
