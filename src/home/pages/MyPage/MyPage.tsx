@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../hooks/useAuth';
-import { performanceService } from '../../api/performanceService';
+import { performanceApi } from '../../api/performanceApi';
 import { PerformanceListItem } from '../../types/performance';
+import type { PerformanceHostDto } from '../../api/performanceApi';
 import Layout from '../../../components/layout/Layout';
 import '../styles/MyPage.css';
 import MyPageSidebar from '../../components/mypage/MyPageSidebar';
@@ -36,8 +37,23 @@ const MyPage: React.FC = () => {
   const loadMyPerformances = async () => {
     try {
       setLoading(true);
-      const data = await performanceService.getMyPerformances();
-      setPerformances(data);
+      const res = await performanceApi.getMyPerformances();
+      // 백엔드가 My 리스트 구조를 HostDto로 반환할 수 있어 필드 매핑 처리
+      const list = (res.data || []) as unknown as PerformanceHostDto[];
+      const mapped: PerformanceListItem[] = list.map(item => ({
+        performanceId: item.performanceId,
+        title: item.title,
+        date: item.date,
+        runtime: 0,
+        hallType: '',
+        hallAddress: '',
+        status: item.statusDescription,
+        isEvent: false,
+        img: item.img,
+        createdAt: item.createdDate,
+        updatedAt: item.createdDate,
+      }));
+      setPerformances(mapped);
     } catch (error) {
       console.error('공연 목록 로드 실패:', error);
       alert('공연 목록을 불러오는데 실패했습니다.');
@@ -52,7 +68,7 @@ const MyPage: React.FC = () => {
     }
 
     try {
-      await performanceService.deletePerformance(performanceId);
+      await performanceApi.deletePerformance(performanceId);
       alert('공연이 삭제되었습니다.');
       loadMyPerformances(); // 목록 새로고침
     } catch (error) {

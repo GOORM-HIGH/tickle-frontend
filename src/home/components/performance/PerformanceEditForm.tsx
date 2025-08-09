@@ -4,9 +4,8 @@ import Cookies from 'js-cookie';
 
 import { useAuth } from '../../../hooks/useAuth';
 import { PERFORMANCE_GENRES } from '../../constants/performance';
-import { performanceApi } from '../../api/performanceApi';
-import { performanceService } from '../../api/performanceService';
-import { PerformanceFormData, UpdatePerformanceRequestDto } from '../../types/performance';
+import { PerformanceFormData } from '../../types/performance';
+import { performanceApi, UpdatePerformanceRequestDto } from '../../api/performanceApi';
 
 import '../../styles/PerformanceCreatePage.css';
 
@@ -129,7 +128,7 @@ const PerformanceEditForm: React.FC = () => {
     };
 
     try {
-      await performanceService.updatePerformance(+performanceId, requestData);
+      await performanceApi.updatePerformance(+performanceId, requestData);
       alert('공연이 성공적으로 수정되었습니다!');
       navigate('/performance/host');
     } catch (err: any) {

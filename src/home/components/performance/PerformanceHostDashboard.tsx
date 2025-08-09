@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
 import { useAuth } from '../../../hooks/useAuth';
-import { performanceService, PerformanceHostDto } from '../../api/performanceService';
+import { performanceApi, PerformanceHostDto } from '../../api/performanceApi';
 
 import '../../styles/PerformanceHostPage.css';
 
@@ -30,9 +30,9 @@ const PerformanceHostDashboard: React.FC = () => {
       if (!isLoggedIn) return;
       try {
         setLoading(true);
-        const response = await performanceService.getHostPerformances();
-        if (Array.isArray(response)) setPerformances(response);
-        else setPerformances([]);
+        const response = await performanceApi.getHostPerformances();
+        const list = response.data || [];
+        setPerformances(Array.isArray(list) ? list : []);
       } catch (err: any) {
         console.error('공연 목록 조회 실패:', err);
         setError('공연 목록을 불러오는데 실패했습니다.');
@@ -63,10 +63,11 @@ const PerformanceHostDashboard: React.FC = () => {
   const handleDeletePerformance = async (performanceId: number) => {
     if (!window.confirm('정말로 이 공연을 삭제하시겠습니까?')) return;
     try {
-      await performanceService.deletePerformance(performanceId);
+      await performanceApi.deletePerformance(performanceId);
       alert('공연이 삭제되었습니다.');
-      const response = await performanceService.getHostPerformances();
-      setPerformances(Array.isArray(response) ? response : []);
+      const response = await performanceApi.getHostPerformances();
+      const list = response.data || [];
+      setPerformances(Array.isArray(list) ? list : []);
     } catch (err) {
       console.error('공연 삭제 실패:', err);
       alert('공연 삭제에 실패했습니다.');

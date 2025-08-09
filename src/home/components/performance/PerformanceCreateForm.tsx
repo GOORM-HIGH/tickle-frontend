@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
 import { useAuth } from '../../../hooks/useAuth';
-import { performanceService } from '../../api/performanceService';
+import { performanceApi, CreatePerformanceRequestDto } from '../../api/performanceApi';
 import { PERFORMANCE_GENRES, HALL_TYPES, VENUE_LOCATIONS } from '../../constants/performance';
-import { PerformanceFormData, PerformanceRequestDto } from '../../types/performance';
+import { PerformanceFormData } from '../../types/performance';
 
 import '../../styles/PerformanceCreatePage.css';
 
@@ -89,7 +89,7 @@ const PerformanceCreateForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const requestData: PerformanceRequestDto = {
+      const requestData: CreatePerformanceRequestDto = {
         title: formData.title,
         genreId: formData.genreId,
         date: formatPerformanceDateToISO(formData.date),
@@ -102,7 +102,7 @@ const PerformanceCreateForm: React.FC = () => {
         img: imagePreview || '',
       };
 
-      await performanceService.createPerformance(requestData);
+      await performanceApi.createPerformance(requestData);
       alert('공연이 성공적으로 생성되었습니다!');
       navigate('/');
     } catch (error: any) {

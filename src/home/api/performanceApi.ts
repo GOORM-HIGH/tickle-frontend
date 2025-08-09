@@ -66,6 +66,32 @@ export interface PerformanceResponse {
   status?: string;
 }
 
+// 호스트 대시보드/관리용 DTO
+export interface PerformanceHostDto {
+  performanceId: number;
+  title: string;
+  date: string;
+  img?: string;
+  statusDescription: string;
+  lookCount: number;
+  createdDate: string;
+  deletedDate?: string;
+}
+
+// 생성/수정 요청 DTO (백엔드 RequestDto와 일치)
+export interface UpdatePerformanceRequestDto {
+  title?: string;
+  genreId?: number;
+  date?: string; // ISO 8601
+  runtime?: number;
+  hallType?: string;
+  hallAddress?: string;
+  startDate?: string; // ISO 8601
+  endDate?: string; // ISO 8601
+  isEvent?: boolean;
+  img?: string;
+}
+
 // 프론트엔드에서 사용할 타입 (기존 인터페이스와 매핑)
 export interface PerformanceCard {
   id: number;
@@ -131,8 +157,7 @@ export interface CreatePerformanceRequestDto {
 
 // 날짜 입력 시 시간 자동 설정 함수
 export const formatDateWithTime = (dateString: string, timeType: 'performance' | 'start' | 'end'): string => {
-  const date = new Date(dateString);
-  
+  // 입력된 날짜 문자열을 ISO 조합에 그대로 사용
   switch (timeType) {
     case 'performance':
       // 공연 날짜: 00:00:00
@@ -261,5 +286,51 @@ export const performanceApi = {
       }
     });
     return response.data;
+  },
+
+  // 내가 생성한 공연 목록 조회
+  getMyPerformances: async (): Promise<ResultResponse<PerformanceHostDto[]>> => {
+    const response = await api.get('/api/v1/performance/my', {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      }
+    });
+    return response.data;
+  },
+
+  // HOST 권한으로 생성한 공연 목록 조회
+  getHostPerformances: async (): Promise<ResultResponse<PerformanceHostDto[]>> => {
+    const response = await api.get('/api/v1/performance/host', {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      }
+    });
+    return response.data;
+  },
+
+  // 공연 수정
+  updatePerformance: async (
+    performanceId: number,
+    data: UpdatePerformanceRequestDto
+  ): Promise<ResultResponse<PerformanceDetailDto>> => {
+    const response = await api.patch(`/api/v1/performance/${performanceId}`, data, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      }
+    });
+    return response.data;
+  },
+
+  // 공연 삭제
+  deletePerformance: async (performanceId: number): Promise<void> => {
+    await api.delete(`/api/v1/performance/${performanceId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      }
+    });
   },
 }; 
