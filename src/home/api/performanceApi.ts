@@ -131,8 +131,6 @@ export interface CreatePerformanceRequestDto {
 
 // 날짜 입력 시 시간 자동 설정 함수
 export const formatDateWithTime = (dateString: string, timeType: 'performance' | 'start' | 'end'): string => {
-  const date = new Date(dateString);
-  
   switch (timeType) {
     case 'performance':
       // 공연 날짜: 00:00:00

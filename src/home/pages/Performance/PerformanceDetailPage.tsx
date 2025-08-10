@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Layout from '../../../components/layout/Layout';
 import PerformanceDetail from '../../components/PerformanceDetail';
 import { useScrollToTop } from '../../../hooks/useScrollToTop';

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { performanceService, PerformanceListItem } from '../api/performanceService';
+import { performanceService } from '../api/performanceService';
+import { PerformanceListItem } from '../types/performance';
 import Layout from '../../components/layout/Layout';
 import '../styles/MyPage.css';
 
@@ -13,7 +14,9 @@ const MyPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'info' | 'performances' | 'reservations' | 'coupons' | 'settlements'>('info');
 
   // 권한 확인
-  const isHost = currentUser?.role === 'HOST';
+  const storedUserInfo = typeof window !== 'undefined' ? localStorage.getItem('userInfo') : null;
+  const memberRole: string | undefined = storedUserInfo ? (JSON.parse(storedUserInfo).memberRole as string | undefined) : undefined;
+  const isHost = memberRole === 'HOST';
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -134,7 +137,7 @@ const MyPage: React.FC = () => {
                 <h2 className="page-title">내정보</h2>
                 <div className="user-info">
                   <p><strong>닉네임:</strong> {currentUser?.nickname}</p>
-                  <p><strong>역할:</strong> {currentUser?.role === 'HOST' ? '호스트' : '일반 사용자'}</p>
+                  <p><strong>역할:</strong> {memberRole === 'HOST' ? '호스트' : '일반 사용자'}</p>
                 </div>
               </div>
             )}

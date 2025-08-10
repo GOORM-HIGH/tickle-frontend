@@ -95,26 +95,6 @@ const PopularPerformances: React.FC = () => {
     setCurrentSlide(prev => Math.min(maxSlides, prev + 1));
   };
 
-  const handleImageLoad = (performanceId: number) => {
-    setPerformances(prev => 
-      prev.map(p => 
-        p.id === performanceId 
-          ? { ...p, imageLoaded: true }
-          : p
-      )
-    );
-  };
-
-  const handleImageError = (performanceId: number) => {
-    setPerformances(prev => 
-      prev.map(p => 
-        p.id === performanceId 
-          ? { ...p, imageError: true }
-          : p
-      )
-    );
-  };
-
   if (loading) {
     return (
       <div className="popular-performances">

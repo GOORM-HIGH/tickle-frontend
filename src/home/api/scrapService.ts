@@ -20,10 +20,7 @@ export interface PerformanceScrapDto {
   event: boolean;
 }
 
-// 토큰을 동적으로 가져오는 함수
-const getAuthToken = () => {
-  return localStorage.getItem('accessToken');
-};
+
 
 export const scrapService = {
   // 스크랩 추가

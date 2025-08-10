@@ -118,7 +118,6 @@ const PerformanceDetail: React.FC = () => {
   const end = new Date(performance.endDate);
   const isNotStarted = now < start;
   const isEnded = now > end;
-  const isInProgress = !isNotStarted && !isEnded;
 
   const reserveLabel = isNotStarted ? '예매 예정' : isEnded ? '예매종료' : '예매하기';
   const reserveDisabled = isNotStarted || isEnded;
