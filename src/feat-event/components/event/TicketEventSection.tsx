@@ -1,8 +1,8 @@
+import { useState } from 'react';
 import TicketEventCard from '../ticket/TicketEventCard';
 import { TicketListResponseDto, searchTicketEvents } from '../../api/eventApi';
 import styles from '../../styles/event.module.css';
 import { EventSearchBar } from './EventSearchBar';
-import { useState } from 'react';
 
 interface TicketEventSectionProps {
   ticketEvents: TicketListResponseDto[];

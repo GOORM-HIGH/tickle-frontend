@@ -5,10 +5,10 @@ import Footer from '../../components/layout/footer/Footer';
 import { getTicketEvents, TicketListResponseDto } from '../api/eventApi';
 import styles from '../styles/event.module.css';
 // 분리된 컴포넌트들
-import HeroSection from '../_components/event/HeroSection';
-import TabButtons from '../_components/event/TabButtons';
-import CouponEventSection from '../_components/event/CouponEventSection';
-import TicketEventSection from '../_components/event/TicketEventSection';
+import HeroSection from '../components/event/HeroSection';
+import TabButtons from '../components/event/TabButtons';
+import CouponEventSection from '../components/event/CouponEventSection';
+import TicketEventSection from '../components/event/TicketEventSection';
 
 export function EventPage() {
   const [activeTab, setActiveTab] = useState<'coupon' | 'ticket'>('coupon');

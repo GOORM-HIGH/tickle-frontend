@@ -1,4 +1,4 @@
-import CouponSection from '../../components/coupon/CouponSection';
+import CouponSection from '../coupon/CouponSection';
 import styles from '../../styles/event.module.css';
 
 export default function CouponEventSection() {
