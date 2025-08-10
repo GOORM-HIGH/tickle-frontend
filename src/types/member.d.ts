@@ -6,7 +6,7 @@ type ApiResponse<T> = {
 };
 
 // 역할 Enum
-type UserRole = "USER" | "HOST" | "ADMIN";
+type UserRole = "MEMBER" | "HOST" | "ADMIN";
 
 // 로그인 요청
 type SignInRequest = {
