@@ -1,128 +1,35 @@
 import React from 'react';
-import { User, Heart, Receipt, Calendar as CalendarIcon, Gift, HelpCircle, Settings, Plus } from 'lucide-react';
-import styles from '../styles/history.module.css';
+import ProfileSection from './ProfileSection';
+import NavigationMenu from './NavigationMenu';
+import { MyPageTab } from '../constants/tabs';
 
 interface SidebarProps {
   currentBalance: number;
-  activeMenu: string;
-  onMenuClick: (menu: string) => void;
+  activeTab: MyPageTab;
   onChargeClick: () => void;
+  onTabChange: (tab: MyPageTab) => void;
+  onNavigate: (path: string) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
   currentBalance,
-  activeMenu,
-  onMenuClick,
-  onChargeClick
+  activeTab,
+  onChargeClick,
+  onTabChange,
+  onNavigate
 }) => {
   return (
-    <div className={styles.sidebar}>
-      <div className={styles.profileSection}>
-        <div className={styles.profileImage}>
-          <img 
-          src="/logo.png" 
-          alt="프로필" 
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          onError={(e) => {
-            console.error('프로필 이미지 로드 실패:', e);
-            e.currentTarget.style.display = 'none';
-          }}
+    <div className="sidebar">
+      <div className="sidebar-content">
+        <ProfileSection 
+          currentBalance={currentBalance}
+          onChargeClick={onChargeClick}
         />
-        </div>
-        <div className={styles.userInfo}>
-          <h3 className={styles.userName}>사용자님</h3>
-          <div className={styles.pointBalance}>
-            <span className={styles.pointLabel}>보유 포인트</span>
-            <span className={styles.pointAmount}>{currentBalance.toLocaleString()} P</span>
-          </div>
-          <button className={styles.chargePointBtn} onClick={onChargeClick}>
-            <Plus size={16} />
-            포인트 충전하기
-          </button>
-        </div>
-      </div>
-
-      <nav className={styles.sidebarNav}>
-        <ul className={styles.navMenu}>
-          <li className={styles.navItem}>
-            <button 
-              className={`${styles.navLink} ${activeMenu === '내정보' ? styles.active : ''}`}
-              onClick={() => onMenuClick('내정보')}
-            >
-              <User size={20} />
-              내 정보
-            </button>
-          </li>
-          <li className={styles.navItem}>
-            <button 
-              className={`${styles.navLink} ${activeMenu === '찜목록' ? styles.active : ''}`}
-              onClick={() => onMenuClick('찜목록')}
-            >
-              <Heart size={20} />
-              찜목록
-            </button>
-          </li>
-          <li className={styles.navItem}>
-            <button 
-              className={`${styles.navLink} ${activeMenu === '결제내역' ? styles.active : ''}`}
-              onClick={() => onMenuClick('결제내역')}
-            >
-              <Receipt size={20} />
-              결제내역
-            </button>
-          </li>
-          <li className={styles.navItem}>
-            <button 
-              className={`${styles.navLink} ${activeMenu === '예매내역' ? styles.active : ''}`}
-              onClick={() => onMenuClick('예매내역')}
-            >
-              <Receipt size={20} />
-              예매내역
-            </button>
-          </li>
-          <li className={styles.navItem}>
-            <button 
-              className={`${styles.navLink} ${activeMenu === '찜목록' ? styles.active : ''}`}
-              onClick={() => onMenuClick('찜목록')}
-            >
-              <Heart size={20} />
-              찜목록
-            </button>
-          </li>
-          <li className={styles.navItem}>
-            <button 
-              className={`${styles.navLink} ${activeMenu === '결제내역' ? styles.active : ''}`}
-              onClick={() => onMenuClick('결제내역')}
-            >
-              <Receipt size={20} />
-              결제내역
-            </button>
-          </li>
-          <li className={styles.navItem}>
-            <button 
-              className={`${styles.navLink} ${activeMenu === 'FAQ' ? styles.active : ''}`}
-              onClick={() => onMenuClick('FAQ')}
-            >
-              <HelpCircle size={20} />
-              FAQ
-            </button>
-          </li>
-          <li className={styles.navItem}>
-            <button 
-              className={`${styles.navLink} ${activeMenu === '설정' ? styles.active : ''}`}
-              onClick={() => onMenuClick('설정')}
-            >
-              <Settings size={20} />
-              설정
-            </button>
-          </li>
-        </ul>
-      </nav>
-
-      <div className={styles.sidebarFooter}>
-        <button className={styles.editInfoBtn}>
-          정보수정
-        </button>
+        <NavigationMenu 
+          activeTab={activeTab}
+          onTabChange={onTabChange}
+          onNavigate={onNavigate}
+        />
       </div>
     </div>
   );
