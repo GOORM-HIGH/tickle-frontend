@@ -6,12 +6,14 @@ import styles from '../styles/history.module.css';
 interface ChargePopupProps {
   currentBalance: number;
   onClose: () => void;
+  onCharge: (amount: number) => void;
   onReceipt: (receiptData: PointResponse) => void;
 }
 
 const ChargePopup: React.FC<ChargePopupProps> = ({
   currentBalance,
   onClose,
+  onCharge,
   onReceipt
 }) => {
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
@@ -110,7 +112,8 @@ const ChargePopup: React.FC<ChargePopupProps> = ({
         purchasedAt: data.purchasedAt
       });
 
-      // onReceipt 호출하여 영수증 팝업 표시
+      onCharge(data.price);
+      // 새로운 영수증 컴포넌트 사용
       onReceipt(result);
       onClose();
 

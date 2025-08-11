@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../components/layout/Layout';
 import { 
@@ -30,14 +30,8 @@ const MyPage: React.FC = () => {
     pointHistory, 
     pointHistoryLoading, 
     filterType, 
-    currentPage,
-    pageSize,
-    totalElements,
-    totalPages,
-    isLast,
     handleCharge, 
-    setFilterType,
-    handlePageChange
+    setFilterType 
   } = usePoints();
   const { 
     performances, 
@@ -49,88 +43,30 @@ const MyPage: React.FC = () => {
     receiptData, 
     showReceiptPopup,
     handleReceipt, 
-    closeAndClearReceipt
+    clearReceiptData,
+    closeReceiptPopup
   } = usePopups();
 
-  // 포인트 충전 완료 후 팝업 닫기를 useCallback으로 최적화
-  const handleChargeComplete = useCallback(async (amount: number) => {
+  // 포인트 충전 완료 후 팝업 닫기
+  const handleChargeComplete = async (amount: number) => {
     console.log('포인트 충전 시작:', amount);
     const result = await handleCharge(amount);
     console.log('포인트 충전 결과:', result);
     if (result.success) {
       handleCloseChargePopup();
-      // onReceipt 호출 제거 - ChargePopup에서 직접 onReceipt를 호출하므로 중복 방지
+      if (result.data) {
+        console.log('영수증 데이터 설정:', result.data);
+        handleReceipt(result.data);
+      }
     }
     return result;
-  }, [handleCharge, handleCloseChargePopup]);
+  };
 
-  // 영수증 팝업 닫기를 useCallback으로 최적화
-  const handleCloseReceipt = useCallback(() => {
-    // closeAndClearReceipt를 사용하여 중복 호출 방지
-    closeAndClearReceipt();
-  }, [closeAndClearReceipt]);
-
-  // MyPageContent props를 useMemo로 최적화
-  const myPageContentProps = useMemo(() => ({
-    currentBalance,
-    activeTab,
-    pointHistory,
-    pointHistoryLoading,
-    filterType,
-    currentPage,
-    pageSize,
-    totalElements,
-    totalPages,
-    isLast,
-    performances,
-    loading,
-    onChargeClick: handleChargeClick,
-    onTabChange: setActiveTab,
-    onNavigate: navigate,
-    onFilterChange: setFilterType,
-    onEditPerformance: handleEditPerformance,
-    onDeletePerformance: handleDeletePerformance,
-    onPageChange: handlePageChange
-  }), [
-    currentBalance,
-    activeTab,
-    pointHistory,
-    pointHistoryLoading,
-    filterType,
-    currentPage,
-    pageSize,
-    totalElements,
-    totalPages,
-    isLast,
-    performances,
-    loading,
-    handleChargeClick,
-    setActiveTab,
-    navigate,
-    setFilterType,
-    handleEditPerformance,
-    handleDeletePerformance,
-    handlePageChange
-  ]);
-
-  // MyPagePopups props를 useMemo로 최적화
-  const myPagePopupsProps = useMemo(() => ({
-    showChargePopup,
-    showReceiptPopup,
-    currentBalance,
-    receiptData,
-    onCloseChargePopup: handleCloseChargePopup,
-    onReceipt: handleReceipt,
-    onCloseReceipt: handleCloseReceipt
-  }), [
-    showChargePopup,
-    showReceiptPopup,
-    currentBalance,
-    receiptData,
-    handleCloseChargePopup,
-    handleReceipt,
-    handleCloseReceipt
-  ]);
+  // 영수증 팝업 닫기
+  const handleCloseReceipt = () => {
+    closeReceiptPopup();
+    clearReceiptData();
+  };
 
   // 권한 확인 중일 때 로딩 표시
   if (!isLoggedIn) {
@@ -139,8 +75,32 @@ const MyPage: React.FC = () => {
 
   return (
     <Layout>
-      <MyPageContent {...myPageContentProps} />
-      <MyPagePopups {...myPagePopupsProps} />
+      <MyPageContent
+        currentBalance={currentBalance}
+        activeTab={activeTab}
+        pointHistory={pointHistory}
+        pointHistoryLoading={pointHistoryLoading}
+        filterType={filterType}
+        performances={performances}
+        loading={loading}
+        onChargeClick={handleChargeClick}
+        onTabChange={setActiveTab}
+        onNavigate={navigate}
+        onFilterChange={setFilterType}
+        onEditPerformance={handleEditPerformance}
+        onDeletePerformance={handleDeletePerformance}
+      />
+
+      <MyPagePopups
+        showChargePopup={showChargePopup}
+        showReceiptPopup={showReceiptPopup}
+        currentBalance={currentBalance}
+        receiptData={receiptData}
+        onCloseChargePopup={handleCloseChargePopup}
+        onCharge={handleChargeComplete}
+        onReceipt={handleReceipt}
+        onCloseReceipt={handleCloseReceipt}
+      />
     </Layout>
   );
 };

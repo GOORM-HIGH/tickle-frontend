@@ -1,20 +1,15 @@
 import React from 'react';
 import { Sidebar, MainContent } from './index';
 import { MyPageTab } from '../constants/tabs';
-import { PointHistoryResponse } from '../../services/pointService';
+import { PointHistory } from '../types';
 import { PerformanceListItem } from '../../home/types/performance';
 
 interface MyPageContentProps {
   currentBalance: number;
   activeTab: MyPageTab;
-  pointHistory: PointHistoryResponse[];
+  pointHistory: PointHistory[];
   pointHistoryLoading: boolean;
   filterType: string;
-  currentPage: number;
-  pageSize: number;
-  totalElements: number;
-  totalPages: number;
-  isLast: boolean;
   performances: PerformanceListItem[];
   loading: boolean;
   onChargeClick: () => void;
@@ -23,7 +18,6 @@ interface MyPageContentProps {
   onFilterChange: (filter: string) => void;
   onEditPerformance: (id: number) => void;
   onDeletePerformance: (id: number) => void;
-  onPageChange: (page: number) => void;
 }
 
 export const MyPageContent: React.FC<MyPageContentProps> = ({
@@ -32,11 +26,6 @@ export const MyPageContent: React.FC<MyPageContentProps> = ({
   pointHistory,
   pointHistoryLoading,
   filterType,
-  currentPage,
-  pageSize,
-  totalElements,
-  totalPages,
-  isLast,
   performances,
   loading,
   onChargeClick,
@@ -45,7 +34,6 @@ export const MyPageContent: React.FC<MyPageContentProps> = ({
   onFilterChange,
   onEditPerformance,
   onDeletePerformance,
-  onPageChange,
 }) => {
   return (
     <div className="mypage">
@@ -65,18 +53,12 @@ export const MyPageContent: React.FC<MyPageContentProps> = ({
             pointHistory={pointHistory}
             pointHistoryLoading={pointHistoryLoading}
             filterType={filterType}
-            currentPage={currentPage}
-            pageSize={pageSize}
-            totalElements={totalElements}
-            totalPages={totalPages}
-            isLast={isLast}
             performances={performances}
             loading={loading}
             onFilterChange={onFilterChange}
             onChargeClick={onChargeClick}
             onEditPerformance={onEditPerformance}
             onDeletePerformance={onDeletePerformance}
-            onPageChange={onPageChange}
           />
         </div>
       </div>
