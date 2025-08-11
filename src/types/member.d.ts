@@ -50,3 +50,9 @@ type MemberInfo = {
   contractCharge?: number; // 백엔드가 BigDecimal 문자열이면 string | number 로
   memberRole?: UserRole; // 필요하면 추가
 };
+
+type UpdateMemberRequest = {
+  nickname?: string;
+  charge?: number; // % 값
+  img?: string; // 새로 업로드된 이미지 URL
+};

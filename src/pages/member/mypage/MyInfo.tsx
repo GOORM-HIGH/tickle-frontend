@@ -9,6 +9,11 @@ import AuthInput from "../../../components/member/AuthInput";
 import Button from "../../../components/common/Button";
 import Select from "../../../components/common/Select";
 
+import {
+  validateNickName,
+  validateContractCharge,
+} from "../../../utils/validations";
+
 const bankList: string[] = [
   "국민은행",
   "신한은행",
@@ -29,17 +34,12 @@ export default function MyInfo() {
     hostBizDepositor: "",
     hostBizBankNumber: "",
     contractCharge: 0,
+    memberRole: "MEMBER",
   });
 
-  // 새로 선택한 프로필 이미지(선택 시 업로드용)
   const [profileImage, setProfileImage] = useState<File | null>(null);
-
-  // 간단 에러 상태 (필요한 항목만 유지)
-  const [errors, setErrors] = useState({
-    nickname: "",
-    hostBizDepositor: "",
-    hostBizBankNumber: "",
-  });
+  const [isSaving, setIsSaving] = useState(false);
+  const [errors, setErrors] = useState({ nickname: "" });
 
   // 회원 정보 조회
   const fetchMemberInfo = async () => {
@@ -62,31 +62,23 @@ export default function MyInfo() {
     fetchMemberInfo();
   }, []);
 
-  // 공통 변경 핸들러 (수정 가능 항목만 사용할 예정)
+  // 입력 핸들러 (수수료율은 숫자 캐스팅)
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
 
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => {
+      if (name === "contractCharge") {
+        return { ...prev, [name]: Number(value) };
+      }
+      return { ...prev, [name]: value };
+    });
 
-    // (선택) 간단한 즉시 검증
     if (name === "nickname") {
       setErrors((prev) => ({
         ...prev,
         nickname: value ? "" : "닉네임을 입력해주세요.",
-      }));
-    }
-    if (name === "hostBizDepositor") {
-      setErrors((prev) => ({
-        ...prev,
-        hostBizDepositor: value ? "" : "예금주를 입력해주세요.",
-      }));
-    }
-    if (name === "hostBizBankNumber") {
-      setErrors((prev) => ({
-        ...prev,
-        hostBizBankNumber: value ? "" : "계좌번호를 입력해주세요.",
       }));
     }
   };
@@ -113,51 +105,73 @@ export default function MyInfo() {
     }
   };
 
-  // 저장
+  // 저장: 닉네임 + (HOST이면 수수료율) + (선택 이미지)만 전송
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSaving) return;
 
-    // 필수 간단 검증
-    if (!formData.nickname) {
-      setErrors((prev) => ({ ...prev, nickname: "닉네임을 입력해주세요." }));
-      return;
-    }
-    if (!formData.hostBizDepositor) {
-      setErrors((prev) => ({
-        ...prev,
-        hostBizDepositor: "예금주를 입력해주세요.",
-      }));
-      return;
-    }
-    if (!formData.hostBizBankNumber) {
-      setErrors((prev) => ({
-        ...prev,
-        hostBizBankNumber: "계좌번호를 입력해주세요.",
-      }));
+    // 닉네임 검증
+    const nicknameError = validateNickName(formData.nickname);
+    if (nicknameError) {
+      setErrors((prev) => ({ ...prev, nickname: nicknameError }));
       return;
     }
 
+    // HOST 전용: 수수료율 검증
+    if (formData.memberRole === "HOST") {
+      const chargeError = validateContractCharge(
+        Number(formData.contractCharge)
+      );
+      if (chargeError) {
+        alert(chargeError);
+        return;
+      }
+    }
+
+    setIsSaving(true);
     try {
-      // 새 이미지 업로드(선택 시)
-      const uploadedUrl = await uploadProfileImage();
-      const payload: Partial<MemberInfo> = {
-        ...formData,
-        img: uploadedUrl ?? formData.img, // 새로 업로드됐다면 교체
-      };
+      const accessToken = getAccessToken();
+      if (!accessToken) {
+        alert("로그인이 필요합니다.");
+        return;
+      }
 
-      // 백엔드의 업데이트 엔드포인트에 맞게 수정하세요.
-      // 예: PUT /api/v1/mypage
-      await api.put<ApiResponse<MemberInfo>>("/api/v1/mypage", payload, {
-        withCredentials: true,
-      });
+      // (선택) 새 이미지 업로드
+      const uploadedUrl = await uploadProfileImage();
+
+      // 전송 페이로드 (오직 닉네임/수수료율/이미지)
+      const payload: UpdateMemberRequest = {
+        nickname: formData.nickname.trim(),
+        img: uploadedUrl ?? undefined,
+      };
+      if (formData.memberRole === "HOST") {
+        const chargeNum = Number(formData.contractCharge);
+        if (!Number.isNaN(chargeNum)) payload.charge = chargeNum;
+      }
+
+      // ✅ 백엔드 사양에 맞춰 PathVariable로 이메일 전달
+      await api.post<ApiResponse<void>>(
+        `/api/v1/members/${encodeURIComponent(formData.email)}`,
+        payload,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+          withCredentials: true,
+        }
+      );
 
       alert("저장되었습니다.");
-      // 최신 데이터로 갱신
-      fetchMemberInfo();
+      await fetchMemberInfo();
       setProfileImage(null);
-    } catch (error) {
-      console.error("회원 정보 저장 실패", error);
-      alert("저장 중 오류가 발생했습니다.");
+    } catch (error: any) {
+      console.error("회원 정보 저장 실패", error?.response?.data || error);
+      // 서버 메시지 노출(가능할 때)
+      const msg =
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        "저장 중 오류가 발생했습니다.";
+      alert(msg);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -167,7 +181,7 @@ export default function MyInfo() {
         onSubmit={handleSubmit}
         className="flex flex-col items-center gap-6"
       >
-        {/* 프로필 이미지 */}
+        {/* 프로필 이미지 (수정 가능) */}
         <ProfileImageUploader
           imageUrl={
             profileImage
@@ -178,7 +192,7 @@ export default function MyInfo() {
         />
 
         <div className="flex flex-col gap-4">
-          {/* 읽기 전용 표시 필드들 */}
+          {/* 읽기 전용 */}
           <AuthInput
             label="이메일"
             variant="large"
@@ -200,7 +214,7 @@ export default function MyInfo() {
             />
           )}
 
-          {/* 수정 가능 필드들 */}
+          {/* 닉네임 (수정 가능) */}
           <AuthInput
             label="닉네임"
             name="nickname"
@@ -211,47 +225,54 @@ export default function MyInfo() {
             error={errors.nickname}
           />
 
-          <Select
-            label="은행"
-            name="hostBizBank"
-            value={formData.hostBizBank}
-            onChange={handleChange}
-            options={[
-              { label: "선택", value: "" },
-              ...bankList.map((b) => ({ label: b, value: b })),
-            ]}
-          />
+          {/* HOST 전용: 보기만 가능(수정 불가) + 수수료율(수정 가능) */}
+          {formData.memberRole === "HOST" && (
+            <>
+              <Select
+                label="은행"
+                name="hostBizBank"
+                value={formData.hostBizBank}
+                onChange={handleChange}
+                options={[
+                  { label: "선택", value: "" },
+                  ...bankList.map((b) => ({ label: b, value: b })),
+                ]}
+                disabled
+              />
 
-          <AuthInput
-            label="예금주"
-            name="hostBizDepositor"
-            variant="large"
-            placeholder="예금주"
-            value={formData.hostBizDepositor}
-            onChange={handleChange}
-            error={errors.hostBizDepositor}
-          />
+              <AuthInput
+                label="예금주"
+                name="hostBizDepositor"
+                variant="large"
+                placeholder="예금주"
+                value={formData.hostBizDepositor}
+                onChange={handleChange}
+                readOnly
+              />
 
-          <AuthInput
-            label="계좌번호"
-            name="hostBizBankNumber"
-            variant="large"
-            placeholder="계좌번호"
-            value={formData.hostBizBankNumber}
-            onChange={handleChange}
-            error={errors.hostBizBankNumber}
-          />
+              <AuthInput
+                label="계좌번호"
+                name="hostBizBankNumber"
+                variant="large"
+                placeholder="계좌번호"
+                value={formData.hostBizBankNumber}
+                onChange={handleChange}
+                readOnly
+              />
 
-          <Select
-            label="수수료율"
-            name="contractCharge"
-            value={formData.contractCharge}
-            onChange={handleChange}
-            options={chargeList.map((c) => ({ label: `${c}%`, value: c }))}
-          />
+              {/* 수수료율만 수정 가능 */}
+              <Select
+                label="수수료율"
+                name="contractCharge"
+                value={formData.contractCharge}
+                onChange={handleChange}
+                options={chargeList.map((c) => ({ label: `${c}%`, value: c }))}
+              />
+            </>
+          )}
 
-          <Button size="large" type="submit">
-            저장
+          <Button size="large" type="submit" disabled={isSaving}>
+            {isSaving ? "저장 중..." : "저장"}
           </Button>
         </div>
       </form>
