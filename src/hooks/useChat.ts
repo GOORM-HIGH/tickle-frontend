@@ -25,8 +25,8 @@ export const useChat = () => {
         console.log(`🔍 채팅방 ${room.chatRoomId} unreadMessageCount 값:`, room.unreadMessageCount);
         
         if (room.unreadMessageCount === undefined || room.unreadMessageCount === null) {
-          console.log(`🔍 채팅방 ${room.chatRoomId}에 unreadMessageCount 필드가 없음 - 테스트용 값 3 설정`);
-          return { ...room, unreadMessageCount: 3 };
+          console.log(`🔍 채팅방 ${room.chatRoomId}에 unreadMessageCount 필드가 없음 - 0으로 설정`);
+          return { ...room, unreadMessageCount: 0 };
         }
         return room;
       });
@@ -35,33 +35,9 @@ export const useChat = () => {
       setChatRooms(processedRooms);
     } catch (error) {
       console.error('🔍 채팅방 목록 로드 실패:', error);
-      // 🎯 API 실패 시 테스트용 데이터 (디버깅용)
-      console.log('🔍 API 실패로 인한 테스트 데이터 사용');
-      const testRooms = [
-        {
-          chatRoomId: 1,
-          performanceId: 1,
-          name: '테스트 채팅방 1',
-          status: true,
-          maxParticipants: 100,
-          participantCount: 5,
-          unreadMessageCount: 3,  // 테스트용 읽지 않은 메시지
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        },
-        {
-          chatRoomId: 2,
-          performanceId: 2,
-          name: '테스트 채팅방 2',
-          status: true,
-          maxParticipants: 50,
-          participantCount: 3,
-          unreadMessageCount: 2,  // 테스트용 읽지 않은 메시지
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      ];
-      setChatRooms(testRooms);
+      // 🎯 API 실패 시 빈 배열로 설정 (테스트 데이터 제거)
+      console.log('🔍 API 실패로 인해 빈 채팅방 목록 설정');
+      setChatRooms([]);
     } finally {
       setLoading(false);
     }
@@ -88,6 +64,20 @@ export const useChat = () => {
   const decrementUnreadCount = useCallback((chatRoomId: number, count: number = 1) => {
     console.log(`📉 읽지 않은 메시지 개수 감소: 채팅방 ${chatRoomId}, 감소량 ${count}`);
     setTotalUnreadCount(prev => Math.max(0, prev - count));
+  }, []);
+
+  // 🎯 새 채팅방 추가
+  const addChatRoom = useCallback((newRoom: ChatRoom) => {
+    console.log(`➕ 새 채팅방 추가: ${newRoom.name}`);
+    setChatRooms(prev => {
+      // 중복 체크
+      const isDuplicate = prev.some(room => room.chatRoomId === newRoom.chatRoomId);
+      if (isDuplicate) {
+        console.log(`⚠️ 채팅방 ${newRoom.chatRoomId}는 이미 존재함`);
+        return prev;
+      }
+      return [...prev, newRoom];
+    });
   }, []);
 
   // 🎯 채팅방 목록에서 읽지 않은 메시지 개수 계산 (백엔드에서 이미 계산된 값 사용)
@@ -124,6 +114,7 @@ export const useChat = () => {
     loading,
     loadMyChatRooms,
     incrementUnreadCount,  // ✅ 새 메시지 수신 시 증가
-    decrementUnreadCount   // ✅ 읽음 처리 시 감소
+    decrementUnreadCount,  // ✅ 읽음 처리 시 감소
+    addChatRoom            // ✅ 새 채팅방 추가
   };
 };

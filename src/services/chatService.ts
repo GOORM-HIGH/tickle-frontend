@@ -76,10 +76,13 @@ export const chatService = {
   },
 
   // 채팅방 참여
-  joinChatRoom: async (chatRoomId: number): Promise<void> => {
-    await api.post(`/api/v1/chat/participants/rooms/${chatRoomId}/join`, {
+  joinChatRoom: async (performanceId: number): Promise<ChatRoom> => {
+    await api.post(`/api/v1/chat/participants/rooms/${performanceId}/join`, {
       message: "채팅방에 참여했습니다."
     });
+    
+    // 참여 후 채팅방 정보 반환
+    return await chatService.getChatRoomByPerformance(performanceId);
   },
 
   getChatRoomByPerformance: async (performanceId: number): Promise<ChatRoom> => {

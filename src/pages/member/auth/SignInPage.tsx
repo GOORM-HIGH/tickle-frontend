@@ -48,20 +48,8 @@ const SignInPage: React.FC = () => {
 
     try {
       const { email, password } = formData;
-      const response = await axios.post(
-        "http://127.0.0.1:8081/api/v1/sign-in",
-        { email, password },
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-
-      console.log(response.data);
-
-      const { accessToken } = response.data;
-      setAccessToken(accessToken);
-
-      // 🎯 useAuth의 login 함수를 호출하여 상태 업데이트
+      
+      // 🎯 useAuth의 login 함수만 사용 (토큰 설정 포함)
       await login(email, password);
 
       // 🎯 명시적으로 홈페이지로 리다이렉트
