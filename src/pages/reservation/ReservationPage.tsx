@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import Layout from '../../components/layout/Layout';
 import SeatSelection from '../../components/reservation/SeatSelection';
 import CouponSelection from '../../components/reservation/CouponSelection';
 import ReservationComplete from '../../components/reservation/ReservationComplete';
@@ -111,22 +110,18 @@ const ReservationPage: React.FC = () => {
 
   if (loading) {
     return (
-      <Layout>
-        <div className="loading">공연 정보를 불러오는 중...</div>
-      </Layout>
+      <div className="loading">공연 정보를 불러오는 중...</div>
     );
   }
 
   if (error) {
     return (
-      <Layout>
-        <div className="error">
-          {error}
-          <button onClick={() => navigate(-1)} className="back-button">
-            뒤로 가기
-          </button>
-        </div>
-      </Layout>
+      <div className="error">
+        {error}
+        <button onClick={() => navigate(-1)} className="back-button">
+          뒤로 가기
+        </button>
+      </div>
     );
   }
 
@@ -173,32 +168,30 @@ const ReservationPage: React.FC = () => {
   };
 
   return (
-    <Layout>
-      <div className="reservation-page">
-        {/* 진행 단계 표시 */}
-        {currentStep !== 'complete' && (
-          <div className="progress-indicator">
-            <div className={`progress-step ${currentStep === 'seat-selection' ? 'active' : ''}`}>
-              <div className="step-number">1</div>
-              <div className="step-label">좌석 선택</div>
-            </div>
-            <div className="progress-line"></div>
-            <div className={`progress-step ${currentStep === 'payment' ? 'active' : ''}`}>
-              <div className="step-number">2</div>
-              <div className="step-label">결제</div>
-            </div>
-            <div className="progress-line"></div>
-            <div className="progress-step">
-              <div className="step-number">3</div>
-              <div className="step-label">예매 완료</div>
-            </div>
+    <div className="reservation-page">
+      {/* 진행 단계 표시 */}
+      {currentStep !== 'complete' && (
+        <div className="progress-indicator">
+          <div className={`progress-step ${currentStep === 'seat-selection' ? 'active' : ''}`}>
+            <div className="step-number">1</div>
+            <div className="step-label">좌석 선택</div>
           </div>
-        )}
+          <div className="progress-line"></div>
+          <div className={`progress-step ${currentStep === 'payment' ? 'active' : ''}`}>
+            <div className="step-number">2</div>
+            <div className="step-label">결제</div>
+          </div>
+          <div className="progress-line"></div>
+          <div className="progress-step">
+            <div className="step-number">3</div>
+            <div className="step-label">예매 완료</div>
+          </div>
+        </div>
+      )}
 
-        {/* 현재 단계 렌더링 */}
-        {renderCurrentStep()}
-      </div>
-    </Layout>
+      {/* 현재 단계 렌더링 */}
+      {renderCurrentStep()}
+    </div>
   );
 };
 

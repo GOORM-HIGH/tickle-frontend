@@ -42,7 +42,7 @@ const PerformanceRouter: React.FC = () => {
       <Route path="/genre/:genreId" element={<DynamicGenrePage />} />
       
       {/* 예매 페이지 */}
-      <Route path="/performance/:performanceId/reservation" element={<ReservationPage />} />
+      <Route path="/:performanceId/reservation" element={<ReservationPage />} />
       
       {/* 공연 상세 페이지 */}
       <Route path="/:id" element={<PerformanceDetailPage />} />
