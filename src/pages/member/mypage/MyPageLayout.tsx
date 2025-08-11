@@ -29,7 +29,7 @@ export default function MyPageLayout() {
 
         {/* 오른쪽 컨텐츠 */}
         <main className="col-span-12 md:col-span-9">
-          <div className="rounded-2xl border p-6 bg-white">
+          <div>
             <Outlet />
           </div>
         </main>
