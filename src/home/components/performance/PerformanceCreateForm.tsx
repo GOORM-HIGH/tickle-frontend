@@ -90,6 +90,7 @@ const PerformanceCreateForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     try {
       const requestData: CreatePerformanceRequestDto = {
         title: formData.title,
@@ -106,19 +107,12 @@ const PerformanceCreateForm: React.FC = () => {
 
       const response = await performanceApi.createPerformance(requestData);
       
-      if (formData.isEvent) {
-        // 이벤트인 경우 이벤트 생성 페이지로 이동
-        alert('공연이 성공적으로 생성되었습니다! 이벤트 생성 페이지로 이동합니다.');
-        navigate('/event/create', { 
-          state: { 
-            performanceId: response.data?.performanceId || 'new',
-            performanceData: requestData 
-          } 
-        });
+      // 공연 생성 성공 후 이벤트 참여를 체크했다면 이벤트 생성 페이지로 이동
+      if (formData.isEvent && response.data?.performanceId) {
+        navigate(`/mypage/event/create?performanceId=${response.data.performanceId}`);
       } else {
-        // 일반 공연인 경우 홈으로 이동
         alert('공연이 성공적으로 생성되었습니다!');
-        navigate('/');
+        navigate('');
       }
     } catch (error: any) {
       console.error('공연 생성 실패:', error);
@@ -291,6 +285,14 @@ const PerformanceCreateForm: React.FC = () => {
                     <input type="checkbox" name="isEvent" checked={formData.isEvent} onChange={handleInputChange} />
                     <span className="checkbox-text">이벤트 참여 계약을 맺었을 때 체크해주세요!</span>
                   </label>
+                  {formData.isEvent && (
+                    <div className="event-notice">
+                      <p>🎉 이벤트 참여가 확인되었습니다!</p>
+                      <small style={{ color: '#666', fontSize: '12px' }}>
+                        공연 생성하기 버튼을 누르면 이벤트 생성 페이지로 이동합니다
+                      </small>
+                    </div>
+                  )}
                 </div>
               </div>
 

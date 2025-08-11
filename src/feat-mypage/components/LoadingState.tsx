@@ -4,7 +4,7 @@ interface LoadingStateProps {
   message?: string;
 }
 
-export const LoadingState: React.FC<LoadingStateProps> = ({ 
+const LoadingState: React.FC<LoadingStateProps> = ({ 
   message = "권한 확인 중..." 
 }) => {
   return (
@@ -13,3 +13,5 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
     </div>
   );
 };
+
+export default LoadingState;
