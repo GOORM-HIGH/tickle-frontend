@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import MyPage from '../feat-mypage/pages/MyPage';
 import PointHistoryPage from '../feat-mypage/pages/PointHistoryPage';
 import PointChargePage from '../feat-mypage/pages/PointChargePage';
+import { EventForm } from '../feat-mypage/components';
 
 const MypageRouter: React.FC = () => {
   return (
@@ -13,6 +14,7 @@ const MypageRouter: React.FC = () => {
       {/* 포인트 관련 라우트 */}
       <Route path="/point/history" element={<PointHistoryPage />} />
       <Route path="/point/charge" element={<PointChargePage />} />
+      <Route path="/event/create" element={<EventForm />} />
     </Routes>
   );
 };

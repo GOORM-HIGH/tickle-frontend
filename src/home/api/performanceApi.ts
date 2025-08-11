@@ -178,6 +178,41 @@ export const formatDateWithTime = (dateString: string, timeType: 'performance' |
   }
 };
 
+// 좌석 정보 타입 정의
+export interface SeatDto {
+  seatId: number;
+  seatNumber: string;
+  seatGrade: string;
+  seatPrice: number;
+  statusId: number;
+}
+
+export interface SeatsResponseDto {
+  hallType: string;
+  seats: SeatDto[];
+}
+
+// 티켓 이벤트 생성 요청 DTO
+export interface TicketEventCreateRequestDto {
+  performanceId: number;
+  seatId: number;
+  name: string;
+  goalPrice: number;
+  perPrice: number;
+}
+
+// 티켓 이벤트 응답 DTO
+export interface TicketEventResponseDto {
+  eventId: number;
+  performanceId: number;
+  seatId: number;
+  name: string;
+  goalPrice: number;
+  perPrice: number;
+  status: string;
+  createdAt: string;
+}
+
 // 공연 관련 API 함수들
 export const performanceApi = {
   // 인기 공연 목록 조회
@@ -312,6 +347,29 @@ export const performanceApi = {
         'Accept': 'application/json',
       }
     });
+    return response.data;
+  },
+
+  // 공연 좌석 정보 조회
+  getPerformanceSeats: async (performanceId: number): Promise<ResultResponse<SeatsResponseDto>> => {
+    const response = await api.get(`/api/v1/reservation/${performanceId}/seats`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      }
+    });
+    return response.data;
+  },
+
+  // 티켓 이벤트 생성
+  createTicketEvent: async (data: TicketEventCreateRequestDto): Promise<ResultResponse<TicketEventResponseDto>> => {
+    const response = await api.post('/api/v1/event/ticket', data, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      }
+    });
+    console.log('백엔드 응답:', response);
     return response.data;
   },
 
