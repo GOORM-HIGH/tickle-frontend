@@ -1,20 +1,9 @@
 import React from 'react';
 import { History, Plus } from 'lucide-react';
-
-interface PointHistoryItem {
-  id: string;
-  type: 'charge' | 'use';
-  amount: number;
-  description: string;
-  status: string;
-  date: string;
-  time: string;
-  paymentMethod: string;
-  orderId: string;
-}
+import { PointSimpleResponseDto } from '../../services/pointService';
 
 interface PointHistorySectionProps {
-  pointHistory: PointHistoryItem[];
+  pointHistory: PointSimpleResponseDto[];
   pointHistoryLoading: boolean;
   filterType: string;
   onFilterChange: (type: string) => void;
@@ -28,6 +17,60 @@ const PointHistorySection: React.FC<PointHistorySectionProps> = ({
   onFilterChange,
   onChargeClick
 }) => {
+  // 포인트 내역을 필터링하고 정렬하는 함수
+  const getFilteredHistory = () => {
+    let filtered = pointHistory;
+    
+    // 필터 타입에 따라 내역 필터링
+    if (filterType === 'charge') {
+      filtered = pointHistory.filter(item => item.credit > 0);
+    } else if (filterType === 'use') {
+      filtered = pointHistory.filter(item => item.credit < 0);
+    }
+    
+    // 날짜순으로 정렬 (최신순)
+    return filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  };
+
+  // 날짜와 시간을 분리하는 함수
+  const formatDateTime = (dateTimeString: string) => {
+    const date = new Date(dateTimeString);
+    const dateStr = date.toLocaleDateString('ko-KR');
+    const timeStr = date.toLocaleTimeString('ko-KR', { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+    return { date: dateStr, time: timeStr };
+  };
+
+  // 포인트 타입에 따른 상태와 설명을 반환하는 함수
+  const getPointInfo = (item: PointSimpleResponseDto) => {
+    if (item.credit > 0) {
+      return {
+        type: 'charge',
+        status: '충전 완료',
+        description: '포인트 충전',
+        className: 'history-completed'
+      };
+    } else if (item.credit < 0) {
+      return {
+        type: 'use',
+        status: '사용 완료',
+        description: '포인트 사용',
+        className: 'history-pending'
+      };
+    } else {
+      return {
+        type: 'neutral',
+        status: '처리됨',
+        description: '포인트 처리',
+        className: 'history-completed'
+      };
+    }
+  };
+
+  const filteredHistory = getFilteredHistory();
+
   return (
     <div className="tab-content">
       <div className="history-mainContent">
@@ -66,47 +109,50 @@ const PointHistorySection: React.FC<PointHistorySectionProps> = ({
           </div>
         </div>
 
-                          {pointHistoryLoading ? (
-                    <div className="loading">포인트 내역을 불러오는 중...</div>
-                  ) : pointHistory.length === 0 ? (
-                    <div className="empty-state">
-                      <p>포인트 내역이 없습니다.</p>
-                    </div>
-                  ) : (
-                    <div className="history-historyTable">
-                      <div className="history-tableHeader">
-                        <div className="history-headerCell">상태/내용</div>
-                        <div className="history-headerCell">충전 일시</div>
-                        <div className="history-headerCell">충전 금액</div>
-                        <div className="history-headerCell">충전 수단</div>
+        {pointHistoryLoading ? (
+          <div className="loading">포인트 내역을 불러오는 중...</div>
+        ) : filteredHistory.length === 0 ? (
+          <div className="empty-state">
+            <p>포인트 내역이 없습니다.</p>
+          </div>
+        ) : (
+          <div className="history-historyTable">
+            <div className="history-tableHeader">
+              <div className="history-headerCell">상태/내용</div>
+              <div className="history-headerCell">처리 일시</div>
+              <div className="history-headerCell">포인트</div>
+              <div className="history-headerCell">주문번호</div>
+            </div>
+            <div className="history-tableBody">
+              {filteredHistory.map((item, index) => {
+                const { date, time } = formatDateTime(item.createdAt);
+                const pointInfo = getPointInfo(item);
+                
+                return (
+                  <div key={`${item.orderId}-${index}`} className="history-tableRow">
+                    <div className="history-statusCell">
+                      <div className={`history-statusBadge ${pointInfo.className}`}>
+                        {pointInfo.status}
                       </div>
-                      <div className="history-tableBody">
-                        {pointHistory
-                          .filter(item => filterType === 'all' || item.type === filterType)
-                          .map((item) => (
-                            <div key={item.id} className="history-tableRow">
-                              <div className="history-statusCell">
-                                <div className={`history-statusBadge ${item.type === 'charge' ? 'history-pending' : 'history-completed'}`}>
-                                  {item.type === 'charge' ? '입금 대기' : '결제 완료'}
-                                </div>
-                                <div className="history-description">{item.description}</div>
-                              </div>
-                              <div className="history-dateCell">
-                                {item.date} {item.time}
-                              </div>
-                              <div className="history-amountCell">
-                                <span className={item.type === 'use' ? 'amount-negative' : 'amount-positive'}>
-                                  {item.type === 'use' ? '-' : '+'}{Math.abs(item.amount).toLocaleString()}원
-                                </span>
-                              </div>
-                              <div className="history-methodCell">
-                                {item.paymentMethod}
-                              </div>
-                            </div>
-                          ))}
-                      </div>
+                      <div className="history-description">{pointInfo.description}</div>
                     </div>
-                  )}
+                    <div className="history-dateCell">
+                      {date} {time}
+                    </div>
+                    <div className="history-amountCell">
+                      <span className={pointInfo.type === 'use' ? 'amount-negative' : 'amount-positive'}>
+                        {pointInfo.type === 'use' ? '' : '+'}{item.credit.toLocaleString()}P
+                      </span>
+                    </div>
+                    <div className="history-methodCell">
+                      {item.orderId || '-'}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

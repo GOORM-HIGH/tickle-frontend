@@ -26,6 +26,7 @@ const ReceiptPopup: React.FC<ReceiptPopupProps> = ({ receiptData, onClose }) => 
 
   const handleClose = () => {
     setIsVisible(false);
+    // 300ms 후에 onClose 호출하여 부드러운 애니메이션 제공
     setTimeout(onClose, 300);
   };
 
