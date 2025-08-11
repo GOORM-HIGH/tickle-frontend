@@ -7,7 +7,8 @@ import {
   CouponsTab,
   SettlementsTab,
   PointHistoryTab,
-  PerformanceManagementTab
+  PerformanceManagementTab,
+  ScrapPage,
 } from './tabs';
 
 import { MyPageTab } from '../constants/tabs';
@@ -56,6 +57,9 @@ const MainContent: React.FC<MainContentProps> = ({
 
       case 'reservations':
         return <ReservationsTab />;
+      
+      case 'scraps':
+        return <ScrapPage />;
 
       case 'performances':
         return (
