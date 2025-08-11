@@ -2,7 +2,6 @@ import Cookies from "js-cookie";
 
 export const setAccessToken = (token: string) => {
   Cookies.set("accessToken", token, {
-    secure: true,
     sameSite: "Strict",
     expires: 1 / 24, // 1시간
   });
@@ -19,7 +18,6 @@ export const removeTokens = () => {
 // 사용자 정보 관리 함수들
 export const setUserInfo = (userInfo: string) => {
   Cookies.set("userInfo", userInfo, {
-    secure: true,
     sameSite: "Strict",
     expires: 7, // 7일
   });

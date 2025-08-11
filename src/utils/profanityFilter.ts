@@ -27,7 +27,19 @@ const replacementMap: { [key: string]: string } = {
   'pussy': '🐱'
 };
 
-export const profanityFilter = {
+export const profanityFilter: {
+  detectProfanity: (text: string) => boolean;
+  filterText: (text: string) => string;
+  addProfanity: (word: string, replacement?: string) => void;
+  removeProfanity: (word: string) => void;
+  filterLevel: {
+    NONE: 'none';
+    LIGHT: 'light';
+    MEDIUM: 'medium';
+    STRICT: 'strict';
+  };
+  filterByLevel: (text: string, level: 'NONE' | 'LIGHT' | 'MEDIUM' | 'STRICT') => string;
+} = {
   // 비속어 감지
   detectProfanity: (text: string): boolean => {
     const lowerText = text.toLowerCase();
@@ -75,7 +87,7 @@ export const profanityFilter = {
   } as const,
 
   // 강도별 필터링
-  filterByLevel: (text: string, level: keyof typeof profanityFilter.filterLevel): string => {
+  filterByLevel: (text: string, level: 'NONE' | 'LIGHT' | 'MEDIUM' | 'STRICT'): string => {
     switch (level) {
       case 'NONE':
         return text;
@@ -90,8 +102,6 @@ export const profanityFilter = {
       case 'STRICT':
         // 엄격한 필터링 (모든 의심스러운 패턴)
         return profanityFilter.filterText(text)
-          .replace(/\b\w*[씨시]발\w*\b/gi, '💢')
-          .replace(/\b\w*[병]신\w*\b/gi, '🤔')
           .replace(/\b\w*[개]새끼\w*\b/gi, '🐕')
           .replace(/\b\w*[바]보\w*\b/gi, '🤔');
       default:
