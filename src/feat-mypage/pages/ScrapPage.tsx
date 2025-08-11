@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bookmark } from 'lucide-react';
 import Cookies from 'js-cookie';
-import Layout from '../../../components/layout/Layout';
-import { useAuth } from '../../../hooks/useAuth';
-import { scrapService, PerformanceScrapDto } from '../../api/scrapService';
+import Layout from '../../components/layout/Layout';
+import { useAuth } from '../../hooks/useAuth';
+import { scrapService, PerformanceScrapDto } from '../../home/api/scrapService';
 
-import '../../styles/ScrapPage.css';
+import '../../home/styles/ScrapPage.css';
 
 const ScrapPage: React.FC = () => {
   const navigate = useNavigate();
