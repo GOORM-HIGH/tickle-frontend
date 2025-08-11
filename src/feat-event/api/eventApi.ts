@@ -1,4 +1,5 @@
 import api from '../../services/api';
+import { getAccessToken } from '../../utils/tokenUtils';
 
 // 이벤트 타입 정의
 export enum EventType {
@@ -170,7 +171,7 @@ export const issueCoupon = async (eventId: number) => {
 // 쿠폰 발급 API
 export const issueEventCoupon = async (eventId: number): Promise<{ status: number; message: string; data: string }> => {
   try {
-    const token = localStorage.getItem('accessToken');
+    const token = getAccessToken();
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
@@ -187,7 +188,17 @@ export const issueEventCoupon = async (eventId: number): Promise<{ status: numbe
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      
+      // 인증 관련 에러 처리
+      if (response.status === 401) {
+        throw new Error('인증 실패');
+      } else if (response.status === 403) {
+        throw new Error('권한이 없습니다');
+      } else if (response.status === 404) {
+        throw new Error('쿠폰을 찾을 수 없습니다');
+      } else {
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      }
     }
 
     const result = await response.json();
@@ -209,12 +220,7 @@ export const getSpecialEventCoupons = async () => {
     return responses.map(res => res.data.data);
   } catch (error) {
     console.error('특별 이벤트 쿠폰 조회 실패:', error);
-    // API 실패 시 기본 데이터 반환
-    return [
-      { id: 2, name: "뮤지컬 〈프리다〉", rate: 15, eventId: 2 },
-      { id: 3, name: "콘서트 〈스프링 페스티벌〉", rate: 25, eventId: 3 },
-      { id: 4, name: "연극 〈햄릿〉", rate: 20, eventId: 4 }
-    ];
+    throw error;
   }
 };
 
@@ -278,10 +284,9 @@ export const getPerformanceDetail = async (performanceId: number) => {
 export const getPerformanceImage = async (performanceId: number): Promise<string> => {
   try {
     const performanceDetail = await getPerformanceDetail(performanceId);
-    return performanceDetail.img || `https://picsum.photos/300/200?random=${performanceId}`;
+    return performanceDetail.img || '';
   } catch (error) {
     console.error('공연 이미지 조회 실패:', error);
-    // 에러 시 기본 이미지 반환
-    return `https://picsum.photos/300/200?random=${performanceId}`;
+    throw error;
   }
 }; 

@@ -91,7 +91,7 @@ export default function FeatureMenu({
           )}
 
           <Link
-            to="/event-ticket"
+            to="/event"
             className="flex items-center gap-1 hover:text-blue-600"
           >
             🎉 이벤트

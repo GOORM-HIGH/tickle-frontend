@@ -4,11 +4,11 @@ import Header from '../../components/layout/header/Header';
 import Footer from '../../components/layout/footer/Footer';
 import { getTicketEvents, TicketListResponseDto } from '../api/eventApi';
 import styles from '../styles/event.module.css';
-// 분리된 컴포넌트들
-import HeroSection from '../_components/event/HeroSection';
-import TabButtons from '../_components/event/TabButtons';
-import CouponEventSection from '../_components/event/CouponEventSection';
-import TicketEventSection from '../_components/event/TicketEventSection';
+import { useScrollToTop } from '../../hooks/useScrollToTop';
+import HeroSection from '../components/event/HeroSection';
+import TabButtons from '../components/event/TabButtons';
+import CouponEventSection from '../components/event/CouponEventSection';
+import TicketEventSection from '../components/event/TicketEventSection';
 
 export function EventPage() {
   const [activeTab, setActiveTab] = useState<'coupon' | 'ticket'>('coupon');
@@ -19,6 +19,7 @@ export function EventPage() {
   const [totalElements, setTotalElements] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const cardsPerPage = 9;
+  useScrollToTop();
 
   console.log('EventPage 렌더링됨');
 
