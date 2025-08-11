@@ -159,7 +159,7 @@ const GenreRanking: React.FC<CategoryRankingProps> = ({ category }) => {
             {performances
               .slice(currentSlide * 5, (currentSlide + 1) * 5)
               .map((performance, index) => (
-                <div className="performance-item" key={performance.performanceId}>
+                <div className="performance-genre-item" key={performance.performanceId}>
                   <Link 
                     to={`/performance/${performance.performanceId}`}
                     className="performance-card-link"

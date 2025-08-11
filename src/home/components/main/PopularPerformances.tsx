@@ -160,7 +160,7 @@ const PopularPerformances: React.FC = () => {
           {performances
             .slice(currentSlide * 5, (currentSlide + 1) * 5)
             .map((performance, index) => (
-              <div key={performance.id} className="performance-item">
+              <div key={performance.id} className="performance-home-item">
                 <Link 
                   to={`/performance/${performance.id}`}
                   className="performance-card-link"

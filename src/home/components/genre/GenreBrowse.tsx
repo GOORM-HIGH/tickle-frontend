@@ -60,6 +60,13 @@ const GenreBrowse: React.FC<CategoryBrowseProps> = ({ category }) => {
 
   // 카테고리를 장르 ID로 매핑
   const getGenreId = (category: string): number => {
+    // 숫자 문자열인 경우 바로 변환
+    const numericId = parseInt(category);
+    if (!isNaN(numericId)) {
+      return numericId;
+    }
+    
+    // 문자열 카테고리를 숫자 ID로 매핑 (기존 호환성 유지)
     const genreMap: { [key: string]: number } = {
       'circus': 1,      // 서커스/마술
       'concert': 2,     // 대중음악
