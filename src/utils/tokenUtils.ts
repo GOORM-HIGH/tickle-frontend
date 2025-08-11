@@ -13,4 +13,20 @@ export const getAccessToken = () => Cookies.get("accessToken");
 export const removeTokens = () => {
   Cookies.remove("accessToken");
   Cookies.remove("refreshToken");
+  Cookies.remove("userInfo");
+};
+
+// 사용자 정보 관리 함수들
+export const setUserInfo = (userInfo: string) => {
+  Cookies.set("userInfo", userInfo, {
+    secure: true,
+    sameSite: "Strict",
+    expires: 7, // 7일
+  });
+};
+
+export const getUserInfo = () => Cookies.get("userInfo");
+
+export const removeUserInfo = () => {
+  Cookies.remove("userInfo");
 };

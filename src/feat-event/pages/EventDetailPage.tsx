@@ -6,13 +6,12 @@ import { EVENT_DETAILS } from '../../constants/eventData';
 import { shareEvent } from '../../utils/eventUtils';
 import { getTicketEventDetail, TicketEventDetailResponseDto, applyTicketEvent, TicketApplyResponseDto, getRandomEvents, RandomEventResponseDto } from '../api/eventApi';
 import styles from '../styles/detail.module.css';
-
-// 분리된 컴포넌트들
-import { ResultPopup } from '../_components/event/ResultPopup';
-import { EventHeader } from '../_components/event/EventHeader';
-import { EventDetails } from '../_components/event/EventDetails';
-import { RecommendedEvents } from '../_components/event/RecommendedEvents';
-import PromotionalBanner from '../_components/event/PromotionalBanner';
+import { useScrollToTop } from '../../hooks/useScrollToTop';
+import { ResultPopup } from '../components/event/ResultPopup';
+import { EventHeader } from '../components/event/EventHeader';
+import { EventDetails } from '../components/event/EventDetails';
+import { RecommendedEvents } from '../components/event/RecommendedEvents';
+import PromotionalBanner from '../components/event/PromotionalBanner';
 
 export default function EventDetailPage() {
   const navigate = useNavigate();
@@ -26,6 +25,7 @@ export default function EventDetailPage() {
   const [randomEvents, setRandomEvents] = useState<RandomEventResponseDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  useScrollToTop();
 
   useEffect(() => {
     console.log('EventDetailPage - eventId:', eventId);

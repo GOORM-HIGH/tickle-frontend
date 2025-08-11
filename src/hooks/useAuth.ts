@@ -70,7 +70,7 @@ export const useAuth = () => {
       
       // 🎯 사용자 정보 저장
       if (response.user) {
-        localStorage.setItem('userInfo', JSON.stringify(response.user));
+        Cookies.set('userInfo', JSON.stringify(response.user), { expires: 7 });
         setCurrentUser({ 
           id: response.user.id,
           nickname: response.user.nickname,
@@ -90,7 +90,7 @@ export const useAuth = () => {
   const logout = () => {
     authService.logout();
     Cookies.remove('accessToken');
-    localStorage.removeItem('userInfo'); // 🎯 사용자 정보도 삭제
+    Cookies.remove('userInfo'); // 🎯 사용자 정보도 삭제
     setIsLoggedIn(false);
     setCurrentUser(null);
     setAuthKey(prev => prev + 1); // 강제 리렌더링
