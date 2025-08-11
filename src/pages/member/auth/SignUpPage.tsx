@@ -181,7 +181,7 @@ const SignUpPage: React.FC = () => {
       }
 
       alert("회원가입 성공");
-      navigate("/home");
+      navigate("/sign-in");
     } catch (error) {
       alert("회원가입 중 오류가 발생했습니다.");
       console.error(error);
