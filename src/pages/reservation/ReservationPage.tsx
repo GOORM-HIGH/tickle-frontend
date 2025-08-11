@@ -4,8 +4,10 @@ import Layout from '../../components/layout/Layout';
 import SeatSelection from '../../components/reservation/SeatSelection';
 import CouponSelection from '../../components/reservation/CouponSelection';
 import ReservationComplete from '../../components/reservation/ReservationComplete';
-import { Seat, PaymentInfo, ReservationResponse } from '../../types/reservation';
+import { SeatInfoResponseDto, PaymentCalculationInfo, ReservationResponse } from '../../types/reservation';
 import { reservationService } from '../../services/reservationService';
+import { performanceApi, PerformanceDetailDto } from '../../home/api/performanceApi';
+import { useTimeConversion } from '../../hooks/useTimeConversion';
 import './ReservationPage.css';
 
 type ReservationStep = 'seat-selection' | 'payment' | 'complete';
@@ -13,17 +15,20 @@ type ReservationStep = 'seat-selection' | 'payment' | 'complete';
 const ReservationPage: React.FC = () => {
   const { performanceId } = useParams<{ performanceId: string }>();
   const navigate = useNavigate();
+  const { formatDate } = useTimeConversion();
   
   const [currentStep, setCurrentStep] = useState<ReservationStep>('seat-selection');
-  const [selectedSeats, setSelectedSeats] = useState<Seat[]>([]);
+  const [selectedSeats, setSelectedSeats] = useState<SeatInfoResponseDto[]>([]);
   const [preemptionToken, setPreemptionToken] = useState<string>('');
-  const [paymentInfo, setPaymentInfo] = useState<PaymentInfo | null>(null);
+  const [paymentInfo, setPaymentInfo] = useState<PaymentCalculationInfo | null>(null);
   const [reservationData, setReservationData] = useState<ReservationResponse | null>(null);
   const [performanceInfo, setPerformanceInfo] = useState({
-    title: '뮤지컬 "레미제라블"',
-    date: '2024.08.15 (목) 19:30',
-    venue: '세종문화회관 대극장'
+    title: '',
+    date: '',
+    venue: ''
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (performanceId) {
@@ -32,39 +37,66 @@ const ReservationPage: React.FC = () => {
   }, [performanceId]);
 
   const loadPerformanceInfo = async () => {
-    // 실제로는 API에서 공연 정보를 가져와야 함
-    // 여기서는 테스트용 데이터 사용
-    setPerformanceInfo({
-      title: '뮤지컬 "레미제라블"',
-      date: '2024.08.15 (목) 19:30',
-      venue: '세종문화회관 대극장'
-    });
+    try {
+      setLoading(true);
+      const response = await performanceApi.getPerformanceDetail(parseInt(performanceId || '1'));
+      
+      if (response.data) {
+        const performance = response.data;
+        setPerformanceInfo({
+          title: performance.title,
+          date: formatDate(performance.date, 'full'),
+          venue: performance.hallAddress
+        });
+      }
+    } catch (error) {
+      console.error('공연 정보 조회 실패:', error);
+      setError('공연 정보를 불러오는데 실패했습니다.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSeatSelection = (seats: Seat[], token: string) => {
+  const handleSeatSelection = (seats: SeatInfoResponseDto[], token: string) => {
     setSelectedSeats(seats);
     setPreemptionToken(token);
     setCurrentStep('payment');
   };
 
-  const handleCouponSelection = async (paymentInfo: PaymentInfo) => {
+  const handleCouponSelection = async (paymentInfo: PaymentCalculationInfo) => {
     setPaymentInfo(paymentInfo);
     
     try {
-      // 예매 생성 API 호출
-      const reservationRequest = {
-        performanceId: parseInt(performanceId || '1'),
-        seatIds: selectedSeats.map(seat => seat.id),
-        couponId: paymentInfo.usedCoupon?.id,
-        paymentMethod: paymentInfo.paymentMethod,
-        preemptionToken: preemptionToken
+      // 예매 완료 API 호출 (createReservation 대신 completeReservation 사용)
+      const completionRequest = {
+        preemptionToken: preemptionToken,
+        totalAmount: paymentInfo.finalAmount,
+        couponId: paymentInfo.usedCoupon?.id
       };
 
-      const reservationResponse = await reservationService.createReservation(reservationRequest);
-      setReservationData(reservationResponse);
-      setCurrentStep('complete');
+      const completionResponse = await reservationService.completeReservation(completionRequest);
+      
+      if (completionResponse.success) {
+        // 예매 완료 성공 - 응답 데이터를 예매 데이터로 변환
+        const reservationData: ReservationResponse = {
+          reservationId: completionResponse.reservationId.toString(),
+          reservationNumber: completionResponse.reservationNumber,
+          performanceTitle: performanceInfo.title,
+          performanceDate: performanceInfo.date,
+          venue: performanceInfo.venue,
+          seats: selectedSeats,
+          paymentInfo: paymentInfo,
+          reservator: '사용자', // 실제로는 인증된 사용자 정보 사용
+          reservationDate: new Date().toISOString()
+        };
+        
+        setReservationData(reservationData);
+        setCurrentStep('complete');
+      } else {
+        alert(completionResponse.message || '예매 처리 중 오류가 발생했습니다.');
+      }
     } catch (error) {
-      console.error('예매 생성 실패:', error);
+      console.error('예매 완료 실패:', error);
       alert('예매 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
     }
   };
@@ -76,6 +108,27 @@ const ReservationPage: React.FC = () => {
   const handleGoHome = () => {
     navigate('/');
   };
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="loading">공연 정보를 불러오는 중...</div>
+      </Layout>
+    );
+  }
+
+  if (error) {
+    return (
+      <Layout>
+        <div className="error">
+          {error}
+          <button onClick={() => navigate(-1)} className="back-button">
+            뒤로 가기
+          </button>
+        </div>
+      </Layout>
+    );
+  }
 
   const renderCurrentStep = () => {
     switch (currentStep) {

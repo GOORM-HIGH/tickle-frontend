@@ -27,6 +27,13 @@
   font-size: 14px;
 }
 
+.hall-type-info {
+  color: #007bff;
+  margin-top: 5px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
 .seat-selection-content {
   display: flex;
   gap: 30px;
@@ -52,6 +59,24 @@
   border-radius: 8px;
   background: white;
   overflow-x: auto;
+}
+
+.seat-grade-section {
+  margin-bottom: 30px;
+}
+
+.seat-grade-section:last-child {
+  margin-bottom: 0;
+}
+
+.grade-header {
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  font-weight: bold;
+  text-align: center;
+  font-size: 14px;
 }
 
 .seat-row {
@@ -91,19 +116,26 @@
   flex-shrink: 0;
 }
 
+.seat-available {
+  background: #FFFFFF !important;
+  border-color: #ddd;
+}
+
 .seat-available:hover {
-  background: #e3f2fd;
+  background: #f8f9fa !important;
   border-color: #007bff;
+  transform: scale(1.05);
 }
 
 .seat-selected {
-  background: #007bff !important;
+  background: #007BFF !important;
   color: white;
-  border-color: #007bff;
+  border-color: #007BFF;
+  transform: scale(1.1);
 }
 
 .seat-occupied {
-  background: #ccc !important;
+  background: #CCCCCC !important;
   color: #666;
   cursor: not-allowed;
 }
@@ -130,15 +162,16 @@
 }
 
 .legend-seat.seat-available {
-  background: white;
+  background: #FFFFFF;
+  border: 1px solid #ddd;
 }
 
 .legend-seat.seat-selected {
-  background: #007bff;
+  background: #007BFF;
 }
 
 .legend-seat.seat-occupied {
-  background: #ccc;
+  background: #CCCCCC;
 }
 
 .selection-sidebar {
@@ -221,6 +254,17 @@
   padding: 20px;
 }
 
+.total-price {
+  font-size: 24px;
+  font-weight: bold;
+  color: #007bff;
+  text-align: center;
+  padding: 15px;
+  background: white;
+  border-radius: 4px;
+  border: 2px solid #007bff;
+}
+
 .reservation-button {
   width: 100%;
   padding: 15px;
@@ -246,7 +290,7 @@
 .grade-info {
   display: flex;
   justify-content: space-between;
-  padding: 5px 0;
+  padding: 8px 0;
   border-bottom: 1px solid #eee;
 }
 
@@ -256,11 +300,27 @@
 
 .grade-name {
   color: #333;
+  font-size: 14px;
 }
 
 .grade-price {
   font-weight: bold;
   color: #007bff;
+  font-size: 14px;
+}
+
+.loading {
+  text-align: center;
+  padding: 50px;
+  font-size: 18px;
+  color: #666;
+}
+
+.error {
+  text-align: center;
+  padding: 50px;
+  font-size: 18px;
+  color: #e74c3c;
 }
 
 @media (max-width: 768px) {
@@ -291,6 +351,11 @@
 
   .count-selector {
     justify-content: center;
+  }
+
+  .grade-header {
+    font-size: 12px;
+    padding: 6px 8px;
   }
 }
 
