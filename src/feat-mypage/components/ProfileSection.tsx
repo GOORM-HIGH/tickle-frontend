@@ -56,10 +56,16 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
     };
   }, []);
 
+  // 프로필 이미지 경로 결정
+  const profileImageSrc =
+    memberInfo?.img && memberInfo.img.trim() !== ""
+      ? memberInfo.img
+      : "/default-avatar.png";
+
   return (
     <div className="profile-section">
       <div className="profile-image">
-        <img src="/logo.png" alt="프로필" />
+        <img src={profileImageSrc} alt="프로필" />
       </div>
 
       <div className="profile-info">
