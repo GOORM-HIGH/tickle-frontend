@@ -196,9 +196,7 @@ export default function InfoTab() {
               {/* 프로필 이미지 (수정 가능) */}
               <ProfileImageUploader
                 imageUrl={
-                  profileImage
-                    ? URL.createObjectURL(profileImage)
-                    : formData.img || undefined
+                  profileImage ? formData.img : "/public/default-avatar.png"
                 }
                 onChange={(file) => setProfileImage(file)}
               />
