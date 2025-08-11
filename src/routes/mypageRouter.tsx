@@ -12,7 +12,7 @@ const MypageRouter: React.FC = () => {
       
       {/* 포인트 관련 라우트 */}
       <Route path="/point/history" element={<PointHistoryPage />} />
-      <Route path="/point-charge" element={<PointChargePage />} />
+      <Route path="/point/charge" element={<PointChargePage />} />
     </Routes>
   );
 };

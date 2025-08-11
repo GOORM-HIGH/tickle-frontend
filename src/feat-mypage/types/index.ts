@@ -1,13 +1,8 @@
 export interface PointHistory {
-  id: string;
-  status: 'completed' | 'cancelled' | 'charge_completed';
-  description: string;
-  amount: number;
-  paymentMethod: string;
-  createdAt: string;
-  bankInfo?: string;
+  credit: number;
+  target: string;
   orderId: string;
-  type: 'charge' | 'use';
+  createdAt: string;
 }
 
 export interface EventFormData {

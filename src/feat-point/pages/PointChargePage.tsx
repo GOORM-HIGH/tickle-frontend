@@ -65,25 +65,29 @@ export const PointChargePage: React.FC = () => {
 
     setIsLoading(true);
     try {
-      // TODO: 백엔드 API 호출
-      console.log('충전 요청:', {
-        amount: amount
-      });
-      
-      // 실제 사용자 정보로 영수증 데이터 생성
-      const receiptData: PointResponse = {
-        username: currentUser?.nickname || '사용자',
-        orderName: '신용카드',
-        amount: amount,
-        totalBalance: currentBalance + amount,
-        purchasedAt: new Date().toISOString(),
+      // 실제 포인트 충전 API 호출
+      const request = {
         orderId: `order_${Date.now()}`,
-        receiptId: `receipt_${Date.now()}`
+        order_name: 'Tickle 포인트 충전',
+        receipt_id: `receipt_${Date.now()}`,
+        amount,
+        username: currentUser?.nickname || '사용자',
+        purchasedAt: new Date().toISOString()
       };
+
+      console.log('포인트 충전 API 요청:', request);
       
-      setReceiptData(receiptData);
+      const result = await pointService.chargePoint(request);
+      console.log('포인트 충전 API 응답:', result);
+      
+      // 영수증 데이터 설정
+      setReceiptData(result);
       setShowReceipt(true);
+      
+      // 잔액 새로고침
+      fetchBalance();
     } catch (error) {
+      console.error('포인트 충전 실패:', error);
       alert('충전 중 오류가 발생했습니다.');
     } finally {
       setIsLoading(false);
@@ -99,12 +103,12 @@ export const PointChargePage: React.FC = () => {
   const fetchBalance = async () => {
     try {
       setBalanceLoading(true);
-      // TODO: 실제 API 호출
-      // const balance = await pointService.getBalance();
-      // setCurrentBalance(balance);
-      setCurrentBalance(125000); // 임시 데이터
+      const balanceData = await pointService.getMyPointBalance();
+      setCurrentBalance(balanceData.credit);
     } catch (error) {
       console.error('잔액 조회 실패:', error);
+      // 에러 발생 시 기본값 설정
+      setCurrentBalance(0);
     } finally {
       setBalanceLoading(false);
     }

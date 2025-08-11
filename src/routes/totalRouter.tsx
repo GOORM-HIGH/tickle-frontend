@@ -4,6 +4,7 @@ import PerformanceRouter from './performanceRouter';
 import AuthRouter from './authRouter';
 import EventRouter from './eventRouter';
 import MypageRouter from './mypageRouter';
+import PointRouter from './pointRouter';
 
 const TotalRouter: React.FC = () => {
   return (
@@ -13,7 +14,10 @@ const TotalRouter: React.FC = () => {
       {/* 루트 경로를 /performance로 리다이렉트 */}
       <Route path="/" element={<Navigate to="/performance" replace />} />
       <Route path="/mypage/*" element={<MypageRouter />} />
-ß
+      
+      {/* 포인트 관련 라우트 */}
+      <Route path="/point/*" element={<PointRouter />} />
+      
       {/* 홈 관련 라우트 (우선순위 높음) */}
       <Route path="/performance/*" element={<PerformanceRouter />} />
       
