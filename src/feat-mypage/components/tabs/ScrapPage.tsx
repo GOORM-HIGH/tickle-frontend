@@ -7,10 +7,12 @@ import { useAuth } from '../../../hooks/useAuth';
 import { scrapService, PerformanceScrapDto } from '../../../home/api/scrapService';
 import SectionHeader from '../../../home/components/mypage/SectionHeader';
 import ScrapGrid from '../../../home/components/mypage/ScrapGrid';
+import { useScrollToTop } from '../../../hooks/useScrollToTop';
 
 import '../../styles/ScrapPage.css';
 
 const ScrapPage: React.FC = () => {
+  useScrollToTop();
   const navigate = useNavigate();
   const { isLoggedIn, currentUser } = useAuth();
 
@@ -92,7 +94,6 @@ const ScrapPage: React.FC = () => {
 
   if (!isLoggedIn || loading) {
     return (
-      <Layout>
         <div className="scrap-page">
           <div className="page-container">
             <div className="main-content" style={{ textAlign: 'center', padding: '50px' }}>
@@ -101,13 +102,11 @@ const ScrapPage: React.FC = () => {
             </div>
           </div>
         </div>
-      </Layout>
     );
   }
 
   if (error) {
     return (
-      <Layout>
         <div className="scrap-page">
           <div className="page-container">
             <div className="main-content" style={{ textAlign: 'center', padding: '50px' }}>
@@ -117,7 +116,6 @@ const ScrapPage: React.FC = () => {
             </div>
           </div>
         </div>
-      </Layout>
     );
   }
 

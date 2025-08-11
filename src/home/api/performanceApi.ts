@@ -76,6 +76,11 @@ export interface PerformanceHostDto {
   lookCount: number;
   createdDate: string;
   deletedDate?: string;
+  // 추가 필드들
+  hallAddress?: string;
+  runtime?: number;
+  hallType?: string;
+  isEvent?: boolean;
 }
 
 // 생성/수정 요청 DTO (백엔드 RequestDto와 일치)
@@ -290,7 +295,7 @@ export const performanceApi = {
 
   // 내가 생성한 공연 목록 조회
   getMyPerformances: async (): Promise<ResultResponse<PerformanceHostDto[]>> => {
-    const response = await api.get('/api/v1/performance/my', {
+    const response = await api.get('/api/v1/performance/host', {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',

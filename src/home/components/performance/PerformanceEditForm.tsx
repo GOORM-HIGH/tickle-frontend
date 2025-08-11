@@ -6,15 +6,16 @@ import { useAuth } from '../../../hooks/useAuth';
 import { PERFORMANCE_GENRES } from '../../constants/performance';
 import { PerformanceFormData } from '../../types/performance';
 import { performanceApi, UpdatePerformanceRequestDto } from '../../api/performanceApi';
+import { useScrollToTop } from '../../../hooks/useScrollToTop';
 
 import '../../styles/PerformanceCreatePage.css';
 
 const PerformanceEditForm: React.FC = () => {
+  useScrollToTop();
   const navigate = useNavigate();
   const { performanceId } = useParams<{ performanceId: string }>();
   const { isLoggedIn, currentUser } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
-
   const [formData, setFormData] = useState<PerformanceFormData>({
     title: '',
     genreId: 0,
@@ -130,7 +131,7 @@ const PerformanceEditForm: React.FC = () => {
     try {
       await performanceApi.updatePerformance(+performanceId, requestData);
       alert('공연이 성공적으로 수정되었습니다!');
-      navigate('/performance/host');
+      navigate('/performance');
     } catch (err: any) {
       console.error('공연 수정 실패:', err);
       if (err.response?.status === 401 || err.response?.status === 403) navigate('/');
@@ -168,21 +169,6 @@ const PerformanceEditForm: React.FC = () => {
   return (
     <div className="performance-create-page">
       <div className="page-container">
-        <div className="sidebar">
-          <div className="sidebar-content">
-            <h3>마이페이지</h3>
-            <ul className="sidebar-menu">
-              <li onClick={() => navigate('/mypage')}>내정보</li>
-              <li onClick={() => navigate('/mypage/reservations')}>예매/취소 내역</li>
-              <li onClick={() => navigate('/mypage/tickets')}>예매권</li>
-              <li onClick={() => navigate('/mypage/coupons')}>쿠폰</li>
-              <li onClick={() => navigate('/performance/scraps')}>스크랩한 공연</li>
-              <li className="active" onClick={() => navigate('/performance/host')}>공연관리</li>
-              <li onClick={() => navigate('/mypage/settlements')}>정산내역</li>
-            </ul>
-          </div>
-        </div>
-
         <div className="main-content">
           <h2 className="page-title">공연 수정</h2>
           <div className="form-layout">

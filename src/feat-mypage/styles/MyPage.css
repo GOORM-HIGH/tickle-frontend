@@ -92,8 +92,6 @@
   flex-direction: column;
   gap: 2.5rem;
   height: fit-content;
-  position: sticky;
-  top: 2rem;
   border: none;
 }
 

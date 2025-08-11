@@ -6,10 +6,12 @@ import { useAuth } from '../../../hooks/useAuth';
 import { performanceApi, CreatePerformanceRequestDto } from '../../api/performanceApi';
 import { PERFORMANCE_GENRES, HALL_TYPES, VENUE_LOCATIONS } from '../../constants/performance';
 import { PerformanceFormData } from '../../types/performance';
+import { useScrollToTop } from '../../../hooks/useScrollToTop';
 
 import '../../styles/PerformanceCreatePage.css';
 
 const PerformanceCreateForm: React.FC = () => {
+  useScrollToTop();
   const navigate = useNavigate();
   const { isLoggedIn, currentUser } = useAuth();
 
@@ -137,20 +139,6 @@ const PerformanceCreateForm: React.FC = () => {
   return (
     <div className="performance-create-page">
       <div className="page-container">
-        <div className="sidebar">
-          <div className="sidebar-content">
-            <h3>마이페이지</h3>
-            <ul className="sidebar-menu">
-              <li onClick={() => navigate('/mypage')}>내정보</li>
-              <li onClick={() => navigate('/mypage/reservations')}>예매/취소 내역</li>
-              <li onClick={() => navigate('/mypage/tickets')}>예매권</li>
-              <li onClick={() => navigate('/mypage/coupons')}>쿠폰</li>
-              <li onClick={() => navigate('/performance/scraps')}>스크랩한 공연</li>
-              <li className="active" onClick={() => navigate('/performance/host')}>공연관리</li>
-              <li onClick={() => navigate('/mypage/settlements')}>정산내역</li>
-            </ul>
-          </div>
-        </div>
 
         <div className="main-content">
           <h2 className="page-title">공연생성</h2>

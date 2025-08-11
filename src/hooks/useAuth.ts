@@ -37,13 +37,19 @@ export const useAuth = () => {
         console.log('🔍 useAuth - JWT 디코딩 결과:', decoded);
         
         if (decoded && decoded.userId && decoded.nickname) {
+          // authorities 배열에서 첫 번째 권한을 role로 사용
+          let role = decoded.role || decoded.memberRole || decoded.auth;
+          if (decoded.authorities && Array.isArray(decoded.authorities) && decoded.authorities.length > 0) {
+            role = decoded.authorities[0];
+          }
+          
           setCurrentUser({ 
             id: decoded.userId,
             nickname: decoded.nickname,
-            role: decoded.role || decoded.memberRole || decoded.auth,
+            role: role,
           });
           setIsLoggedIn(true);
-          console.log('🔍 useAuth - 로그인 상태 설정됨:', decoded.nickname);
+          console.log('🔍 useAuth - 로그인 상태 설정됨:', decoded.nickname, '권한:', role);
         } else {
           console.log('🔍 useAuth - JWT에 사용자 정보 없음');
           setIsLoggedIn(false);
