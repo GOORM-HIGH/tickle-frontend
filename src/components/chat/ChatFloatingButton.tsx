@@ -91,12 +91,14 @@ const ChatFloatingButton: React.FC = () => {
   };
 
   const handleJoinChatFromReservation = async (reservation: any) => {
-    console.log("🔥 채팅 참여하기 버튼 클릭됨!", reservation);
+    console.log("🔥 채팅방 참여하기 버튼 클릭됨!", reservation);
+    console.log("🔥 performanceId:", reservation.performanceId);
 
     try {
       setReservationLoading(true);
       
       // 🎯 채팅방 참여 API 호출
+      console.log("🔥 joinChatRoom API 호출 시작...");
       const newChatRoom = await chatService.joinChatRoom(reservation.performanceId);
       console.log("✅ 채팅방 참여 성공:", newChatRoom);
       
@@ -104,6 +106,7 @@ const ChatFloatingButton: React.FC = () => {
       addChatRoom(newChatRoom);
       
       // 🎯 채팅방 목록 새로고침
+      console.log("🔥 loadMyChatRooms 호출...");
       await loadMyChatRooms();
       
       alert("채팅방에 참여했습니다!");
@@ -112,8 +115,9 @@ const ChatFloatingButton: React.FC = () => {
       setSelectedRoom(newChatRoom);
       setCurrentView('room');
       
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ 채팅방 참여 실패:", error);
+      console.error("❌ 에러 상세:", error.response?.data);
       alert("채팅방 참여에 실패했습니다.");
     } finally {
       setReservationLoading(false);
@@ -146,6 +150,26 @@ const ChatFloatingButton: React.FC = () => {
     loadMyChatRooms();
     loadReservations();
   }, []);
+
+  // 🎯 채팅방 목록 새로고침 이벤트 리스너
+  useEffect(() => {
+    const handleChatRoomListRefresh = () => {
+      console.log('🔄 ChatFloatingButton - 채팅방 목록 새로고침 이벤트 수신');
+      loadMyChatRooms();
+      
+      // 🎯 읽지 않은 메시지 카운트 재계산
+      setTimeout(() => {
+        console.log('🔄 읽지 않은 메시지 카운트 재계산');
+        loadMyChatRooms();
+      }, 500);
+    };
+
+    window.addEventListener('chatRoomListRefresh', handleChatRoomListRefresh);
+    
+    return () => {
+      window.removeEventListener('chatRoomListRefresh', handleChatRoomListRefresh);
+    };
+  }, [loadMyChatRooms]);
 
   return (
     <>

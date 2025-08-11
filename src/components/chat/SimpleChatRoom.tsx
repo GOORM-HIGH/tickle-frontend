@@ -98,6 +98,11 @@ export const SimpleChatRoom: React.FC<Props> = ({
       
       const newMessages = await chatService.getMessages(room.chatRoomId, page, 20);
       console.log(`📄 로딩된 메시지: ${newMessages.length}개`);
+      console.log(`📄 메시지 상세:`, newMessages);
+      
+      // 🎯 삭제된 메시지 확인
+      const deletedMessages = newMessages.filter(msg => msg.isDeleted);
+      console.log(`📄 삭제된 메시지: ${deletedMessages.length}개`, deletedMessages);
       
       if (append) {
         // 이전 메시지를 앞에 추가 (중복 제거 포함)
@@ -267,7 +272,12 @@ export const SimpleChatRoom: React.FC<Props> = ({
 
   // 메시지 삭제 처리
   const handleMessageDelete = useCallback((messageId: number) => {
-    setMessages(prev => prev.filter(msg => msg.id !== messageId));
+    // 🎯 삭제된 메시지를 화면에서 제거하지 않고 "삭제된 메시지입니다"로 표시
+    setMessages(prev => prev.map(msg => 
+      msg.id === messageId 
+        ? { ...msg, content: '삭제된 메시지입니다.', isDeleted: true }
+        : msg
+    ));
     onMessageDelete(messageId);
   }, [onMessageDelete]);
 
@@ -304,6 +314,40 @@ export const SimpleChatRoom: React.FC<Props> = ({
         
         // 2. WebSocket 연결
         await connectWebSocket();
+        
+        // 3. 🎯 읽음 처리 (채팅방 입장 시)
+        try {
+          console.log('📖 채팅방 입장 - 읽음 처리 시작');
+          // 모든 메시지를 읽음 처리 (가장 최근 메시지 ID 사용)
+          if (messages.length > 0) {
+            const latestMessageId = Math.max(...messages.map(m => m.id));
+            await chatService.markAsRead(room.chatRoomId, latestMessageId);
+            console.log('📖 읽음 처리 완료 - 최근 메시지 ID:', latestMessageId);
+            
+            // 🎯 로컬 상태에서도 읽음 처리
+            setMessages(prev => prev.map(msg => ({ ...msg, isRead: true })));
+          } else {
+            console.log('📖 읽을 메시지가 없음');
+          }
+        } catch (error) {
+          console.error('📖 읽음 처리 실패:', error);
+        }
+        
+        // 4. 🎯 채팅방 목록 새로고침 (읽음 처리 후)
+        try {
+          console.log('🔄 채팅방 목록 새로고침 시작');
+          // 부모 컴포넌트의 loadMyChatRooms 호출을 위해 이벤트 발생
+          window.dispatchEvent(new CustomEvent('chatRoomListRefresh'));
+          console.log('🔄 채팅방 목록 새로고침 이벤트 발생');
+          
+          // 🎯 강제 새로고침 (읽음 처리 확실히 반영)
+          setTimeout(() => {
+            console.log('🔄 강제 새로고침 실행');
+            window.dispatchEvent(new CustomEvent('chatRoomListRefresh'));
+          }, 1000);
+        } catch (error) {
+          console.error('🔄 채팅방 목록 새로고침 실패:', error);
+        }
       } catch (error) {
         console.error('채팅방 초기화 실패:', error);
       }
@@ -314,7 +358,7 @@ export const SimpleChatRoom: React.FC<Props> = ({
     return () => {
       stompWebSocketService.disconnect();
     };
-  }, [loadMessages, connectWebSocket]);
+  }, [loadMessages, connectWebSocket, room.chatRoomId]);
 
   // 연결 상태 모니터링
   useEffect(() => {

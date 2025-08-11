@@ -11,6 +11,7 @@ export const useChat = () => {
     setLoading(true);
     try {
       console.log('🔍 채팅방 목록 로드 시작');
+      console.log('🔍 현재 토큰:', getAccessToken() ? '토큰 있음' : '토큰 없음');
       const rooms = await chatService.getMyRooms();
       console.log('🔍 백엔드에서 받은 채팅방 데이터:', rooms);
       
