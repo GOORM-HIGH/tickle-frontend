@@ -1,4 +1,5 @@
 // src/components/ticket/TicketEventCard.tsx
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface TicketEventCardProps {

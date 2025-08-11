@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { websocketService } from '../services/websocketService';
+import { stompWebSocketService } from '../services/stompWebSocketService';
 import { ChatMessage } from '../types/chat';
 
 export const useWebSocket = () => {
@@ -12,7 +12,7 @@ export const useWebSocket = () => {
     onMessage: (message: ChatMessage) => void
   ) => {
     try {
-      await websocketService.connect(chatRoomId, userId, nickname, onMessage);
+      await stompWebSocketService.connect(chatRoomId, userId, nickname, onMessage);
       setIsConnected(true);
     } catch (error) {
       setIsConnected(false);
@@ -21,12 +21,12 @@ export const useWebSocket = () => {
   }, []);
 
   const disconnect = useCallback(() => {
-    websocketService.disconnect();
+    stompWebSocketService.disconnect();
     setIsConnected(false);
   }, []);
 
   const sendMessage = useCallback((content: string) => {
-    websocketService.sendMessage(content);
+    stompWebSocketService.sendMessage(content);
   }, []);
 
   return { isConnected, connect, disconnect, sendMessage };

@@ -1,5 +1,5 @@
 // src/components/coupon/CouponCard.tsx
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { issueEventCoupon } from '../../api/eventApi';
 
 // 스핀 애니메이션을 위한 CSS
