@@ -76,10 +76,56 @@ export const chatService = {
   },
 
   // 채팅방 참여
-  joinChatRoom: async (chatRoomId: number): Promise<void> => {
-    await api.post(`/api/v1/chat/participants/rooms/${chatRoomId}/join`, {
-      message: "채팅방에 참여했습니다."
-    });
+  joinChatRoom: async (performanceId: number): Promise<ChatRoom> => {
+    try {
+      // 1. 먼저 performanceId로 채팅방 정보 조회
+      console.log('🔥 1단계: performanceId로 채팅방 조회', performanceId);
+      const chatRoom = await chatService.getChatRoomByPerformance(performanceId);
+      console.log('🔥 조회된 채팅방:', chatRoom);
+      
+      // 2. chatRoomId로 참여 API 호출
+      console.log('🔥 2단계: chatRoomId로 참여 API 호출', chatRoom.chatRoomId);
+      await api.post(`/api/v1/chat/participants/rooms/${chatRoom.chatRoomId}/join`, {
+        message: "채팅방에 참여했습니다."
+      });
+      
+      // 3. 참여 후 채팅방 정보 반환
+      return chatRoom;
+    } catch (error: any) {
+      console.error('🔥 채팅방 참여 중 오류:', error);
+      console.error('🔥 오류 상세:', error.response?.data);
+      
+      // 채팅방이 없는 경우 처리
+      if (error.response?.status === 404) {
+        console.log('🔥 채팅방이 존재하지 않음. 채팅방 생성 시도...');
+        
+        try {
+          // 채팅방 생성 시도
+          const createResponse = await api.post('/api/v1/chat/rooms', {
+            performanceId: performanceId,
+            roomName: `공연 ${performanceId} 채팅방`,
+            maxParticipants: 100
+          });
+          
+          console.log('🔥 채팅방 생성 성공:', createResponse.data);
+          
+          // 생성된 채팅방으로 다시 참여 시도
+          const newChatRoom = createResponse.data.data;
+          console.log('🔥 새로 생성된 채팅방으로 참여 시도:', newChatRoom.chatRoomId);
+          
+          await api.post(`/api/v1/chat/participants/rooms/${newChatRoom.chatRoomId}/join`, {
+            message: "채팅방에 참여했습니다."
+          });
+          
+          return newChatRoom;
+        } catch (createError: any) {
+          console.error('🔥 채팅방 생성 실패:', createError);
+          throw new Error('채팅방 생성에 실패했습니다. 관리자에게 문의해주세요.');
+        }
+      }
+      
+      throw error;
+    }
   },
 
   getChatRoomByPerformance: async (performanceId: number): Promise<ChatRoom> => {

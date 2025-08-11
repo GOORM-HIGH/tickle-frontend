@@ -80,7 +80,7 @@ class StompWebSocketService {
         console.log('✅ STOMP 연결 성공:', frame);
         this.isConnected = true;
         
-        // 🎯 채팅방 구독
+        // 🎯 채팅방 구독 (먼저 구독 설정)
         this.stompClient?.subscribe(`/topic/chat/${chatRoomId}`, (message) => {
           try {
             console.log('🔔 STOMP 원본 메시지 수신:', message); // 🎯 디버깅 로그 추가
@@ -94,13 +94,10 @@ class StompWebSocketService {
           }
         });
 
-        // 🎯 개인 메시지 구독 제거 (중복 방지)
-        // this.stompClient?.subscribe(`/user/queue/messages`, (message) => {
-        //   // 중복 메시지 방지를 위해 제거
-        // });
-
-        // 🎯 JOIN 메시지 전송
-        this.sendJoinMessage(userId, userNickname);
+        // 🎯 구독 설정 후 잠시 대기 후 JOIN 메시지 전송
+        setTimeout(() => {
+          this.sendJoinMessage(userId, userNickname);
+        }, 100);
         
         resolve();
       },
@@ -275,6 +272,13 @@ class StompWebSocketService {
       console.log(`🎯 상대방 메시지 확인: ID=${senderId}, 닉네임="${data.senderNickname}"`);
     }
     
+    // 🎯 숫자 타입 비교를 위한 변환
+    const senderIdNum = Number(senderId);
+    const currentUserIdNum = Number(currentUserIdFromToken);
+    const finalIsMyMessage = senderIdNum === currentUserIdNum;
+    
+    console.log(`🎯 숫자 변환 후 비교: ${senderIdNum} === ${currentUserIdNum} = ${finalIsMyMessage}`);
+    
     const chatMessage: ChatMessage = {
       id: data.messageId || data.id || 0,
       chatRoomId: data.chatRoomId || this.currentChatRoomId!,
@@ -283,7 +287,7 @@ class StompWebSocketService {
       content: data.content || data.message || '',
       createdAt: data.createdAt || new Date().toISOString(),
       senderNickname: data.senderNickname || data.sender || '알 수 없음',
-      isMyMessage: isMyMessage
+      isMyMessage: finalIsMyMessage // 🎯 숫자 변환 후 비교 결과 사용
     };
 
     console.log(`🎯 메시지 발신자 ID: ${senderId}, 현재 사용자 ID: ${currentUserIdFromToken}, 내 메시지: ${isMyMessage}`);

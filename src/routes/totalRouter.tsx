@@ -5,6 +5,7 @@ import AuthRouter from './authRouter';
 import EventRouter from './eventRouter';
 import MypageRouter from './mypageRouter';
 import PointRouter from './pointRouter';
+import ChatRouter from './chatRouter';
 
 const TotalRouter: React.FC = () => {
   return (
@@ -23,6 +24,9 @@ const TotalRouter: React.FC = () => {
       
       {/* 이벤트 관련 라우트 */}
       <Route path="/event/*" element={<EventRouter />} />
+      
+      {/* 채팅 관련 라우트 */}
+      <Route path="/chat/*" element={<ChatRouter />} />
     </Routes>
   );
 };

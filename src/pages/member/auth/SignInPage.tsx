@@ -58,14 +58,16 @@ const SignInPage: React.FC = () => {
 
       console.log(response.data);
 
-      const { accessToken } = response.data;
+      const { accessToken, user } = response.data;
       setAccessToken(accessToken);
 
-      // 🎯 useAuth의 login 함수를 호출하여 상태 업데이트
-      await login(email, password);
+      // 🎯 사용자 정보도 localStorage에 저장
+      if (user) {
+        localStorage.setItem('userInfo', JSON.stringify(user));
+      }
 
-      // 🎯 명시적으로 홈페이지로 리다이렉트
-      navigate("/performance", { replace: true });
+      // 🎯 페이지 새로고침으로 useAuth 상태 업데이트
+      window.location.href = "/performance";
     } catch (error: any) {
       let errorMessage: string = "";
 

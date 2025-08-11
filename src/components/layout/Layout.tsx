@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import Header from './header/Header';
 import Footer from './footer/Footer';
+import ChatFloatingButton from '../chat/ChatFloatingButton';
 import './Layout.css';
 
 interface LayoutProps {
@@ -15,6 +16,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         {children}
       </main>
       <Footer />
+      <ChatFloatingButton />
     </div>
   );
 };
