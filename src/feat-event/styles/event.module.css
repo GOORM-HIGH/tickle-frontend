@@ -168,41 +168,38 @@
   margin-right: auto;
 }
 
-.activeTab {
-  background: #3399FF;
+.tabButton {
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #0066FF;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 120px;
+}
+
+.tabButton.active {
+  background: #0066FF;
   color: white;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(51, 153, 255, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 102, 255, 0.3);
 }
 
-.activeTab:hover {
-  background: #2980ff;
+.tabButton.active:hover {
+  background: #0052CC;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(51, 153, 255, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 102, 255, 0.4);
 }
 
-.inactiveTab {
-  background: #f8fafc;
-  color: #6b7280;
-  padding: 0.75rem 1.5rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
+.tabButton:not(.active) {
+  background: white;
+  color: #0066FF;
 }
 
-.inactiveTab:hover {
-  background: #e8f2ff;
-  color: #3399FF;
-  border-color: #3399FF;
+.tabButton:not(.active):hover {
+  background: #F0F8FF;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 102, 255, 0.2);
 }
 
 .sectionBox {
