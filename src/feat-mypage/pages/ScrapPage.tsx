@@ -9,7 +9,7 @@ import MyPageSidebar from '../../components/mypage/MyPageSidebar';
 import SectionHeader from '../../components/mypage/SectionHeader';
 import ScrapGrid from '../../components/mypage/ScrapGrid';
 
-import '../../styles/ScrapPage.css';
+import '../../home/styles/ScrapPage.css';
 
 const ScrapPage: React.FC = () => {
   const navigate = useNavigate();

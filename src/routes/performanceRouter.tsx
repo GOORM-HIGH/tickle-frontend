@@ -15,7 +15,7 @@ import PerformanceCreatePage from '../home/pages/Performance/PerformanceCreatePa
 import PerformanceHostPage from '../home/pages/Performance/PerformanceHostPage';
 import PerformanceEditPage from '../home/pages/Performance/PerformanceEditPage';
 import SearchPage from '../home/pages/Main/SearchPage';
-import ScrapPage from '../home/pages/MyPage/ScrapPage';
+
 import DynamicGenrePage from '../home/pages/Gnere/DynamicGenrePage';
 
 const PerformanceRouter: React.FC = () => {
@@ -40,8 +40,7 @@ const PerformanceRouter: React.FC = () => {
       {/* 동적 장르 페이지 */}
       <Route path="/genre/:genreId" element={<DynamicGenrePage />} />
       
-      {/* 마이페이지 관련 라우트 */}
-      <Route path="/scraps" element={<ScrapPage />} />
+      {/* 공연 상세 페이지 */}
       <Route path="/:id" element={<PerformanceDetailPage />} />
     </Routes>
   );
