@@ -6,11 +6,13 @@ import AuthInput from "../../../components/member/AuthInput";
 import Button from "../../../components/common/Button";
 import { setAccessToken } from "../../../utils/tokenUtils";
 import { validateEmail, validatePassword } from "../../../utils/validations";
+import { useAuth } from "../../../hooks/useAuth";
 
 const SignInPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from;
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState<SignInRequest>({
     email: "",
@@ -59,7 +61,11 @@ const SignInPage: React.FC = () => {
       const { accessToken } = response.data;
       setAccessToken(accessToken);
 
-      navigate(typeof from === "string" ? from : "/", { replace: true });
+      // 🎯 useAuth의 login 함수를 호출하여 상태 업데이트
+      await login(email, password);
+
+      // 🎯 명시적으로 홈페이지로 리다이렉트
+      navigate("/performance", { replace: true });
     } catch (error: any) {
       let errorMessage: string = "";
 

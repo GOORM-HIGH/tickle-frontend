@@ -1,5 +1,6 @@
 import api from './api';
 import { LoginRequest, LoginResponse } from '../types/auth';
+import { removeTokens } from '../utils/tokenUtils';
 
 export const authService = {
   login: async (credentials: LoginRequest): Promise<LoginResponse> => {
@@ -8,6 +9,6 @@ export const authService = {
   },
 
   logout: () => {
-    localStorage.removeItem('accessToken');
+    removeTokens();
   },
 };

@@ -6,6 +6,7 @@ import { stompWebSocketService } from "./../services/stompWebSocketService";
 import { ChatRoom } from "../components/chat/ChatRoom";
 import { EnhancedChatRoomList } from "../components/chat/EnhancedChatRoomList";
 import { NotificationBadge } from "../components/chat/NotificationBadge";
+import { getAccessToken } from "../utils/tokenUtils";
 import type {
   ChatRoom as ChatRoomType,
   ChatMessage,
@@ -364,7 +365,7 @@ export const MainPage: React.FC = () => {
         <div>채팅방 수: {Object.keys(messagesByRoom).length}</div>
         <div>
           토큰:{" "}
-          {localStorage.getItem("accessToken")?.substring(0, 20) || "None"}...
+          {getAccessToken()?.substring(0, 20) || "None"}...
         </div>
         <div>현재 시간: {new Date().toLocaleTimeString()}</div>
         <div>
