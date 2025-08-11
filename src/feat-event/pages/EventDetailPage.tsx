@@ -6,8 +6,7 @@ import { EVENT_DETAILS } from '../../constants/eventData';
 import { shareEvent } from '../../utils/eventUtils';
 import { getTicketEventDetail, TicketEventDetailResponseDto, applyTicketEvent, TicketApplyResponseDto, getRandomEvents, RandomEventResponseDto } from '../api/eventApi';
 import styles from '../styles/detail.module.css';
-
-// 분리된 컴포넌트들
+import { useScrollToTop } from '../../hooks/useScrollToTop';
 import { ResultPopup } from '../components/event/ResultPopup';
 import { EventHeader } from '../components/event/EventHeader';
 import { EventDetails } from '../components/event/EventDetails';
@@ -26,6 +25,7 @@ export default function EventDetailPage() {
   const [randomEvents, setRandomEvents] = useState<RandomEventResponseDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  useScrollToTop();
 
   useEffect(() => {
     console.log('EventDetailPage - eventId:', eventId);

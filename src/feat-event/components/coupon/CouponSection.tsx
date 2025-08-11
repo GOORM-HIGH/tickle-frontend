@@ -140,7 +140,7 @@ export default function CouponSection({ title, description, type }: Props) {
           {type === 'special' ? '특별 이벤트 쿠폰을 불러오는 중...' : '쿠폰을 불러오는 중...'}
         </div>
       ) : (
-        <div
+                <div
           style={{
             display: type === 'special' ? 'flex' : 'flex',
             flexDirection: type === 'active' ? 'column' : 'row',
@@ -154,7 +154,8 @@ export default function CouponSection({ title, description, type }: Props) {
               paddingLeft: '20px', // 첫 번째 쿠폰을 위한 여백
               paddingTop: '20px', // 호버 시 위로 올라가는 여백
               paddingBottom: '30px', // 호버 시 아래로 내려가는 여백
-              minHeight: '400px', // 최소 높이 설정
+              minHeight: '350px', // 최소 높이를 늘림
+              maxWidth: '800px', // 최대 너비를 늘림
             } : {})
           }}
         >
@@ -164,8 +165,11 @@ export default function CouponSection({ title, description, type }: Props) {
                 key={i}
                 style={{ 
                   ...(type === 'special' ? { 
-                    flex: '0 0 280px', 
-                    scrollSnapAlign: 'start' 
+                    flex: '0 0 320px', 
+                    scrollSnapAlign: 'start',
+                    marginRight: i < coupons.length - 1 ? '-80px' : '0', // 오른쪽으로 갈수록 겹쳐보이도록
+                    zIndex: i + 1, // 첫 번째 쿠폰이 가장 뒤로, 오른쪽 쿠폰이 가장 위로
+                    position: 'relative'
                   } : {
                     width: '100%',
                     maxWidth: '100%'
