@@ -3,19 +3,6 @@ import { Plus } from "lucide-react";
 import { getAccessToken } from "../../utils/tokenUtils";
 import api from "../../services/api";
 
-interface MemberInfo {
-  email: string;
-  nickname: string;
-  pointBalance: number;
-  img: string;
-  hostBizName: string;
-  hostBizBank: string;
-  hostBizDepositor: string;
-  hostBizBankNumber: string;
-  contractCharge: number;
-  memberRole: "MEMBER" | "HOST" | string;
-}
-
 interface ApiResponse<T> {
   data: T;
 }
@@ -31,41 +18,30 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
 }) => {
   const [memberInfo, setMemberInfo] = useState<MemberInfo | null>(null);
 
+  const fetchMemberInfo = async () => {
+    try {
+      const accessToken = getAccessToken();
+      if (!accessToken) return;
+
+      const res = await api.get<ApiResponse<MemberInfo>>("/api/v1/mypage", {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        withCredentials: true,
+      });
+
+      setMemberInfo(res.data.data);
+    } catch (error) {
+      console.error("회원 정보 조회 실패", error);
+    }
+  };
+
   useEffect(() => {
-    let ignore = false;
-
-    const fetchMemberInfo = async () => {
-      try {
-        const accessToken = getAccessToken();
-        if (!accessToken) return;
-
-        const res = await api.get<ApiResponse<MemberInfo>>("/api/v1/mypage", {
-          headers: { Authorization: `Bearer ${accessToken}` },
-          withCredentials: true,
-        });
-
-        if (!ignore) setMemberInfo(res.data.data);
-      } catch (error) {
-        console.error("회원 정보 조회 실패", error);
-      }
-    };
-
     fetchMemberInfo();
-    return () => {
-      ignore = true;
-    };
   }, []);
-
-  // 프로필 이미지 경로 결정
-  const profileImageSrc =
-    memberInfo?.img && memberInfo.img.trim() !== ""
-      ? memberInfo.img
-      : "/default-avatar.png";
 
   return (
     <div className="profile-section">
       <div className="profile-image">
-        <img src={profileImageSrc} alt="프로필" />
+        <img src={memberInfo?.img || "/default-avatar.png"} alt="프로필" />
       </div>
 
       <div className="profile-info">
