@@ -1,0 +1,312 @@
+.coupon-selection {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.coupon-selection-header {
+  margin-bottom: 20px;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.back-button:hover {
+  text-decoration: underline;
+}
+
+.performance-info {
+  color: #666;
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+.timer-banner {
+  background: #ffc107;
+  color: #333;
+  text-align: center;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.coupon-selection-content {
+  display: flex;
+  gap: 30px;
+}
+
+.coupon-section {
+  flex: 1;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.coupon-section h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.coupon-list h3 {
+  margin-bottom: 15px;
+  color: #666;
+}
+
+.coupon-item {
+  margin-bottom: 15px;
+}
+
+.coupon-checkbox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.coupon-checkbox:hover {
+  border-color: #007bff;
+}
+
+.coupon-checkbox input[type="radio"] {
+  display: none;
+}
+
+.checkmark {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ddd;
+  border-radius: 50%;
+  margin-right: 15px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.coupon-checkbox input[type="radio"]:checked + .checkmark {
+  background: #007bff;
+  border-color: #007bff;
+}
+
+.coupon-checkbox input[type="radio"]:checked + .checkmark::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+}
+
+.coupon-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.coupon-name {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.coupon-description {
+  color: #666;
+  font-size: 14px;
+}
+
+.selection-info {
+  width: 350px;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  height: fit-content;
+}
+
+.selection-info h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.selected-seats-box {
+  background: white;
+  border: 2px solid #007bff;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.selected-seats-box h3 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.selected-seat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.selected-seat:last-child {
+  border-bottom: none;
+}
+
+.seat-info {
+  font-weight: bold;
+}
+
+.seat-grade {
+  color: #666;
+  font-size: 12px;
+}
+
+.seat-price {
+  color: #007bff;
+  font-weight: bold;
+}
+
+.points-info {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.points-info h3 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.points-detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.points-detail:last-child {
+  border-bottom: none;
+}
+
+.points-amount {
+  color: #007bff;
+  font-weight: bold;
+}
+
+.payment-summary {
+  margin-bottom: 20px;
+}
+
+.payment-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.payment-item.discount {
+  color: #dc3545;
+}
+
+.payment-item.final {
+  font-weight: bold;
+  font-size: 18px;
+  color: #007bff;
+  border-bottom: none;
+}
+
+.point-warning {
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.warning-icon {
+  font-size: 18px;
+  margin-right: 8px;
+}
+
+.warning-text {
+  font-weight: bold;
+  color: #721c24;
+}
+
+.warning-description {
+  color: #721c24;
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.point-charge-button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.point-charge-button:hover {
+  background: #0056b3;
+}
+
+.payment-button {
+  width: 100%;
+  padding: 15px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.payment-button:hover:not(:disabled) {
+  background: #0056b3;
+}
+
+.payment-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .coupon-selection-content {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .selection-info {
+    width: 100%;
+  }
+
+  .coupon-checkbox {
+    padding: 12px;
+  }
+
+  .checkmark {
+    width: 18px;
+    height: 18px;
+    margin-right: 12px;
+  }
+}
+
