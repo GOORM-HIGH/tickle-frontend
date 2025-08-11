@@ -1,7 +1,7 @@
 import React from 'react';
 import Layout from '../../../components/layout/Layout';
-import CategoryRanking from '../../components/category/CategoryRanking';
-import CategoryBrowse from '../../components/category/CategoryBrowse';
+import GenreRanking from '../../components/genre/GenreRanking';
+import GenreBrowse from '../../components/genre/GenreBrowse';
 import { useScrollToTop } from '../../../hooks/useScrollToTop';
 
 interface GenrePageProps {
@@ -23,8 +23,8 @@ const GenrePage: React.FC<GenrePageProps> = ({ category, categoryName }) => {
         }}>
           {categoryName}
         </h1>
-        <CategoryRanking category={category} />
-        <CategoryBrowse category={category} />
+        <GenreRanking category={category} />
+        <GenreBrowse category={category} />
       </div>
     </Layout>
   );

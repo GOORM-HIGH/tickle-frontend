@@ -48,7 +48,7 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
           </button>
         </li>
         <li className="menu-item">
-          <button className="menu-button" onClick={() => onNavigate('/mypage/scraps')}>
+          <button className="menu-button" onClick={() => onTabChange('scraps')}>
             <span>
               <Heart size={20} />
               스크랩한 공연

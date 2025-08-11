@@ -7,8 +7,9 @@ import {
   CouponsTab,
   SettlementsTab,
   PointHistoryTab,
-  PerformanceManagementTab,
-} from "./tabs";
+  PerformanceHostDashboard,
+  ScrapPage,
+} from './tabs';
 
 import { MyPageTab } from "../constants/tabs";
 
@@ -56,16 +57,18 @@ const MainContent: React.FC<MainContentProps> = ({
 
       case "reservations":
         return <ReservationsTab />;
+      
+      case 'scraps':
+        return <ScrapPage />;
 
-      case "performances":
-        return (
-          <PerformanceManagementTab
-            performances={performances}
-            loading={loading}
-            onEdit={onEditPerformance}
-            onDelete={onDeletePerformance}
-          />
-        );
+      case 'performances':
+        return  <PerformanceHostDashboard 
+                  performances={performances}
+                  loading={loading}
+                  onEditPerformance={onEditPerformance}
+                  onDeletePerformance={onDeletePerformance}
+                />;
+    
 
       case "coupons":
         return <CouponsTab />;

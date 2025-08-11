@@ -18,9 +18,11 @@ const decodeJWT = (token: string) => {
   }
 };
 
+type CurrentUser = { id: number; nickname: string; role?: string };
+
 export const useAuth = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentUser, setCurrentUser] = useState<{id: number, nickname: string} | null>(null);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [loading, setLoading] = useState(false);
   const [authKey, setAuthKey] = useState(0); // 강제 리렌더링을 위한 키
 
@@ -35,12 +37,19 @@ export const useAuth = () => {
         console.log('🔍 useAuth - JWT 디코딩 결과:', decoded);
         
         if (decoded && decoded.userId && decoded.nickname) {
+          // authorities 배열에서 첫 번째 권한을 role로 사용
+          let role = decoded.role || decoded.memberRole || decoded.auth;
+          if (decoded.authorities && Array.isArray(decoded.authorities) && decoded.authorities.length > 0) {
+            role = decoded.authorities[0];
+          }
+          
           setCurrentUser({ 
             id: decoded.userId,
-            nickname: decoded.nickname
+            nickname: decoded.nickname,
+            role: role,
           });
           setIsLoggedIn(true);
-          console.log('🔍 useAuth - 로그인 상태 설정됨:', decoded.nickname);
+          console.log('🔍 useAuth - 로그인 상태 설정됨:', decoded.nickname, '권한:', role);
         } else {
           console.log('🔍 useAuth - JWT에 사용자 정보 없음');
           setIsLoggedIn(false);
@@ -70,7 +79,8 @@ export const useAuth = () => {
         Cookies.set('userInfo', JSON.stringify(response.user), { expires: 7 });
         setCurrentUser({ 
           id: response.user.id,
-          nickname: response.user.nickname
+          nickname: response.user.nickname,
+          role: (response.user as any).memberRole || (response.user as any).role,
         });
       }
       

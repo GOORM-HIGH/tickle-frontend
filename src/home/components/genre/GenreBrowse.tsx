@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { performanceApi, PerformanceDto, PagingResponse } from '../../api/performanceApi';
 import { useTimeConversion } from '../../../hooks/useTimeConversion';
-import '../../styles/CategoryBrowse.css';
+import '../../styles/GenreBrowse.css';
 
 // 이미지 로딩 상태를 관리하는 컴포넌트
 const ImageWithSkeleton: React.FC<{ src: string; alt: string }> = ({ src, alt }) => {
@@ -49,7 +49,7 @@ interface CategoryBrowseProps {
   category: string;
 }
 
-const CategoryBrowse: React.FC<CategoryBrowseProps> = ({ category }) => {
+const GenreBrowse: React.FC<CategoryBrowseProps> = ({ category }) => {
   const { convertUTCToKST } = useTimeConversion();
   const [performances, setPerformances] = useState<PerformanceDto[]>([]);
   const [loading, setLoading] = useState(true);
@@ -60,6 +60,13 @@ const CategoryBrowse: React.FC<CategoryBrowseProps> = ({ category }) => {
 
   // 카테고리를 장르 ID로 매핑
   const getGenreId = (category: string): number => {
+    // 숫자 문자열인 경우 바로 변환
+    const numericId = parseInt(category);
+    if (!isNaN(numericId)) {
+      return numericId;
+    }
+    
+    // 문자열 카테고리를 숫자 ID로 매핑 (기존 호환성 유지)
     const genreMap: { [key: string]: number } = {
       'circus': 1,      // 서커스/마술
       'concert': 2,     // 대중음악
@@ -239,4 +246,4 @@ const CategoryBrowse: React.FC<CategoryBrowseProps> = ({ category }) => {
   );
 };
 
-export default CategoryBrowse; 
+export default GenreBrowse; 
