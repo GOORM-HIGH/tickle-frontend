@@ -1,3 +1,4 @@
+// src/pages/member/signup/HostSignUpPage.tsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -69,7 +70,6 @@ const HostSignUpPage: React.FC = () => {
     hostBizBankNumber: "",
   });
 
-  // 컴포넌트 내부
   useEffect(() => {
     console.log("formData 변경됨:", formData);
   }, [formData]);
@@ -77,20 +77,21 @@ const HostSignUpPage: React.FC = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value, files } = e.target as HTMLInputElement &
-      HTMLSelectElement;
+    const target = e.target as HTMLInputElement & HTMLSelectElement;
+    const { name, value, files } = target;
 
     if (name === "profileImage" && files) {
       setProfileImage(files[0]);
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      return;
     }
 
-    // 선택한 은행 로그 출력
-    if (name === "hostBizBank") {
-      console.log("선택한 은행:", value);
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    }
+    setFormData((prev) => {
+      // ✅ 수수료율은 select에서 string으로 오므로 number로 캐스팅
+      if (name === "hostContractCharge") {
+        return { ...prev, hostContractCharge: Number(value) };
+      }
+      return { ...prev, [name]: value };
+    });
 
     // 실시간 검증
     if (name === "email")
@@ -166,14 +167,12 @@ const HostSignUpPage: React.FC = () => {
     } catch (error: any) {
       if (axios.isAxiosError(error)) {
         const status = error.response?.status;
-
         if (status === 409) {
           console.error("이미 가입된 이메일입니다.");
           alert("이미 가입된 이메일입니다.");
           return;
         }
       }
-
       alert("인증번호 발송 실패");
       console.error(error);
     }
@@ -186,7 +185,6 @@ const HostSignUpPage: React.FC = () => {
         alert(codeError);
         return;
       }
-
       await axios.post(
         "http://127.0.0.1:8081/api/v1/auth/email-verification/confirm",
         { email: formData.email, code: emailAuthCode },
@@ -208,8 +206,11 @@ const HostSignUpPage: React.FC = () => {
       const response = await axios.post(
         "http://127.0.0.1:8081/api/v1/upload",
         imageData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
       );
+      // 백엔드 응답 형태에 맞게 조정하세요 (예: { url } 또는 { data: { url } })
       return response.data.url;
     } catch (error) {
       alert("이미지 업로드 실패");
@@ -228,23 +229,29 @@ const HostSignUpPage: React.FC = () => {
 
     try {
       const birthday = toInstant(formData.birthday, false);
-      const hostContractCharge: string = toBigDecimalString(
-        formData.hostContractCharge
-      );
       const imageUrl = await uploadProfileImage();
+
+      // ✅ 퍼센트(number) → BigDecimal 문자열("0.05") 변환
+      const hostContractCharge =
+        formData.role === "HOST"
+          ? toBigDecimalString(formData.hostContractCharge ?? 0, 2)
+          : undefined;
+
       const payload = {
         ...formData,
         img: imageUrl || "",
         birthday,
-        hostContractCharge,
+        hostContractCharge, // 백엔드 BigDecimal 필드에 0~1 범위 값으로 매핑됨
       };
 
-      console.log("payload\n" + payload);
+      console.log("payload:", payload);
 
       const response = await axios.post(
         "http://127.0.0.1:8081/api/v1/sign-up",
         payload,
-        { headers: { "Content-Type": "application/json" } }
+        {
+          headers: { "Content-Type": "application/json" },
+        }
       );
 
       if (response.data.status !== 201) {
@@ -272,6 +279,7 @@ const HostSignUpPage: React.FC = () => {
           }
           onChange={(file) => setProfileImage(file)}
         />
+
         <div className="flex flex-col gap-4">
           <AuthInput
             label="이메일"
@@ -282,6 +290,8 @@ const HostSignUpPage: React.FC = () => {
             onChange={handleChange}
             error={errors.email}
           />
+
+          {/* 이메일 인증 */}
           <div className="flex flex-col w-[460px]">
             <label className="mb-1 text-sm font-medium text-gray-700">
               이메일 인증
@@ -353,6 +363,8 @@ const HostSignUpPage: React.FC = () => {
             onChange={handleChange}
             error={errors.nickname}
           />
+
+          {/* 사업자 정보 */}
           <AuthInput
             label="사업자등록번호"
             variant="large"
@@ -426,6 +438,7 @@ const HostSignUpPage: React.FC = () => {
             ]}
           />
 
+          {/* ✅ 수수료율: number 상태 유지, 변경 시 Number 캐스팅 */}
           <Select
             label="수수료율"
             name="hostContractCharge"

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { chatService } from '../services/chatService';
+import { getAccessToken } from '../utils/tokenUtils';
 import type { ChatRoom } from '../services/chatService';
 
 export const useChat = () => {
@@ -68,7 +69,7 @@ export const useChat = () => {
 
   // 🎯 로그인 상태 확인 후 채팅방 로드
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
+    const token = getAccessToken();
     if (token) {
       loadMyChatRooms();
     }

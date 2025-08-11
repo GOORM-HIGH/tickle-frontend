@@ -5,11 +5,15 @@ import SearchBar from "../../common/SearchBar";
 import AuthMenu from "../../common/header/AuthMenu";
 import FeatureMenu from "../../common/header/FeatureMenu";
 import GenreMenu from "../../common/header/GenreMenu";
-import { getAccessToken, removeTokens } from "../../../utils/tokens";
+import { getAccessToken, removeTokens } from "../../../utils/tokenUtils";
+import { connectSSE } from "../../../utils/connectSSE";
 
 export default function Header() {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [isSignIn, setIsSignIn] = useState(false);
+  const [shouldRefreshNotificationList, setShouldRefreshNotificationList] =
+    useState(false);
+
   const navigate = useNavigate();
 
   const handleSearch = (e: React.FormEvent) => {
@@ -24,20 +28,28 @@ export default function Header() {
   };
 
   const handleSignOut = () => {
-    removeTokens(); // accessToken, refreshToken 제거
+    removeTokens();
     setIsSignIn(false);
-    navigate("/"); // 홈으로 리디렉션
+    navigate("/");
   };
 
   useEffect(() => {
-    const accessToken = getAccessToken();
-    if (accessToken) {
-      setIsSignIn(true);
-    }
+    const token = getAccessToken();
+    if (!token) return;
+
+    setIsSignIn(true);
+    const eventSource = connectSSE(token, () => {
+      setShouldRefreshNotificationList(true);
+    });
+
+    return () => {
+      eventSource.close();
+      console.log("🔌 SSE 연결 종료");
+    };
   }, []);
 
   return (
-    <header className="w-full bg-white border-b border-gray-200 shadow-sm sticky top-0 z-10">
+    <header className="w-full bg-white border-b border-gray-200 shadow-sm sticky top-0 z-10 header-container">
       <div className="max-w-full mx-auto px-8 py-4 flex items-center justify-between">
         <Logo />
         <SearchBar
@@ -47,7 +59,15 @@ export default function Header() {
         />
         <AuthMenu isSignIn={isSignIn} onSignOut={handleSignOut} />
       </div>
-      <FeatureMenu />
+
+      <FeatureMenu
+        isSignIn={isSignIn}
+        shouldRefreshNotificationList={shouldRefreshNotificationList}
+        onNotificationRefreshed={() => {
+          setShouldRefreshNotificationList(false);
+        }}
+      />
+
       <GenreMenu />
     </header>
   );

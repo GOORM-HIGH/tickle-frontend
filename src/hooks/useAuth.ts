@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { authService } from '../services/authService';
 import { LoginResponse } from '../types/auth';
+import Cookies from 'js-cookie';
 
 // 🎯 JWT 토큰 디코딩 함수
 const decodeJWT = (token: string) => {
@@ -24,30 +25,36 @@ export const useAuth = () => {
   const [authKey, setAuthKey] = useState(0); // 강제 리렌더링을 위한 키
 
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    const userInfo = localStorage.getItem('userInfo');
+    const token = Cookies.get('accessToken');
+    console.log('🔍 useAuth - 쿠키에서 토큰 확인:', token ? '토큰 있음' : '토큰 없음');
     
-    if (token && userInfo) {
+    if (token) {
       try {
-        // 🎯 저장된 사용자 정보 사용
-        const user = JSON.parse(userInfo);
-        setCurrentUser({ 
-          id: user.id,
-          nickname: user.nickname
-        });
-        setIsLoggedIn(true);
-      } catch (error) {
-        console.error('저장된 사용자 정보 파싱 실패:', error);
-        // 🎯 JWT에서 정보 추출 (fallback)
+        // 🎯 JWT에서 정보 추출
         const decoded = decodeJWT(token);
+        console.log('🔍 useAuth - JWT 디코딩 결과:', decoded);
+        
         if (decoded && decoded.userId && decoded.nickname) {
           setCurrentUser({ 
             id: decoded.userId,
             nickname: decoded.nickname
           });
           setIsLoggedIn(true);
+          console.log('🔍 useAuth - 로그인 상태 설정됨:', decoded.nickname);
+        } else {
+          console.log('🔍 useAuth - JWT에 사용자 정보 없음');
+          setIsLoggedIn(false);
+          setCurrentUser(null);
         }
+      } catch (error) {
+        console.error('🔍 useAuth - JWT 디코딩 실패:', error);
+        setIsLoggedIn(false);
+        setCurrentUser(null);
       }
+    } else {
+      console.log('🔍 useAuth - 토큰 없음, 로그아웃 상태');
+      setIsLoggedIn(false);
+      setCurrentUser(null);
     }
   }, []);
 
@@ -55,11 +62,12 @@ export const useAuth = () => {
     setLoading(true);
     try {
       const response: LoginResponse = await authService.login({ email, password });
-      localStorage.setItem('accessToken', response.accessToken);
+      // 쿠키에 토큰 저장 (7일간 유효)
+      Cookies.set('accessToken', response.accessToken, { expires: 7 });
       
       // 🎯 사용자 정보 저장
       if (response.user) {
-        localStorage.setItem('userInfo', JSON.stringify(response.user));
+        Cookies.set('userInfo', JSON.stringify(response.user), { expires: 7 });
         setCurrentUser({ 
           id: response.user.id,
           nickname: response.user.nickname
@@ -77,8 +85,8 @@ export const useAuth = () => {
 
   const logout = () => {
     authService.logout();
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('userInfo'); // 🎯 사용자 정보도 삭제
+    Cookies.remove('accessToken');
+    Cookies.remove('userInfo'); // 🎯 사용자 정보도 삭제
     setIsLoggedIn(false);
     setCurrentUser(null);
     setAuthKey(prev => prev + 1); // 강제 리렌더링

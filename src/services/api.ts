@@ -21,10 +21,10 @@ api.interceptors.request.use((config) => {
 // api.interceptors.response.use(
 //   (response) => response,
 //   (error) => {
+//     console.error('API 오류:', error.response?.status, error.response?.data);
 //     if (error.response?.status === 401) {
-//       alert('로그인이 필요합니다!');
+//     console.log('인증 오류: 토큰이 유효하지 않습니다.');
 //       localStorage.removeItem('accessToken');
-//       // 실제로는 로그인 페이지로 이동
 //     }
 //     return Promise.reject(error);
 //   }

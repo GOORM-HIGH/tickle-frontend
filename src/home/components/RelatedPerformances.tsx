@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom';
 import { performanceApi, PerformanceDto } from '../api/performanceApi';
 import { useTimeConversion } from '../../hooks/useTimeConversion';
 import '../styles/RelatedPerformances.css';
+import { useScrollToTop } from '../../hooks/useScrollToTop';
 
 // 이미지 로딩 상태를 관리하는 컴포넌트
 const ImageWithSkeleton: React.FC<{ src: string; alt: string }> = ({ src, alt }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
+  useScrollToTop();
 
   const handleLoad = () => {
     setIsLoaded(true);

@@ -11,8 +11,13 @@ import ComplexPage from '../home/pages/Gnere/ComplexPage';
 import TraditionalPage from '../home/pages/Gnere/TraditionalPage';
 import PopularDancePage from '../home/pages/Gnere/PopularDancePage';
 import PerformanceDetailPage from '../home/pages/Performance/PerformanceDetailPage';
+import PerformanceCreatePage from '../home/pages/Performance/PerformanceCreatePage';
+import PerformanceHostPage from '../home/pages/Performance/PerformanceHostPage';
+import PerformanceEditPage from '../home/pages/Performance/PerformanceEditPage';
 import SearchPage from '../home/pages/Main/SearchPage';
 import ReservationPage from '../pages/reservation/ReservationPage';
+
+import DynamicGenrePage from '../home/pages/Gnere/DynamicGenrePage';
 
 const PerformanceRouter: React.FC = () => {
   return (
@@ -28,10 +33,16 @@ const PerformanceRouter: React.FC = () => {
       <Route path="/complex" element={<ComplexPage />} />
       <Route path="/traditional" element={<TraditionalPage />} />
       <Route path="/popular-dance" element={<PopularDancePage />} />
-      <Route path="/:id" element={<PerformanceDetailPage />} />
+      <Route path="/create" element={<PerformanceCreatePage />} />
+      <Route path="/host" element={<PerformanceHostPage />} />
+      <Route path="/edit/:performanceId" element={<PerformanceEditPage />} />
       <Route path="/search" element={<SearchPage />} />
-      {/* 예매 페이지 */}
-      <Route path="/:performanceId/reservation" element={<ReservationPage />} />
+      
+      {/* 동적 장르 페이지 */}
+      <Route path="/genre/:genreId" element={<DynamicGenrePage />} />
+      
+      {/* 공연 상세 페이지 */}
+      <Route path="/:id" element={<PerformanceDetailPage />} />
     </Routes>
   );
 };
