@@ -175,7 +175,7 @@ export default function InfoTab() {
   };
 
   return (
-    <div className="w-full max-w-[1000px] mx-auto mt-0">
+    <div className="w-full max-w-[810px] mx-auto mt-0">
       {/* 상단 여백·패딩 제거 후 헤더와 카드 붙이기 */}
       <div className="tab-content p-0">
         <div className="flex flex-col gap-0">
@@ -184,7 +184,7 @@ export default function InfoTab() {
           {/* AuthCard를 바로 이어서 렌더 (위쪽 여백 제거) */}
           <AuthCard
             title="회원정보"
-            minWidth="1000px"
+            minWidth="810px"
             centered={false} // ← 세로 상단 정렬
             fullHeight={false} // ← 화면 높이 채우지 않음
             containerClassName="pt-0" // 필요 시 여백 조절
