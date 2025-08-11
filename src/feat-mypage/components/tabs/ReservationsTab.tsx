@@ -102,9 +102,7 @@ const ReservationsTab: React.FC = () => {
           withCredentials: true,
         }
       );
-      const list = (res.data.data ?? []).filter(
-        (v) => v.status === "예매 취소"
-      );
+      const list = res.data.data;
       setCanceledReservationList(list);
     } catch (e: any) {
       console.error("취소내역 조회 실패", e?.response?.data || e);
