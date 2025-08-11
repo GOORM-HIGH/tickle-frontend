@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { performanceApi, PerformanceDto } from '../api/performanceApi';
-import { useTimeConversion } from '../../hooks/useTimeConversion';
-import '../styles/RelatedPerformances.css';
-import { useScrollToTop } from '../../hooks/useScrollToTop';
+import { performanceApi, PerformanceDto } from '../../api/performanceApi';
+import { useTimeConversion } from '../../../hooks/useTimeConversion';
+import '../../styles/RelatedPerformances.css';
+import { useScrollToTop } from '../../../hooks/useScrollToTop';
 
 // 이미지 로딩 상태를 관리하는 컴포넌트
 const ImageWithSkeleton: React.FC<{ src: string; alt: string }> = ({ src, alt }) => {

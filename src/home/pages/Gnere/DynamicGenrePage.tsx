@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Layout from '../../../components/layout/Layout';
-import CategoryRanking from '../../components/category/CategoryRanking';
-import CategoryBrowse from '../../components/category/CategoryBrowse';
+import GenreRanking from '../../components/genre/GenreRanking';
+import GenreBrowse from '../../components/genre/GenreBrowse';
 import { useScrollToTop } from '../../../hooks/useScrollToTop';
 import { performanceApi, GenreDto } from '../../api/performanceApi';
 
@@ -80,8 +80,8 @@ const DynamicGenrePage: React.FC = () => {
         }}>
           {genreInfo.title}
         </h1>
-        <CategoryRanking category={genreId!} />
-        <CategoryBrowse category={genreId!} />
+        <GenreRanking category={genreId!} />
+        <GenreBrowse category={genreId!} />
       </div>
     </Layout>
   );

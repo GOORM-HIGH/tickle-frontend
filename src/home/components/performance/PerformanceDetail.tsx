@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { performanceApi, PerformanceDetailDto } from '../api/performanceApi';
-import { useTimeConversion } from '../../hooks/useTimeConversion';
+import { performanceApi, PerformanceDetailDto } from '../../api/performanceApi';
+import { useTimeConversion } from '../../../hooks/useTimeConversion';
 import RelatedPerformances from './RelatedPerformances';
 import { Bookmark } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
-import { scrapService } from '../api/scrapService';
-import '../styles/PerformanceDetailPage.css';
+import { useAuth } from '../../../hooks/useAuth';
+import { scrapService } from '../../api/scrapService';
+import '../../styles/PerformanceDetailPage.css';
 
 const PerformanceDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -182,10 +182,7 @@ const PerformanceDetail: React.FC = () => {
             <div className="performance-actions">
               <button
                 className={reserveClassName}
-                onClick={() => {
-                  if (reserveDisabled) return;
-                  console.log('예매하기 클릭');
-                }}
+                onClick={() => navigate(`/performance/${performance.performanceId}/reservation`)}
                 disabled={reserveDisabled}
                 title={isNotStarted ? `예매 시작: ${formatDate(performance.startDate, 'date')}` : undefined}
               >

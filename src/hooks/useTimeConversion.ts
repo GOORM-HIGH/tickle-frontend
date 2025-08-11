@@ -1,56 +1,80 @@
 import { useCallback } from 'react';
 
-// UTC 시간을 한국 시간으로 변환하는 커스텀 hook
+// Asia/Seoul 타임존으로 안전하게 포맷하는 유틸리티
+const formatInKST = (
+  dateInput: string | number | Date,
+  options: Intl.DateTimeFormatOptions
+): string => {
+  const date = new Date(dateInput);
+  const formatter = new Intl.DateTimeFormat('en', {
+    timeZone: 'Asia/Seoul',
+    hour12: false,
+    ...options,
+  });
+  const parts = (formatter as any).formatToParts
+    ? (formatter as Intl.DateTimeFormat).formatToParts(date)
+    : null;
+
+  if (!parts) return formatter.format(date);
+
+  const get = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find(p => p.type === type)?.value || '';
+
+  const year = get('year');
+  const month = get('month');
+  const day = get('day');
+  const hour = get('hour');
+  const minute = get('minute');
+
+  const includeDate = Boolean(options.year || options.month || options.day);
+  const includeTime = Boolean(options.hour || options.minute);
+
+  if (includeDate && includeTime) return `${year}.${month}.${day} ${hour}:${minute}`;
+  if (includeDate) return `${year}.${month}.${day}`;
+  if (includeTime) return `${hour}:${minute}`;
+  return formatter.format(date);
+};
+
+// UTC/KST 혼동 없이 입력의 타임존을 존중하고 KST로만 표시
 export const useTimeConversion = () => {
-  // UTC 시간을 한국 시간으로 변환하는 함수
-  const convertUTCToKST = useCallback((utcDateString: string): string => {
+  const convertUTCToKST = useCallback((dateString: string): string => {
     try {
-      const utcDate = new Date(utcDateString);
-      const kstDate = new Date(utcDate.getTime() + (9 * 60 * 60 * 1000)); // UTC+9 (한국 시간)
-      
-      // 날짜 형식 포맷팅
-      const year = kstDate.getFullYear();
-      const month = String(kstDate.getMonth() + 1).padStart(2, '0');
-      const day = String(kstDate.getDate()).padStart(2, '0');
-      const hours = String(kstDate.getHours()).padStart(2, '0');
-      const minutes = String(kstDate.getMinutes()).padStart(2, '0');
-      
-      return `${year}.${month}.${day} ${hours}:${minutes}`;
+      return formatInKST(dateString, {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
     } catch (error) {
       console.error('날짜 변환 오류:', error);
-      return utcDateString; // 변환 실패시 원본 반환
+      return dateString;
     }
   }, []);
 
-  // 다양한 날짜 형식 옵션을 제공하는 함수
-  const formatDate = useCallback((utcDateString: string, format: 'full' | 'date' | 'time' = 'full'): string => {
-    try {
-      const utcDate = new Date(utcDateString);
-      const kstDate = new Date(utcDate.getTime() + (9 * 60 * 60 * 1000));
-      
-      const year = kstDate.getFullYear();
-      const month = String(kstDate.getMonth() + 1).padStart(2, '0');
-      const day = String(kstDate.getDate()).padStart(2, '0');
-      const hours = String(kstDate.getHours()).padStart(2, '0');
-      const minutes = String(kstDate.getMinutes()).padStart(2, '0');
-      
-      switch (format) {
-        case 'date':
-          return `${year}.${month}.${day}`;
-        case 'time':
-          return `${hours}:${minutes}`;
-        case 'full':
-        default:
-          return `${year}.${month}.${day} ${hours}:${minutes}`;
+  const formatDate = useCallback(
+    (dateString: string, format: 'full' | 'date' | 'time' = 'full'): string => {
+      try {
+        if (format === 'date') {
+          return formatInKST(dateString, { year: 'numeric', month: '2-digit', day: '2-digit' });
+        }
+        if (format === 'time') {
+          return formatInKST(dateString, { hour: '2-digit', minute: '2-digit' });
+        }
+        return formatInKST(dateString, {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+      } catch (error) {
+        console.error('날짜 변환 오류:', error);
+        return dateString;
       }
-    } catch (error) {
-      console.error('날짜 변환 오류:', error);
-      return utcDateString;
-    }
-  }, []);
+    },
+    []
+  );
 
-  return {
-    convertUTCToKST,
-    formatDate
-  };
-}; 
+  return { convertUTCToKST, formatDate };
+};
