@@ -3,6 +3,7 @@ export const MY_PAGE_TABS = {
   PERFORMANCES: 'performances',
   RESERVATIONS: 'reservations',
   COUPONS: 'coupons',
+  SCRAPS: 'scraps',
   SETTLEMENTS: 'settlements',
   POINT_HISTORY: 'pointHistory'
 } as const;

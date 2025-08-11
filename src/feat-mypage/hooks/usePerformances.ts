@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { performanceService } from '../../home/api/performanceService';
+import { performanceApi } from '../../home/api/performanceApi';
 import { PerformanceListItem } from '../../home/types/performance';
 import { MY_PAGE_TABS } from '../constants/tabs';
 
@@ -12,8 +12,35 @@ export const usePerformances = (activeTab: string, isHost: boolean) => {
   const loadMyPerformances = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await performanceService.getMyPerformances();
-      setPerformances(data);
+      const response = await performanceApi.getHostPerformances();
+      console.log('🔍 API 응답 전체:', response);
+      console.log('🔍 API 응답 데이터:', response.data);
+      
+      // API 응답에서 data 필드 추출하고 타입 매핑
+      const hostPerformances = response.data || [];
+      console.log('🔍 호스트 공연 목록:', hostPerformances);
+      
+      if (hostPerformances.length > 0) {
+        console.log('🔍 첫 번째 공연 데이터:', hostPerformances[0]);
+        console.log('🔍 첫 번째 공연의 모든 키:', Object.keys(hostPerformances[0]));
+      }
+      
+      const mappedPerformances: PerformanceListItem[] = hostPerformances.map(item => ({
+        performanceId: item.performanceId,
+        title: item.title,
+        date: item.date,
+        runtime: item.runtime || 0,
+        hallType: item.hallType || '',
+        hallAddress: item.hallAddress || '',
+        status: item.statusDescription,
+        isEvent: item.isEvent || false,
+        img: item.img,
+        createdAt: item.createdDate,
+        updatedAt: item.createdDate,
+      }));
+      
+      console.log('🔍 매핑된 공연 목록:', mappedPerformances);
+      setPerformances(mappedPerformances);
     } catch (error) {
       console.error('공연 목록 로드 실패:', error);
       alert('공연 목록을 불러오는데 실패했습니다.');
@@ -28,7 +55,7 @@ export const usePerformances = (activeTab: string, isHost: boolean) => {
     }
 
     try {
-      await performanceService.deletePerformance(performanceId);
+      await performanceApi.deletePerformance(performanceId);
       alert('공연이 삭제되었습니다.');
       loadMyPerformances(); // 목록 새로고침
     } catch (error) {

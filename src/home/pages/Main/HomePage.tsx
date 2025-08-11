@@ -1,8 +1,8 @@
 import React from 'react';
 import Layout from '../../../components/layout/Layout';
-import AdSlider from '../../components/AdSlider';
-import PopularPerformances from '../../components/PopularPerformances';
-import ComingSoon from '../../components/ComingSoon';
+import AdSlider from '../../components/main/AdSlider';
+import PopularPerformances from '../../components/main/PopularPerformances';
+import ComingSoon from '../../components/main/ComingSoon';
 import { useScrollToTop } from '../../../hooks/useScrollToTop';
 
 const HomePage: React.FC = () => {

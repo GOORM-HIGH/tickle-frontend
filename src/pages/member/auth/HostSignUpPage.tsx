@@ -260,7 +260,7 @@ const HostSignUpPage: React.FC = () => {
       }
 
       alert("회원가입 성공");
-      navigate("/home");
+      navigate("/auth/sign-in");
     } catch (error) {
       alert("회원가입 중 오류가 발생했습니다.");
       console.error(error);
