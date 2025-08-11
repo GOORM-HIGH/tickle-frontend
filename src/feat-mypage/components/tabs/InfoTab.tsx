@@ -33,7 +33,7 @@ export default function InfoTab() {
     hostBizBank: "",
     hostBizDepositor: "",
     hostBizBankNumber: "",
-    contractCharge: 0,
+    contractCharge: 0, // ✅ UI에선 '퍼센트' 값을 유지 (0~20)
     memberRole: "MEMBER",
   });
 
@@ -52,7 +52,16 @@ export default function InfoTab() {
         withCredentials: true,
       });
 
-      setFormData(res.data.data);
+      const dto = res.data.data;
+
+      // ✅ 서버는 소수(예: 0.05) → UI는 퍼센트(5)로 변환해서 상태에 저장
+      const raw = Number(dto.contractCharge);
+      const percent = Number.isFinite(raw) ? Math.round(raw * 100) : 0;
+
+      setFormData({
+        ...dto,
+        contractCharge: percent,
+      });
     } catch (error) {
       console.error("회원 정보 조회 실패", error);
     }
@@ -70,7 +79,7 @@ export default function InfoTab() {
 
     setFormData((prev) => {
       if (name === "contractCharge") {
-        return { ...prev, [name]: Number(value) };
+        return { ...prev, [name]: Number(value) }; // ✅ Select가 string을 주면 number로 변환
       }
       return { ...prev, [name]: value };
     });
@@ -117,7 +126,7 @@ export default function InfoTab() {
       return;
     }
 
-    // HOST 전용: 수수료율 검증
+    // HOST 전용: 수수료율 검증 (UI 단위: 퍼센트)
     if (formData.memberRole === "HOST") {
       const chargeError = validateContractCharge(
         Number(formData.contractCharge)
@@ -144,9 +153,11 @@ export default function InfoTab() {
         nickname: formData.nickname.trim(),
         img: uploadedUrl ?? undefined,
       };
+
+      // ✅ 서버는 소수 기대 → UI 퍼센트를 소수로 변환하여 전송
       if (formData.memberRole === "HOST") {
-        const chargeNum = Number(formData.contractCharge);
-        if (!Number.isNaN(chargeNum)) payload.charge = chargeNum;
+        const percent = Number(formData.contractCharge);
+        if (!Number.isNaN(percent)) payload.charge = percent / 100;
       }
 
       // ✅ 백엔드 사양에 맞춰 PathVariable로 이메일 전달
@@ -174,20 +185,25 @@ export default function InfoTab() {
     }
   };
 
+  // 기본 이미지/미리보기
+  const imagePreview = profileImage
+    ? URL.createObjectURL(profileImage)
+    : formData.img && formData.img.trim() !== ""
+    ? formData.img
+    : "/default-avatar.png";
+
   return (
     <div className="w-full max-w-[810px] mx-auto mt-0">
-      {/* 상단 여백·패딩 제거 후 헤더와 카드 붙이기 */}
       <div className="tab-content p-0">
         <div className="flex flex-col gap-0">
           <h2 className="page-title m-0">내정보</h2>
 
-          {/* AuthCard를 바로 이어서 렌더 (위쪽 여백 제거) */}
           <AuthCard
             title="회원정보"
             minWidth="810px"
-            centered={false} // ← 세로 상단 정렬
-            fullHeight={false} // ← 화면 높이 채우지 않음
-            containerClassName="pt-0" // 필요 시 여백 조절
+            centered={false}
+            fullHeight={false}
+            containerClassName="pt-0"
           >
             <form
               onSubmit={handleSubmit}
@@ -195,13 +211,11 @@ export default function InfoTab() {
             >
               {/* 프로필 이미지 (수정 가능) */}
               <ProfileImageUploader
-                imageUrl={
-                  profileImage ? formData.img : "/public/default-avatar.png"
-                }
+                imageUrl={imagePreview}
                 onChange={(file) => setProfileImage(file)}
               />
 
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4 w-full max-w-[560px]">
                 {/* 읽기 전용 */}
                 <AuthInput
                   label="이메일"
@@ -270,7 +284,7 @@ export default function InfoTab() {
                       readOnly
                     />
 
-                    {/* 수수료율만 수정 가능 */}
+                    {/* ✅ 수수료율 Select: value는 '퍼센트' 단위 */}
                     <Select
                       label="수수료율"
                       name="contractCharge"
