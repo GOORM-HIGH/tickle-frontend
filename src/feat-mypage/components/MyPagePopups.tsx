@@ -29,6 +29,8 @@ export const MyPagePopups: React.FC<MyPagePopupsProps> = ({
   onReceipt,
   onCloseReceipt,
 }) => {
+  console.log('MyPagePopups 렌더링:', { showReceiptPopup, receiptData });
+  
   return (
     <>
       {/* 포인트 충전 팝업 */}

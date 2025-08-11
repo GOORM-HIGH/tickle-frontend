@@ -21,10 +21,8 @@ const MyPage: React.FC = () => {
   const { 
     activeTab, 
     showChargePopup, 
-    showReceiptPopup, 
     handleChargeClick, 
-    handleCloseChargePopup, 
-    handleCloseReceiptPopup,
+    handleCloseChargePopup,
     setActiveTab 
   } = useUI();
   const { 
@@ -43,16 +41,21 @@ const MyPage: React.FC = () => {
   } = usePerformances(activeTab, true);
   const { 
     receiptData, 
+    showReceiptPopup,
     handleReceipt, 
-    clearReceiptData 
+    clearReceiptData,
+    closeReceiptPopup
   } = usePopups();
 
   // 포인트 충전 완료 후 팝업 닫기
   const handleChargeComplete = async (amount: number) => {
+    console.log('포인트 충전 시작:', amount);
     const result = await handleCharge(amount);
+    console.log('포인트 충전 결과:', result);
     if (result.success) {
       handleCloseChargePopup();
       if (result.data) {
+        console.log('영수증 데이터 설정:', result.data);
         handleReceipt(result.data);
       }
     }
@@ -61,7 +64,7 @@ const MyPage: React.FC = () => {
 
   // 영수증 팝업 닫기
   const handleCloseReceipt = () => {
-    handleCloseReceiptPopup();
+    closeReceiptPopup();
     clearReceiptData();
   };
 

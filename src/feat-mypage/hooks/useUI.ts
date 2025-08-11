@@ -4,7 +4,6 @@ import { MyPageTab } from '../constants/tabs';
 export const useUI = () => {
   const [activeTab, setActiveTab] = useState<MyPageTab>('info');
   const [showChargePopup, setShowChargePopup] = useState(false);
-  const [showReceiptPopup, setShowReceiptPopup] = useState(false);
 
   const handleTabChange = useCallback((tab: MyPageTab) => {
     setActiveTab(tab);
@@ -18,22 +17,15 @@ export const useUI = () => {
     setShowChargePopup(false);
   }, []);
 
-  const handleCloseReceiptPopup = useCallback(() => {
-    setShowReceiptPopup(false);
-  }, []);
-
   return {
     // 상태
     activeTab,
     showChargePopup,
-    showReceiptPopup,
     
     // 액션
     setActiveTab: handleTabChange,
     setShowChargePopup,
-    setShowReceiptPopup,
     handleChargeClick,
-    handleCloseChargePopup,
-    handleCloseReceiptPopup
+    handleCloseChargePopup
   };
 };
