@@ -9,7 +9,7 @@ interface SidebarProps {
   onChargeClick: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({
+const Sidebar: React.FC<SidebarProps> = ({
   currentBalance,
   activeMenu,
   onMenuClick,
@@ -19,7 +19,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <div className={styles.sidebar}>
       <div className={styles.profileSection}>
         <div className={styles.profileImage}>
-          <img src="/logo.png" alt="프로필" />
+          <img 
+          src="/logo.png" 
+          alt="프로필" 
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          onError={(e) => {
+            console.error('프로필 이미지 로드 실패:', e);
+            e.currentTarget.style.display = 'none';
+          }}
+        />
         </div>
         <div className={styles.userInfo}>
           <h3 className={styles.userName}>사용자님</h3>
@@ -118,4 +126,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
     </div>
   );
-}; 
+};
+
+export default Sidebar; 
