@@ -38,7 +38,7 @@ const PerformanceEditForm: React.FC = () => {
     if (isLoggedIn && !currentUser) return;
     if (!isLoggedIn) {
       alert('로그인이 필요합니다.');
-      navigate('/');
+      navigate('/auth/sign-in');
     }
   }, [isLoggedIn, currentUser, navigate]);
 
@@ -74,7 +74,7 @@ const PerformanceEditForm: React.FC = () => {
         setError('공연 정보를 불러오는데 실패했습니다.');
         if (err.response?.status === 401) navigate('/');
         else if (err.response?.status === 403) navigate('/');
-        else if (err.response?.status === 404) navigate('/performance/host');
+        else if (err.response?.status === 404) navigate('/performance');
       } finally {
         setLoading(false);
       }
@@ -131,7 +131,7 @@ const PerformanceEditForm: React.FC = () => {
     try {
       await performanceApi.updatePerformance(+performanceId, requestData);
       alert('공연이 성공적으로 수정되었습니다!');
-      navigate('/performance');
+      navigate('/mypage');
     } catch (err: any) {
       console.error('공연 수정 실패:', err);
       if (err.response?.status === 401 || err.response?.status === 403) navigate('/');

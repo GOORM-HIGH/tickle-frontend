@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bookmark } from 'lucide-react';
 import Cookies from 'js-cookie';
-import Layout from '../../../components/layout/Layout';
 import { useAuth } from '../../../hooks/useAuth';
 import { scrapService, PerformanceScrapDto } from '../../../home/api/scrapService';
 import SectionHeader from '../../../home/components/mypage/SectionHeader';

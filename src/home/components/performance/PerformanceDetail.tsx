@@ -182,10 +182,7 @@ const PerformanceDetail: React.FC = () => {
             <div className="performance-actions">
               <button
                 className={reserveClassName}
-                onClick={() => {
-                  if (reserveDisabled) return;
-                  console.log('예매하기 클릭');
-                }}
+                onClick={() => navigate(`/performance/${performance.performanceId}/reservation`)}
                 disabled={reserveDisabled}
                 title={isNotStarted ? `예매 시작: ${formatDate(performance.startDate, 'date')}` : undefined}
               >

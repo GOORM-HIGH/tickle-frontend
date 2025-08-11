@@ -62,7 +62,12 @@ const MainContent: React.FC<MainContentProps> = ({
         return <ScrapPage />;
 
       case 'performances':
-        return  <PerformanceHostDashboard />;
+        return  <PerformanceHostDashboard 
+                  performances={performances}
+                  loading={loading}
+                  onEditPerformance={onEditPerformance}
+                  onDeletePerformance={onDeletePerformance}
+                />;
     
 
       case 'coupons':

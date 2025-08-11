@@ -5,19 +5,27 @@ import { usePerformances } from '../../hooks/usePerformances';
 import { MY_PAGE_TABS } from '../../constants/tabs';
 import '../../styles/PerformanceHostPage.css';
 import { useScrollToTop } from '../../../hooks/useScrollToTop';
+import { PerformanceListItem } from '../../../home/types/performance';
 
-const PerformanceHostDashboard: React.FC = () => {
+interface PerformanceHostDashboardProps {
+  performances: PerformanceListItem[];
+  loading: boolean;
+  onEditPerformance: (id: number) => void;
+  onDeletePerformance: (id: number) => void;
+}
+
+const PerformanceHostDashboard: React.FC<PerformanceHostDashboardProps> = ({
+  performances,
+  loading,
+  onEditPerformance,
+  onDeletePerformance
+}) => {
   useScrollToTop();
   const navigate = useNavigate();
   const { isLoggedIn, currentUser } = useAuth();
   const isHost = currentUser?.role === 'HOST';
   
-  const {
-    performances,
-    loading,
-    handleDeletePerformance,
-    handleEditPerformance
-  } = usePerformances(MY_PAGE_TABS.PERFORMANCES, isHost);
+
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -90,8 +98,8 @@ const PerformanceHostDashboard: React.FC = () => {
                 </div>
 
                 <div className="performance-actions">
-                  <button className="edit-button" onClick={() => handleEditPerformance(performance.performanceId)}>수정</button>
-                  <button className="delete-button" onClick={() => handleDeletePerformance(performance.performanceId)}>삭제</button>
+                  <button className="edit-button" onClick={() => onEditPerformance(performance.performanceId)}>수정</button>
+                  <button className="delete-button" onClick={() => onDeletePerformance(performance.performanceId)}>삭제</button>
                 </div>
               </div>
             </div>
