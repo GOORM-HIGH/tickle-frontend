@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaBell, FaUser, FaTicketAlt, FaMusic } from "react-icons/fa";
+import { FaBell, FaUser, FaTicketAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { getAccessToken } from "../../../utils/tokenUtils";
 import api from "../../../services/api";
