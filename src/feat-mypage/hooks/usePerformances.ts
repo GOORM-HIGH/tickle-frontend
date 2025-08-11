@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { performanceService } from '../../home/api/performanceService';
+import { performanceApi, PerformanceHostDto } from '../../home/api/performanceApi';
 import { PerformanceListItem } from '../../home/types/performance';
 import { MY_PAGE_TABS } from '../constants/tabs';
 
@@ -12,7 +12,7 @@ export const usePerformances = (activeTab: string, isHost: boolean) => {
   const loadMyPerformances = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await performanceService.getMyPerformances();
+      const data = await performanceApi.getMyPerformances();
       setPerformances(data);
     } catch (error) {
       console.error('공연 목록 로드 실패:', error);
@@ -28,7 +28,7 @@ export const usePerformances = (activeTab: string, isHost: boolean) => {
     }
 
     try {
-      await performanceService.deletePerformance(performanceId);
+      await performanceApi.deletePerformance(performanceId);
       alert('공연이 삭제되었습니다.');
       loadMyPerformances(); // 목록 새로고침
     } catch (error) {
