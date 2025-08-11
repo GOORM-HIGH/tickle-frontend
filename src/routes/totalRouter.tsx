@@ -19,9 +19,6 @@ const TotalRouter: React.FC = () => {
       
       {/* 이벤트 관련 라우트 */}
       <Route path="/event/*" element={<EventRouter />} />
-      
-      {/* 마이페이지 관련 라우트 */}
-      
     </Routes>
   );
 };

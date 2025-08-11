@@ -1,4 +1,4 @@
-// src/pages/mypage/MyInfo.tsx  (= InfoTab)
+// src/pages/mypage/MyInfo.tsx
 import { useEffect, useState } from "react";
 import { getAccessToken } from "../../../utils/tokenUtils";
 import api from "../../../services/api";
@@ -23,7 +23,7 @@ const bankList: string[] = [
 ];
 const chargeList: number[] = [0, 5, 10, 15, 20];
 
-export default function InfoTab() {
+export default function MyInfo() {
   const [formData, setFormData] = useState<MemberInfo>({
     email: "",
     nickname: "",
@@ -164,6 +164,7 @@ export default function InfoTab() {
       setProfileImage(null);
     } catch (error: any) {
       console.error("회원 정보 저장 실패", error?.response?.data || error);
+      // 서버 메시지 노출(가능할 때)
       const msg =
         error?.response?.data?.message ||
         error?.response?.data?.error ||
@@ -175,125 +176,106 @@ export default function InfoTab() {
   };
 
   return (
-    <div className="w-full max-w-[1000px] mx-auto mt-0">
-      {/* 상단 여백·패딩 제거 후 헤더와 카드 붙이기 */}
-      <div className="tab-content p-0">
-        <div className="flex flex-col gap-0">
-          <h2 className="page-title m-0">내정보</h2>
+    <AuthCard title="회원정보" minWidth="1000px">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col items-center gap-6"
+      >
+        {/* 프로필 이미지 (수정 가능) */}
+        <ProfileImageUploader
+          imageUrl={
+            profileImage
+              ? URL.createObjectURL(profileImage)
+              : formData.img || undefined
+          }
+          onChange={(file) => setProfileImage(file)}
+        />
 
-          {/* AuthCard를 바로 이어서 렌더 (위쪽 여백 제거) */}
-          <AuthCard
-            title="회원정보"
-            minWidth="1000px"
-            centered={false} // ← 세로 상단 정렬
-            fullHeight={false} // ← 화면 높이 채우지 않음
-            containerClassName="pt-0" // 필요 시 여백 조절
-          >
-            <form
-              onSubmit={handleSubmit}
-              className="flex flex-col items-center gap-6"
-            >
-              {/* 프로필 이미지 (수정 가능) */}
-              <ProfileImageUploader
-                imageUrl={
-                  profileImage
-                    ? URL.createObjectURL(profileImage)
-                    : formData.img || undefined
-                }
-                onChange={(file) => setProfileImage(file)}
+        <div className="flex flex-col gap-4">
+          {/* 읽기 전용 */}
+          <AuthInput
+            label="이메일"
+            variant="large"
+            value={formData.email}
+            readOnly
+          />
+          <AuthInput
+            label="보유 포인트"
+            variant="large"
+            value={`${formData.pointBalance.toLocaleString()} P`}
+            readOnly
+          />
+          {formData.hostBizName && (
+            <AuthInput
+              label="사업자명"
+              variant="large"
+              value={formData.hostBizName}
+              readOnly
+            />
+          )}
+
+          {/* 닉네임 (수정 가능) */}
+          <AuthInput
+            label="닉네임"
+            name="nickname"
+            variant="large"
+            placeholder="닉네임"
+            value={formData.nickname}
+            onChange={handleChange}
+            error={errors.nickname}
+          />
+
+          {/* HOST 전용: 보기만 가능(수정 불가) + 수수료율(수정 가능) */}
+          {formData.memberRole === "HOST" && (
+            <>
+              <Select
+                label="은행"
+                name="hostBizBank"
+                value={formData.hostBizBank}
+                onChange={handleChange}
+                options={[
+                  { label: "선택", value: "" },
+                  ...bankList.map((b) => ({ label: b, value: b })),
+                ]}
+                disabled
               />
 
-              <div className="flex flex-col gap-4">
-                {/* 읽기 전용 */}
-                <AuthInput
-                  label="이메일"
-                  variant="large"
-                  value={formData.email}
-                  readOnly
-                />
-                <AuthInput
-                  label="보유 포인트"
-                  variant="large"
-                  value={`${formData.pointBalance.toLocaleString()} P`}
-                  readOnly
-                />
-                {formData.hostBizName && (
-                  <AuthInput
-                    label="사업자명"
-                    variant="large"
-                    value={formData.hostBizName}
-                    readOnly
-                  />
-                )}
+              <AuthInput
+                label="예금주"
+                name="hostBizDepositor"
+                variant="large"
+                placeholder="예금주"
+                value={formData.hostBizDepositor}
+                onChange={handleChange}
+                readOnly
+              />
 
-                {/* 닉네임 (수정 가능) */}
-                <AuthInput
-                  label="닉네임"
-                  name="nickname"
-                  variant="large"
-                  placeholder="닉네임"
-                  value={formData.nickname}
-                  onChange={handleChange}
-                  error={errors.nickname}
-                />
+              <AuthInput
+                label="계좌번호"
+                name="hostBizBankNumber"
+                variant="large"
+                placeholder="계좌번호"
+                value={formData.hostBizBankNumber}
+                onChange={handleChange}
+                readOnly
+              />
 
-                {/* HOST 전용: 보기만 가능(수정 불가) + 수수료율(수정 가능) */}
-                {formData.memberRole === "HOST" && (
-                  <>
-                    <Select
-                      label="은행"
-                      name="hostBizBank"
-                      value={formData.hostBizBank}
-                      onChange={handleChange}
-                      options={[
-                        { label: "선택", value: "" },
-                        ...bankList.map((b) => ({ label: b, value: b })),
-                      ]}
-                      disabled
-                    />
+              {/* 수수료율만 수정 가능 */}
+              <Select
+                label="수수료율"
+                name="contractCharge"
+                value={formData.contractCharge}
+                onChange={handleChange}
+                options={chargeList.map((c) => ({ label: `${c}%`, value: c }))}
+              />
+            </>
+          )}
 
-                    <AuthInput
-                      label="예금주"
-                      name="hostBizDepositor"
-                      variant="large"
-                      placeholder="예금주"
-                      value={formData.hostBizDepositor}
-                      onChange={handleChange}
-                      readOnly
-                    />
-
-                    <AuthInput
-                      label="계좌번호"
-                      name="hostBizBankNumber"
-                      variant="large"
-                      placeholder="계좌번호"
-                      value={formData.hostBizBankNumber}
-                      onChange={handleChange}
-                      readOnly
-                    />
-
-                    {/* 수수료율만 수정 가능 */}
-                    <Select
-                      label="수수료율"
-                      name="contractCharge"
-                      value={formData.contractCharge}
-                      onChange={handleChange}
-                      options={chargeList.map((c) => ({
-                        label: `${c}%`,
-                        value: c,
-                      }))}
-                    />
-                  </>
-                )}
-
-                <Button size="large" type="submit" disabled={isSaving}>
-                  {isSaving ? "저장 중..." : "저장"}
-                </Button>
-              </div>
-            </form>
-          </AuthCard>
+          <Button size="large" type="submit" disabled={isSaving}>
+            {isSaving ? "저장 중..." : "저장"}
+          </Button>
         </div>
-      </div>
-    </div>
+      </form>
+    </AuthCard>
   );
 }
