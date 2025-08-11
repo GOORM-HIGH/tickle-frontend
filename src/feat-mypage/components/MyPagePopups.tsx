@@ -1,5 +1,6 @@
 import React, { useMemo, useCallback } from 'react';
-import { ChargePopup, ReceiptPopup } from './index';
+import ChargePopup from './ChargePopup';
+import ReceiptPopup from './ReceiptPopup';
 import { PointResponse } from '../../services/pointService';
 
 interface ChargeResult {
@@ -85,7 +86,7 @@ const MyPagePopupsComponent: React.FC<MyPagePopupsProps> = ({
 
 // React.memo로 감싸서 props가 변경되지 않으면 리렌더링 방지
 // 비교 함수를 추가하여 더 정확한 비교 수행
-export const MyPagePopups = React.memo(MyPagePopupsComponent, (prevProps, nextProps) => {
+const MyPagePopups = React.memo(MyPagePopupsComponent, (prevProps, nextProps) => {
   const propsChanged = 
     prevProps.showChargePopup !== nextProps.showChargePopup ||
     prevProps.showReceiptPopup !== nextProps.showReceiptPopup ||
@@ -112,3 +113,5 @@ export const MyPagePopups = React.memo(MyPagePopupsComponent, (prevProps, nextPr
   
   return !propsChanged; // props가 변경되지 않았으면 true 반환 (리렌더링 방지)
 });
+
+export default MyPagePopups;

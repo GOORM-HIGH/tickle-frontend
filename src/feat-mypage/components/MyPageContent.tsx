@@ -1,5 +1,6 @@
 import React from 'react';
-import { Sidebar, MainContent } from './index';
+import Sidebar from './Sidebar';
+import MainContent from './MainContent';
 import { MyPageTab } from '../constants/tabs';
 import { PointHistoryResponse } from '../../services/pointService';
 import { PerformanceListItem } from '../../home/types/performance';
@@ -26,7 +27,7 @@ interface MyPageContentProps {
   onPageChange: (page: number) => void;
 }
 
-export const MyPageContent: React.FC<MyPageContentProps> = ({
+const MyPageContent: React.FC<MyPageContentProps> = ({
   currentBalance,
   activeTab,
   pointHistory,
@@ -83,3 +84,5 @@ export const MyPageContent: React.FC<MyPageContentProps> = ({
     </div>
   );
 };
+
+export default MyPageContent;
