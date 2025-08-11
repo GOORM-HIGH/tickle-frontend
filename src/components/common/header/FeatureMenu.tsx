@@ -99,7 +99,7 @@ export default function FeatureMenu({
 
           {isSignIn && (
             <Link
-              to="/auth/my-page"
+              to="/mypage"
               className="flex items-center gap-1 hover:text-blue-600"
             >
               <FaUser /> 마이페이지
