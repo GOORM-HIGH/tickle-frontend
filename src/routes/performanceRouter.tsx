@@ -15,6 +15,7 @@ import PerformanceCreatePage from '../home/pages/Performance/PerformanceCreatePa
 import PerformanceHostPage from '../home/pages/Performance/PerformanceHostPage';
 import PerformanceEditPage from '../home/pages/Performance/PerformanceEditPage';
 import SearchPage from '../home/pages/Main/SearchPage';
+import ReservationPage from '../pages/reservation/ReservationPage';
 
 import DynamicGenrePage from '../home/pages/Gnere/DynamicGenrePage';
 
@@ -39,6 +40,9 @@ const PerformanceRouter: React.FC = () => {
       
       {/* 동적 장르 페이지 */}
       <Route path="/genre/:genreId" element={<DynamicGenrePage />} />
+      
+      {/* 예매 페이지 */}
+      <Route path="/:performanceId/reservation" element={<ReservationPage />} />
       
       {/* 공연 상세 페이지 */}
       <Route path="/:id" element={<PerformanceDetailPage />} />

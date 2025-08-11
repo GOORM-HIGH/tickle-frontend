@@ -1,7 +1,7 @@
-import React from 'react';
-import { PerformanceListItem } from '../../home/types/performance';
-import { PointHistoryResponse } from '../../services/pointService';
-import { 
+import React from "react";
+import { PerformanceListItem } from "../../home/types/performance";
+import { PointHistoryResponse } from "../../services/pointService";
+import {
   InfoTab,
   ReservationsTab,
   CouponsTab,
@@ -11,7 +11,7 @@ import {
   ScrapPage,
 } from './tabs';
 
-import { MyPageTab } from '../constants/tabs';
+import { MyPageTab } from "../constants/tabs";
 
 interface MainContentProps {
   activeTab: MyPageTab;
@@ -48,14 +48,14 @@ const MainContent: React.FC<MainContentProps> = ({
   onChargeClick,
   onEditPerformance,
   onDeletePerformance,
-  onPageChange
+  onPageChange,
 }) => {
   const renderTabContent = () => {
     switch (activeTab) {
-      case 'info':
+      case "info":
         return <InfoTab />;
 
-      case 'reservations':
+      case "reservations":
         return <ReservationsTab />;
       
       case 'scraps':
@@ -70,13 +70,13 @@ const MainContent: React.FC<MainContentProps> = ({
                 />;
     
 
-      case 'coupons':
+      case "coupons":
         return <CouponsTab />;
 
-      case 'settlements':
+      case "settlements":
         return <SettlementsTab />;
 
-      case 'pointHistory':
+      case "pointHistory":
         return (
           <PointHistoryTab
             pointHistory={pointHistory}
@@ -94,20 +94,11 @@ const MainContent: React.FC<MainContentProps> = ({
         );
 
       default:
-        return (
-          <div className="tab-content">
-            <h2 className="page-title">내정보</h2>
-            <p>사용자 정보를 확인하고 수정할 수 있습니다.</p>
-          </div>
-        );
+        return <InfoTab />;
     }
   };
 
-  return (
-    <div className="main-content">
-      {renderTabContent()}
-    </div>
-  );
+  return <div className="main-content">{renderTabContent()}</div>;
 };
 
 export default MainContent;
