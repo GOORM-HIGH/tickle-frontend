@@ -200,7 +200,7 @@ class StompWebSocketService {
   private handleReceivedMessage(data: any): void {
     if (!this.onMessageCallback) return;
 
-    console.log('🎯 handleReceivedMessage 시작, 원본 데이터:', data); // �� 디버깅 로그
+    console.log('🎯 handleReceivedMessage 시작, 원본 데이터:', data);
 
     // 🎯 삭제 이벤트 처리
     if (data.type === 'DELETE') {
@@ -214,72 +214,39 @@ class StompWebSocketService {
         createdAt: new Date().toISOString(),
         senderNickname: data.senderNickname || '알 수 없음',
         isMyMessage: false,
-        isDeleted: true // 삭제된 메시지 표시
+        isDeleted: true
       };
       this.onMessageCallback(deleteMessage);
       return;
     }
 
-    // 🎯 백엔드 응답을 ChatMessage 형태로 변환
-    const senderId = data.senderId || data.memberId || 0;
-    
-    // 🎯 JWT에서 직접 userId 추출
-    let currentUserIdFromToken = this.currentUserId;
-    
-    try {
-      const currentToken = getAccessToken();
-      if (currentToken) {
-        const base64Url = currentToken.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-        const tokenPayload = JSON.parse(jsonPayload);
-        
-        console.log('🎯 JWT 페이로드:', tokenPayload);
-        
-        // 🎯 JWT에서 직접 userId 추출
-        if (tokenPayload.userId) {
-          currentUserIdFromToken = tokenPayload.userId;
-          console.log(`🎯 JWT에서 직접 추출한 userId: ${tokenPayload.userId}`);
-        } else {
-          console.warn('🎯 JWT에 userId가 없음, 저장된 사용자 정보 사용');
-          // fallback: 저장된 사용자 정보 사용
-          const userInfo = getUserInfo();
-          if (userInfo) {
-            const user = JSON.parse(userInfo);
-            currentUserIdFromToken = user.id;
-            console.log(`🎯 저장된 사용자 정보 사용: ID=${user.id}, 닉네임=${user.nickname}`);
-          }
-        }
-      }
-      console.log(`🎯 최종 사용자 ID: ${currentUserIdFromToken} (타입: ${typeof currentUserIdFromToken})`);
-    } catch (error) {
-      console.warn('사용자 정보 추출 실패, 저장된 사용자 ID 사용:', error);
-      currentUserIdFromToken = this.currentUserId;
+    // 🎯 JOIN/LEAVE 시스템 메시지 처리
+    if (data.type === 'USER_JOIN' || data.type === 'USER_LEAVE') {
+      console.log('🚪 시스템 메시지 수신:', data);
+      const systemMessage: ChatMessage = {
+        id: data.messageId || Date.now(),
+        chatRoomId: data.chatRoomId || this.currentChatRoomId!,
+        memberId: data.senderId || 0,
+        messageType: 'SYSTEM',
+        content: data.content || data.message || '',
+        createdAt: data.createdAt || new Date().toISOString(),
+        senderNickname: data.senderNickname || '시스템',
+        isMyMessage: false, // 시스템 메시지는 항상 false
+        isDeleted: false
+      };
+      this.onMessageCallback(systemMessage);
+      return;
     }
-    
-    // 🎯 isMyMessage 판단 (senderId로만 체크)
-    const isMyMessage = senderId === currentUserIdFromToken;
-    
-    console.log(`🎯 최종 isMyMessage: ${isMyMessage}`);
-    console.log(`🎯 발신자 정보: ID=${senderId}, 닉네임="${data.senderNickname}"`);
-    console.log(`🎯 현재 사용자: ID=${currentUserIdFromToken}, 닉네임="${this.currentUserNickname}"`);
-    
-    // 🎯 디버깅: 모든 메시지가 내 메시지로 표시되는 문제 해결
-    if (isMyMessage) {
-      console.log(`🎯 내 메시지 확인: ID=${senderId}, 닉네임="${data.senderNickname}"`);
-    } else {
-      console.log(`🎯 상대방 메시지 확인: ID=${senderId}, 닉네임="${data.senderNickname}"`);
-    }
-    
-    // 🎯 숫자 타입 비교를 위한 변환
-    const senderIdNum = Number(senderId);
-    const currentUserIdNum = Number(currentUserIdFromToken);
-    const finalIsMyMessage = senderIdNum === currentUserIdNum;
-    
-    console.log(`🎯 숫자 변환 후 비교: ${senderIdNum} === ${currentUserIdNum} = ${finalIsMyMessage}`);
-    
+
+    // 🎯 일반 메시지 처리
+    const senderId = Number(data.senderId || data.memberId || 0);
+    const currentUserId = Number(this.currentUserId || 0);
+
+    // 🎯 isMyMessage 계산 (숫자 타입으로 정확히 비교)
+    const isMyMessage = senderId === currentUserId;
+
+    console.log(`🎯 메시지 처리: 발신자=${senderId}, 현재사용자=${currentUserId}, 내메시지=${isMyMessage}`);
+
     const chatMessage: ChatMessage = {
       id: data.messageId || data.id || 0,
       chatRoomId: data.chatRoomId || this.currentChatRoomId!,
@@ -288,13 +255,11 @@ class StompWebSocketService {
       content: data.content || data.message || '',
       createdAt: data.createdAt || new Date().toISOString(),
       senderNickname: data.senderNickname || data.sender || '알 수 없음',
-      isMyMessage: finalIsMyMessage // 🎯 숫자 변환 후 비교 결과 사용
+      isMyMessage: isMyMessage,
+      isDeleted: data.isDeleted || false
     };
 
-    console.log(`🎯 메시지 발신자 ID: ${senderId}, 현재 사용자 ID: ${currentUserIdFromToken}, 내 메시지: ${isMyMessage}`);
-    console.log(`🎯 발신자 닉네임: "${data.senderNickname}" (원본: "${data.sender}")`);
-
-    console.log('🎯 변환된 ChatMessage:', chatMessage); // 🎯 디버깅 로그
+    console.log('🎯 변환된 ChatMessage:', chatMessage);
     this.onMessageCallback(chatMessage);
   }
 
