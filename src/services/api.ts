@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getAccessToken } from '../utils/tokenUtils';
 
 const api = axios.create({
   baseURL: 'http://localhost:8081',
@@ -9,7 +10,7 @@ const api = axios.create({
 
 // JWT 토큰 자동 추가
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("accessToken");
+  const token = getAccessToken();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
