@@ -129,7 +129,7 @@ const SignInPage: React.FC = () => {
           </Link>
           <span>|</span>
           <Link
-            to="/auth/host-sign-in"
+            to="/auth/host-sign-up"
             className="text-blue-600 hover:underline"
           >
             사업자 회원가입
