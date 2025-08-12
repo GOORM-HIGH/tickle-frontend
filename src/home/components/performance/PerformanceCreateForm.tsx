@@ -102,7 +102,7 @@ const PerformanceCreateForm: React.FC = () => {
         startDate: formatDateToISO(formData.startDate),
         endDate: formatDateToISO(formData.endDate, true),
         isEvent: formData.isEvent,
-        img: imagePreview || '',
+        img: '/public/default.jpeg',
       };
 
       const response = await performanceApi.createPerformance(requestData);
@@ -112,7 +112,7 @@ const PerformanceCreateForm: React.FC = () => {
         navigate(`/mypage/event/create?performanceId=${response.data.performanceId}`);
       } else {
         alert('공연이 성공적으로 생성되었습니다!');
-        navigate('/');
+        navigate('');
       }
     } catch (error: any) {
       console.error('공연 생성 실패:', error);
@@ -153,7 +153,7 @@ const PerformanceCreateForm: React.FC = () => {
           <div className="form-layout">
             <div className={`image-upload-section ${imagePreview ? 'has-image' : ''}`}>
               <div className="image-performance-upload-area" onClick={triggerFileInput}>
-                {!imagePreview && <div className="performance-image-placeholder">공연 이미지를 업로드해주세요</div>}
+                {!imagePreview && <img src="/public/default.jpeg" alt="기본 공연 이미지" className="image-preview" />}
                 {imagePreview && <img src={imagePreview} alt="공연 이미지 미리보기" className="image-preview" />}
               </div>
               <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" style={{ display: 'none' }} />

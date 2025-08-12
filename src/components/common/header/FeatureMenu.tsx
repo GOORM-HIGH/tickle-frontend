@@ -5,6 +5,7 @@ import { getAccessToken } from "../../../utils/tokenUtils";
 import api from "../../../services/api";
 import NotificationPopover from "../../notification/NotificationPopover";
 import GenreMenu from "./GenreMenu";
+import { MdEmojiEvents } from "react-icons/md";
 
 interface FeatureMenuProps {
   isSignIn: boolean;
@@ -79,22 +80,12 @@ export default function FeatureMenu({
         {/* 왼쪽: 장르 메뉴 */}
         <GenreMenu variant="inline" />
         <div className="w-full max-w-[1440px] mx-auto flex justify-end items-center text-sm text-gray-900 gap-6">
-          {isSignIn && (
-            <>
-              <Link
-                to="/events"
-                className="flex items-center gap-1 hover:text-blue-600"
-              >
-                <FaTicketAlt /> 쿠폰
-              </Link>
-            </>
-          )}
 
           <Link
             to="/event"
             className="flex items-center gap-1 hover:text-blue-600"
           >
-            🎉 이벤트
+            <MdEmojiEvents size={20} /> 이벤트
           </Link>
 
           {isSignIn && (
