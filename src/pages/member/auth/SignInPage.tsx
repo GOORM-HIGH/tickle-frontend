@@ -63,7 +63,7 @@ const SignInPage: React.FC = () => {
 
       // 🎯 사용자 정보도 localStorage에 저장
       if (user) {
-        localStorage.setItem('userInfo', JSON.stringify(user));
+        localStorage.setItem("userInfo", JSON.stringify(user));
       }
 
       // 🎯 페이지 새로고침으로 useAuth 상태 업데이트
@@ -120,10 +120,10 @@ const SignInPage: React.FC = () => {
         </Button>
 
         <div className="text-sm text-gray-700 flex gap-2">
-          <Link to="/find-password" className="text-blue-600 hover:underline">
+          {/* <Link to="/find-password" className="text-blue-600 hover:underline">
             비밀번호 찾기
-          </Link>
-          <span>|</span>
+          </Link> */}
+          {/* <span>|</span> */}
           <Link to="/sign-up" className="text-blue-600 hover:underline">
             회원가입
           </Link>
