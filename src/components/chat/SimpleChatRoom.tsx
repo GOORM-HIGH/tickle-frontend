@@ -15,6 +15,8 @@ interface Props {
   onClose: () => void;
   onMessageUpdate: (messageId: number, updatedMessage: ChatMessageType) => void;
   onMessageDelete: (messageId: number) => void;
+  showSearch?: boolean; // 🎯 검색 상태 추가
+  onSearchToggle?: (show: boolean) => void; // 🎯 검색 토글 함수 추가
 }
 
 export const SimpleChatRoom: React.FC<Props> = ({
@@ -24,6 +26,8 @@ export const SimpleChatRoom: React.FC<Props> = ({
   onClose,
   onMessageUpdate,
   onMessageDelete,
+  showSearch = false, // 🎯 props에서 받아오기
+  onSearchToggle, // 🎯 props에서 받아오기
 }) => {
   const [messages, setMessages] = useState<ChatMessageType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -32,7 +36,6 @@ export const SimpleChatRoom: React.FC<Props> = ({
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMoreMessages, setHasMoreMessages] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
-  const [showSearch, setShowSearch] = useState(false);
   const [displayedMessages, setDisplayedMessages] = useState<ChatMessageType[]>([]);
   const [lastConnected, setLastConnected] = useState<Date | undefined>();
   const [connectionAttempts, setConnectionAttempts] = useState(0);
@@ -474,20 +477,6 @@ export const SimpleChatRoom: React.FC<Props> = ({
       {/* 헤더 없음 - 모달 헤더만 사용 */}
 
       {/* 검색 영역 */}
-      {showSearch && (
-        <div style={{
-          padding: '10px',
-          backgroundColor: 'white',
-          borderBottom: '1px solid #eee',
-        }}>
-          <MessageSearch
-            messages={messages}
-            onSearchResult={handleSearchResult}
-            onClose={() => setShowSearch(false)}
-          />
-        </div>
-      )}
-
       {/* 연결 상태 표시 */}
       <ConnectionStatus
         isConnected={isConnected}
@@ -509,37 +498,50 @@ export const SimpleChatRoom: React.FC<Props> = ({
           position: 'relative'
         }}
       >
-        {/* 검색 버튼 (고정 위치) */}
-        <div style={{
-          position: 'absolute',
-          top: '10px',
-          right: '10px',
-          zIndex: 100
-        }}>
-          <button
-            onClick={() => setShowSearch(!showSearch)}
-            style={{
-              background: 'none',
-              border: 'none',
-              fontSize: '18px',
-              cursor: 'pointer',
-              padding: '8px',
-              borderRadius: '50%',
-              transition: 'background-color 0.2s',
-              color: showSearch ? '#007bff' : '#666',
-              backgroundColor: showSearch ? '#f0f8ff' : 'transparent'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#f0f0f0';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = showSearch ? '#f0f8ff' : 'transparent';
-            }}
-            title="메시지 검색"
-          >
-            🔍
-          </button>
-        </div>
+        {/* 🎯 검색 영역을 모달창 내 중앙에 배치 */}
+        {showSearch && (
+          <div style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '90%',
+            maxWidth: '400px',
+            backgroundColor: 'rgba(255, 255, 255, 0.85)',
+            border: '1px solid #ddd',
+            borderRadius: '12px',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+            backdropFilter: 'blur(15px)',
+            zIndex: 1001
+          }}>
+            <MessageSearch
+              messages={messages}
+              onSearchResult={handleSearchResult}
+              onClose={() => onSearchToggle?.(false)}
+              onMessageClick={(messageId: number) => {
+                // 🎯 메시지 클릭 시 해당 메시지로 스크롤
+                const messageElement = document.querySelector(`[data-message-id="${messageId}"]`) as HTMLElement;
+                if (messageElement) {
+                  messageElement.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                  });
+                  // 🎯 메시지에 하이라이트 효과 추가
+                  messageElement.style.backgroundColor = '#fff3cd';
+                  messageElement.style.borderRadius = '8px';
+                  messageElement.style.padding = '8px';
+                  messageElement.style.margin = '-8px';
+                  setTimeout(() => {
+                    messageElement.style.backgroundColor = '';
+                    messageElement.style.borderRadius = '';
+                    messageElement.style.padding = '';
+                    messageElement.style.margin = '';
+                  }, 2000);
+                }
+              }}
+            />
+          </div>
+        )}
 
         {isLoading ? (
           <div style={{ textAlign: 'center', padding: '20px' }}>
@@ -586,29 +588,26 @@ export const SimpleChatRoom: React.FC<Props> = ({
             <button
               onClick={scrollToBottom} // 🎯 가장 마지막 메시지로 스크롤
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '5px',
-                padding: '8px 16px',
-                backgroundColor: '#007bff',
-                color: 'white',
-                border: 'none',
-                borderRadius: '20px',
+                background: 'rgba(255, 255, 255, 0.8)',
+                border: '1px solid #ddd',
+                fontSize: '18px',
                 cursor: 'pointer',
-                fontSize: '12px',
-                fontWeight: 'bold',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-                transition: 'background-color 0.2s ease'
+                padding: '8px',
+                borderRadius: '50%',
+                color: '#666',
+                transition: 'background-color 0.2s ease',
+                backdropFilter: 'blur(5px)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#0056b3';
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#007bff';
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
               }}
               title="최신 메시지로 이동"
             >
-              ⬇️ 최신 메시지
+              ⬇️
             </button>
           </div>
         )}

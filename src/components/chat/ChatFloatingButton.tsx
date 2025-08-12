@@ -15,6 +15,7 @@ const ChatFloatingButton: React.FC = () => {
   const [selectedRoom, setSelectedRoom] = useState<ChatRoom | null>(null);
   const [reservations, setReservations] = useState<any[]>([]);
   const [reservationLoading, setReservationLoading] = useState(false);
+  const [showSearch, setShowSearch] = useState(false); // 🎯 검색 상태 추가
 
   const handleClick = () => {
     if (currentUser) {
@@ -35,17 +36,20 @@ const ChatFloatingButton: React.FC = () => {
   const handleRoomClick = (room: ChatRoom) => {
     setSelectedRoom(room);
     setCurrentView('room');
+    setShowSearch(false); // 🎯 검색 상태 초기화
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setCurrentView('list');
     setSelectedRoom(null);
+    setShowSearch(false); // 🎯 검색 상태 초기화
   };
 
   const handleBackToList = () => {
     setCurrentView('list');
     setSelectedRoom(null);
+    setShowSearch(false); // 🎯 검색 상태 초기화
   };
 
   const handleOpenReservations = () => {
@@ -292,24 +296,56 @@ const ChatFloatingButton: React.FC = () => {
                 {currentView === 'reservations' && '🎟️ 내 예매 내역'}
               </h3>
             </div>
-            <button
-              onClick={handleCloseModal}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: 'white',
-                fontSize: '18px',
-                cursor: 'pointer',
-                padding: '0',
-                width: '24px',
-                height: '24px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              ✕
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {/* 🎯 검색 버튼 (채팅방에서만 표시) */}
+              {currentView === 'room' && (
+                <button
+                  onClick={() => setShowSearch(!showSearch)}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    color: 'white',
+                    fontSize: '16px',
+                    cursor: 'pointer',
+                    padding: '6px',
+                    borderRadius: '50%',
+                    transition: 'all 0.2s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '32px',
+                    height: '32px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+                  }}
+                  title="메시지 검색"
+                >
+                  🔍
+                </button>
+              )}
+              <button
+                onClick={handleCloseModal}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'white',
+                  fontSize: '18px',
+                  cursor: 'pointer',
+                  padding: '0',
+                  width: '24px',
+                  height: '24px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                ✕
+              </button>
+            </div>
           </div>
 
           {/* Modal Content */}
@@ -399,6 +435,8 @@ const ChatFloatingButton: React.FC = () => {
                   onClose={handleBackToList}
                   onMessageUpdate={handleMessageUpdate}
                   onMessageDelete={handleMessageDelete}
+                  showSearch={showSearch} // 🎯 검색 상태 전달
+                  onSearchToggle={setShowSearch} // 🎯 검색 토글 함수 전달
                 />
               </div>
             )}

@@ -5,12 +5,14 @@ interface Props {
   messages: ChatMessage[];
   onSearchResult: (filteredMessages: ChatMessage[]) => void;
   onClose: () => void;
+  onMessageClick?: (messageId: number) => void; // 🎯 메시지 클릭 핸들러 추가
 }
 
 export const MessageSearch: React.FC<Props> = ({
   messages,
   onSearchResult,
-  onClose
+  onClose,
+  onMessageClick
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchBy, setSearchBy] = useState<'content' | 'sender'>('content');
@@ -55,6 +57,13 @@ export const MessageSearch: React.FC<Props> = ({
     return () => clearTimeout(timeoutId);
   }, [searchTerm, searchBy]);
 
+  // 🎯 검색창이 열릴 때 자동 포커스
+  useEffect(() => {
+    if (searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, []);
+
   // 검색 결과 하이라이트
   const highlightText = (text: string, term: string) => {
     if (!term) return text;
@@ -92,27 +101,51 @@ export const MessageSearch: React.FC<Props> = ({
 
   // 검색 결과 클릭
   const handleResultClick = (message: ChatMessage) => {
-    // 메시지 위치로 스크롤 (실제 구현에서는 메시지 ID로 스크롤)
-    console.log('메시지로 이동:', message);
+    // 🎯 메시지 클릭 핸들러 호출
+    if (onMessageClick) {
+      onMessageClick(message.id);
+    }
   };
 
   return (
     <div style={{
-      position: 'absolute',
-      top: '0',
-      left: '0',
-      right: '0',
-      backgroundColor: 'white',
+      backgroundColor: 'rgba(255, 255, 255, 0.6)',
       borderBottom: '1px solid #eee',
-      padding: '15px',
-      zIndex: 1000,
-      boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+      padding: '10px',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+      position: 'relative'
     }}>
+      {/* 🎯 X 버튼을 우상단에 고정 */}
+      <button
+        onClick={onClose}
+        style={{
+          position: 'absolute',
+          top: '8px',
+          right: '8px',
+          background: 'none',
+          border: 'none',
+          fontSize: '14px',
+          cursor: 'pointer',
+          padding: '4px',
+          color: '#666',
+          borderRadius: '3px',
+          width: '24px',
+          height: '24px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 10
+        }}
+      >
+        ✕
+      </button>
+
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        gap: '10px',
-        marginBottom: '10px'
+        gap: '8px',
+        marginBottom: '10px',
+        paddingRight: '32px' // 🎯 X 버튼 공간 확보
       }}>
         <div style={{ fontSize: '18px' }}>🔍</div>
         <input
@@ -135,27 +168,16 @@ export const MessageSearch: React.FC<Props> = ({
           value={searchBy}
           onChange={(e) => setSearchBy(e.target.value as 'content' | 'sender')}
           style={{
-            padding: '8px',
+            padding: '2px 4px',
             border: '1px solid #ddd',
-            borderRadius: '6px',
-            fontSize: '14px'
+            borderRadius: '3px',
+            fontSize: '11px',
+            width: '50px'
           }}
         >
           <option value="content">내용</option>
           <option value="sender">발신자</option>
         </select>
-        <button
-          onClick={onClose}
-          style={{
-            background: 'none',
-            border: 'none',
-            fontSize: '18px',
-            cursor: 'pointer',
-            padding: '8px'
-          }}
-        >
-          ✕
-        </button>
       </div>
 
       {/* 검색 결과 */}
@@ -214,14 +236,7 @@ export const MessageSearch: React.FC<Props> = ({
         </div>
       )}
 
-      {/* 검색 힌트 */}
-      <div style={{
-        fontSize: '11px',
-        color: '#999',
-        marginTop: '10px'
-      }}>
-        Enter: 선택된 메시지로 이동 | ↑↓: 결과 탐색 | Esc: 검색 닫기
-      </div>
+      {/* 🎯 안내문구 제거 */}
     </div>
   );
 }; 
