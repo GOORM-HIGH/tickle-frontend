@@ -38,12 +38,13 @@ export const SimpleChatRoom: React.FC<Props> = ({
   const [connectionAttempts, setConnectionAttempts] = useState(0);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [searchResults, setSearchResults] = useState<ChatMessageType[]>([]);
+  const [hasUnreadMessages, setHasUnreadMessages] = useState(false); // 🎯 읽지 않은 메시지 상태 추가
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const scrollPositionRef = useRef<number>(0);
 
-  // 자동 스크롤 (강화)
+  // 자동 스크롤 (개선된 버전)
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
@@ -52,24 +53,43 @@ export const SimpleChatRoom: React.FC<Props> = ({
     messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
   }, []);
 
-  // 🎯 자동 스크롤 체크
-  const shouldAutoScroll = useCallback(() => {
-    if (!messagesContainerRef.current) return false;
-    
-    const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
-    const isNearBottom = scrollTop + clientHeight >= scrollHeight - 100; // 100px 이내면 맨 아래로 간주
-    
-    return isNearBottom;
-  }, []);
+  // 🎯 읽지 않은 메시지 체크 함수
+  const checkUnreadMessages = useCallback(() => {
+    const unreadMessages = messages.filter(msg => !msg.isRead && !msg.isMyMessage);
+    setHasUnreadMessages(unreadMessages.length > 0);
+    console.log(`📖 읽지 않은 메시지: ${unreadMessages.length}개`);
+  }, [messages]);
 
-  // 스크롤 위치 저장
+  // 🎯 읽지 않은 메시지로 스크롤하는 함수
+  const scrollToUnreadMessages = useCallback(() => {
+    const unreadMessages = messages.filter(msg => !msg.isRead && !msg.isMyMessage);
+    if (unreadMessages.length > 0) {
+      // 가장 오래된 읽지 않은 메시지 찾기
+      const oldestUnreadMessage = unreadMessages.reduce((oldest, current) => 
+        new Date(current.createdAt) < new Date(oldest.createdAt) ? current : oldest
+      );
+      
+      console.log(`📖 가장 오래된 읽지 않은 메시지로 스크롤: ID=${oldestUnreadMessage.id}`);
+      
+      // 해당 메시지 요소 찾기
+      const messageElement = document.querySelector(`[data-message-id="${oldestUnreadMessage.id}"]`);
+      if (messageElement) {
+        messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        // 요소를 찾지 못하면 맨 아래로 스크롤
+        scrollToBottom();
+      }
+    }
+  }, [messages, scrollToBottom]);
+
+  // 🎯 스크롤 위치 저장
   const saveScrollPosition = useCallback(() => {
     if (messagesContainerRef.current) {
       scrollPositionRef.current = messagesContainerRef.current.scrollTop;
     }
   }, []);
 
-  // 스크롤 위치 복원
+  // 🎯 스크롤 위치 복원
   const restoreScrollPosition = useCallback(() => {
     if (messagesContainerRef.current) {
       messagesContainerRef.current.scrollTop = scrollPositionRef.current;
@@ -82,15 +102,30 @@ export const SimpleChatRoom: React.FC<Props> = ({
     setDisplayedMessages(messages);
   }, [messages]);
 
-  // 🎯 초기 메시지가 있으면 로딩 상태 해제
+  // 🎯 메시지 변경 시 읽지 않은 메시지 체크
   useEffect(() => {
-    if (messages.length > 0) {
-      setIsLoading(false);
-      console.log(`📄 초기 메시지 ${messages.length}개 로드됨`);
-    }
-  }, [messages]);
+    checkUnreadMessages();
+  }, [messages, checkUnreadMessages]);
 
-  // 메시지 로드 (백엔드 수정 후)
+  // 🎯 초기 메시지 로드 후 스크롤 처리
+  useEffect(() => {
+    if (messages.length > 0 && !isLoading) {
+      console.log(`📄 초기 메시지 ${messages.length}개 로드됨`);
+      
+      // 🎯 초기 로드 시에만 읽지 않은 메시지 체크 (새 메시지 수신 시에는 제외)
+      const hasUnreadMessages = messages.some(msg => !msg.isRead && !msg.isMyMessage);
+      if (hasUnreadMessages) {
+        console.log('📖 읽지 않은 메시지가 있음 - 맨 아래로 스크롤');
+        setTimeout(() => {
+          scrollToBottomImmediate();
+        }, 100);
+      } else {
+        console.log('📖 모든 메시지를 읽음 - 현재 위치 유지');
+      }
+    }
+  }, [isLoading, scrollToBottomImmediate]); // 🎯 messages 의존성 제거
+
+  // 메시지 로드 (개선된 버전)
   const loadMessages = useCallback(async (page: number = 0, append: boolean = false) => {
     try {
       setIsLoadingMore(true);
@@ -109,10 +144,22 @@ export const SimpleChatRoom: React.FC<Props> = ({
         setMessages(prev => {
           const existingIds = new Set(prev.map(msg => msg.id));
           const uniqueNewMessages = newMessages.filter(msg => !existingIds.has(msg.id));
-          return [...uniqueNewMessages, ...prev];
+          const updatedMessages = [...uniqueNewMessages, ...prev];
+          
+          // 🎯 이전 메시지 추가 시 스크롤 위치 복원
+          setTimeout(() => {
+            restoreScrollPosition();
+          }, 100);
+          
+          return updatedMessages;
         });
       } else {
+        // 🎯 초기 로드 시 스크롤 위치 저장
+        saveScrollPosition();
         setMessages(newMessages);
+        
+        // 🎯 초기 로드 완료 후 로딩 상태 해제
+        setIsLoading(false);
       }
       
       // 더 불러올 메시지가 있는지 확인
@@ -120,6 +167,9 @@ export const SimpleChatRoom: React.FC<Props> = ({
       setCurrentPage(page);
     } catch (error) {
       console.error('메시지 로드 실패:', error);
+      setIsLoading(false);
+      setIsLoadingMore(false);
+      
       // 테스트용 메시지
       const testMessages: ChatMessageType[] = [
         {
@@ -147,7 +197,7 @@ export const SimpleChatRoom: React.FC<Props> = ({
     } finally {
       setIsLoadingMore(false);
     }
-  }, [room.chatRoomId, currentUserId, currentUserNickname]);
+  }, [room.chatRoomId, currentUserId, currentUserNickname, saveScrollPosition, restoreScrollPosition]);
 
   // 더 많은 메시지 로드
   const loadMoreMessages = useCallback(async () => {
@@ -157,25 +207,14 @@ export const SimpleChatRoom: React.FC<Props> = ({
     await loadMessages(nextPage, true);
   }, [isLoadingMore, hasMoreMessages, currentPage, loadMessages]);
 
-  // 읽음 처리
-  const handleMarkAsRead = useCallback(async (messageId: number) => {
-    try {
-      await chatService.markAsRead(room.chatRoomId, messageId);
-      console.log(`✅ 메시지 ${messageId} 읽음 처리 완료`);
-    } catch (error) {
-      console.error('읽음 처리 실패:', error);
-    }
-  }, [room.chatRoomId]);
-
-  // 새 메시지 수신 처리 (고급 중복 제거 포함)
+  // 새 메시지 수신 처리 (개선된 버전)
   const handleNewMessage = useCallback((message: ChatMessageType) => {
     console.log('📨 새 메시지 수신:', message);
-    console.log(`🎯 현재 채팅방: ${room.chatRoomId}, 메시지 채팅방: ${message.chatRoomId}`);
     
     // 현재 채팅방의 메시지만 처리
     if (message.chatRoomId === room.chatRoomId) {
       setMessages(prev => {
-        // 🎯 삭제된 메시지 처리
+        // 삭제된 메시지 처리
         if (message.isDeleted) {
           console.log(`🗑️ 삭제된 메시지 처리: ID=${message.id}`);
           return prev.map(existingMessage => 
@@ -185,31 +224,82 @@ export const SimpleChatRoom: React.FC<Props> = ({
           );
         }
         
-        // 🎯 중복 메시지 제거 (messageId 기준)
+        // 중복 메시지 제거 (messageId 기준)
         const isDuplicate = prev.some(existingMessage => existingMessage.id === message.id);
         if (isDuplicate) {
           console.log(`⚠️ 중복 메시지 무시: ID=${message.id}`);
           return prev;
         }
         
-        // 🎯 추가 중복 체크 (내용과 시간으로도 체크)
-        const isContentDuplicate = prev.some(existingMessage => 
-          existingMessage.content === message.content && 
-          Math.abs(new Date(existingMessage.createdAt).getTime() - new Date(message.createdAt).getTime()) < 1000
-        );
-        
-        if (isContentDuplicate) {
-          console.log(`⚠️ 내용 중복 메시지 무시: ID=${message.id}, 내용="${message.content}"`);
-          return prev;
-        }
-        
         console.log(`✅ 새 메시지 추가: ID=${message.id}, 발신자=${message.senderNickname}, 내 메시지=${message.isMyMessage}`);
-        return [...prev, message];
+        const newMessages = [...prev, message];
+        
+        // 🎯 내 메시지만 자동 스크롤 (상대방 메시지는 스크롤 위치 강제 유지)
+        setTimeout(() => {
+          if (message.isMyMessage) {
+            console.log('📜 내 메시지 - 자동 스크롤');
+            scrollToBottom();
+          } else {
+            console.log('📜 상대방 메시지 - 스크롤 위치 강제 유지');
+            // 🎯 상대방 메시지일 때는 현재 스크롤 위치를 강제로 유지
+            if (messagesContainerRef.current) {
+              const currentScrollTop = messagesContainerRef.current.scrollTop;
+              const currentScrollHeight = messagesContainerRef.current.scrollHeight;
+              const currentClientHeight = messagesContainerRef.current.clientHeight;
+              
+              // 스크롤 위치를 강제로 복원
+              setTimeout(() => {
+                if (messagesContainerRef.current) {
+                  messagesContainerRef.current.scrollTop = currentScrollTop;
+                }
+              }, 10);
+            }
+          }
+        }, 50);
+        
+        return newMessages;
       });
     } else {
       console.log(`⚠️ 다른 채팅방 메시지 무시: ${message.chatRoomId} vs ${room.chatRoomId}`);
     }
+  }, [room.chatRoomId, scrollToBottom]);
+
+  // 읽음 처리 (개선된 버전)
+  const handleMarkAsRead = useCallback(async (messageId: number) => {
+    try {
+      await chatService.markAsRead(room.chatRoomId, messageId);
+      console.log(`✅ 메시지 ${messageId} 읽음 처리 완료`);
+      
+      // 🎯 로컬 상태에서도 읽음 처리
+      setMessages(prev => prev.map(msg => ({ ...msg, isRead: true })));
+      
+      // 🎯 채팅방 목록 새로고침
+      window.dispatchEvent(new CustomEvent('chatRoomListRefresh'));
+      
+      // 🎯 강제 새로고침 (읽음 처리 확실히 반영)
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('chatRoomListRefresh'));
+      }, 1000);
+    } catch (error) {
+      console.error('읽음 처리 실패:', error);
+    }
   }, [room.chatRoomId]);
+
+  // 메시지 삭제 처리 (개선된 버전)
+  const handleMessageDelete = useCallback((messageId: number) => {
+    // 🎯 삭제된 메시지를 화면에서 제거하지 않고 "삭제된 메시지입니다"로 표시
+    setMessages(prev => prev.map(msg => 
+      msg.id === messageId 
+        ? { ...msg, content: '삭제된 메시지입니다.', isDeleted: true }
+        : msg
+    ));
+    onMessageDelete(messageId);
+  }, [onMessageDelete]);
+
+  // 검색 결과 처리
+  const handleSearchResult = useCallback((filteredMessages: ChatMessageType[]) => {
+    setDisplayedMessages(filteredMessages);
+  }, []);
 
   // WebSocket 연결
   const connectWebSocket = useCallback(async () => {
@@ -232,24 +322,36 @@ export const SimpleChatRoom: React.FC<Props> = ({
     }
   }, [room.chatRoomId, currentUserId, currentUserNickname, handleNewMessage]);
 
-  // 메시지 전송
+  // 메시지 전송 (개선된 버전)
   const handleSendMessage = useCallback(async (content: string, messageType: 'TEXT' | 'FILE' | 'IMAGE' = 'TEXT') => {
     if (!content.trim()) return;
 
     try {
       if (isConnected) {
         // STOMP로 실시간 전송
+        console.log('📤 STOMP로 메시지 전송:', content);
         stompWebSocketService.sendMessage(content);
+        
+        // 🎯 메시지 전송 후 자동 스크롤
+        setTimeout(() => {
+          scrollToBottom();
+        }, 100);
       } else {
         // REST API 사용
+        console.log('📤 REST API로 메시지 전송:', content);
         const newMessage = await chatService.sendMessage(room.chatRoomId, content);
         setMessages(prev => [...prev, newMessage]);
+        
+        // 🎯 메시지 전송 후 자동 스크롤
+        setTimeout(() => {
+          scrollToBottom();
+        }, 100);
       }
     } catch (error) {
       console.error('메시지 전송 실패:', error);
       alert('메시지 전송에 실패했습니다.');
     }
-  }, [isConnected, room.chatRoomId]);
+  }, [isConnected, room.chatRoomId, scrollToBottom]);
 
   // 파일 업로드 처리
   const handleFileUploaded = useCallback(async (fileInfo: {fileId: string; fileName: string; fileUrl: string}) => {
@@ -269,17 +371,6 @@ export const SimpleChatRoom: React.FC<Props> = ({
     ));
     onMessageUpdate(messageId, updatedMessage);
   }, [onMessageUpdate]);
-
-  // 메시지 삭제 처리
-  const handleMessageDelete = useCallback((messageId: number) => {
-    // 🎯 삭제된 메시지를 화면에서 제거하지 않고 "삭제된 메시지입니다"로 표시
-    setMessages(prev => prev.map(msg => 
-      msg.id === messageId 
-        ? { ...msg, content: '삭제된 메시지입니다.', isDeleted: true }
-        : msg
-    ));
-    onMessageDelete(messageId);
-  }, [onMessageDelete]);
 
   // 메시지 검색
   const handleSearch = useCallback((keyword: string) => {
@@ -371,12 +462,7 @@ export const SimpleChatRoom: React.FC<Props> = ({
     return () => clearInterval(interval);
   }, []);
 
-  // 자동 스크롤 처리
-  useEffect(() => {
-    if (shouldAutoScroll()) {
-      scrollToBottom();
-    }
-  }, [messages, shouldAutoScroll, scrollToBottom]);
+  // 🎯 자동 스크롤 처리 제거 - handleNewMessage에서 개별 처리하도록 변경
 
   return (
     <div style={{ 
@@ -396,7 +482,7 @@ export const SimpleChatRoom: React.FC<Props> = ({
         }}>
           <MessageSearch
             messages={messages}
-            onSearchResult={(filteredMessages) => setDisplayedMessages(filteredMessages)}
+            onSearchResult={handleSearchResult}
             onClose={() => setShowSearch(false)}
           />
         </div>
@@ -420,8 +506,41 @@ export const SimpleChatRoom: React.FC<Props> = ({
           display: 'flex',
           flexDirection: 'column',
           gap: '8px',
+          position: 'relative'
         }}
       >
+        {/* 검색 버튼 (고정 위치) */}
+        <div style={{
+          position: 'absolute',
+          top: '10px',
+          right: '10px',
+          zIndex: 100
+        }}>
+          <button
+            onClick={() => setShowSearch(!showSearch)}
+            style={{
+              background: 'none',
+              border: 'none',
+              fontSize: '18px',
+              cursor: 'pointer',
+              padding: '8px',
+              borderRadius: '50%',
+              transition: 'background-color 0.2s',
+              color: showSearch ? '#007bff' : '#666',
+              backgroundColor: showSearch ? '#f0f8ff' : 'transparent'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#f0f0f0';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = showSearch ? '#f0f8ff' : 'transparent';
+            }}
+            title="메시지 검색"
+          >
+            🔍
+          </button>
+        </div>
+
         {isLoading ? (
           <div style={{ textAlign: 'center', padding: '20px' }}>
             <p>메시지를 불러오는 중...</p>
@@ -453,7 +572,47 @@ export const SimpleChatRoom: React.FC<Props> = ({
         padding: '10px',
         backgroundColor: 'white',
         borderTop: '1px solid #eee',
+        position: 'relative' // 🎯 상대 위치 설정
       }}>
+        {/* 🎯 읽지 않은 메시지 스크롤 버튼 */}
+        {hasUnreadMessages && (
+          <div style={{
+            position: 'absolute',
+            top: '-40px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 100
+          }}>
+            <button
+              onClick={scrollToBottom} // 🎯 가장 마지막 메시지로 스크롤
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                padding: '8px 16px',
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '20px',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                transition: 'background-color 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#0056b3';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#007bff';
+              }}
+              title="최신 메시지로 이동"
+            >
+              ⬇️ 최신 메시지
+            </button>
+          </div>
+        )}
+
         <ChatInput
           onSendMessage={handleSendMessage}
           onFileUploaded={handleFileUploaded}
