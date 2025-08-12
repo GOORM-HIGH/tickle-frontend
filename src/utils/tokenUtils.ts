@@ -1,22 +1,32 @@
+import Cookies from "js-cookie";
+
 export const setAccessToken = (token: string) => {
-  localStorage.setItem("accessToken", token);
+  Cookies.set("accessToken", token, {
+    secure: false, // 🎯 localhost에서는 false로 설정
+    sameSite: "Lax", // 🎯 localhost에서는 Lax로 설정
+    expires: 1 / 24, // 1시간
+  });
 };
 
-export const getAccessToken = () => localStorage.getItem("accessToken");
+export const getAccessToken = () => Cookies.get("accessToken");
 
 export const removeTokens = () => {
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken");
-  localStorage.removeItem("userInfo");
+  Cookies.remove("accessToken");
+  Cookies.remove("refreshToken");
+  Cookies.remove("userInfo");
 };
 
 // 사용자 정보 관리 함수들
 export const setUserInfo = (userInfo: string) => {
-  localStorage.setItem("userInfo", userInfo);
+  Cookies.set("userInfo", userInfo, {
+    secure: false, // 🎯 localhost에서는 false로 설정
+    sameSite: "Lax", // 🎯 localhost에서는 Lax로 설정
+    expires: 7, // 7일
+  });
 };
 
-export const getUserInfo = () => localStorage.getItem("userInfo");
+export const getUserInfo = () => Cookies.get("userInfo");
 
 export const removeUserInfo = () => {
-  localStorage.removeItem("userInfo");
+  Cookies.remove("userInfo");
 };

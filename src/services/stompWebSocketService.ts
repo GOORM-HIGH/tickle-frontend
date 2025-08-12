@@ -1,6 +1,7 @@
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client/dist/sockjs';
 import type { ChatMessage } from './chatService';
+import { getAccessToken, getUserInfo } from '../utils/tokenUtils';
 
 class StompWebSocketService {
   private stompClient: Client | null = null;
@@ -49,7 +50,7 @@ class StompWebSocketService {
     reject: (error: Error) => void
   ): void {
     // 🎯 사용자 정보 저장 (토큰 기반으로 고유 식별)
-    const token = localStorage.getItem('accessToken');
+    const token = getAccessToken();
     this.currentChatRoomId = chatRoomId;
     this.currentUserId = userId;
     this.currentUserNickname = userNickname;
@@ -65,7 +66,7 @@ class StompWebSocketService {
       webSocketFactory: () => socket,
       connectHeaders: {
         // 🎯 JWT 토큰을 헤더로 전송 (STOMP는 지원함)
-        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+        'Authorization': `Bearer ${getAccessToken()}`,
         'X-User-Id': userId.toString(),
         'X-User-Nickname': userNickname,
         'X-Session-Id': sessionStorage.getItem('sessionId') || `${userId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}` // 브라우저 세션 ID
@@ -139,7 +140,7 @@ class StompWebSocketService {
     console.log('🚪 JOIN 메시지 전송:', joinMessage);
     
     // 🎯 JWT 토큰 가져오기
-    const token = localStorage.getItem('accessToken');
+    const token = getAccessToken();
     console.log('🎯 JOIN 메시지 JWT 토큰:', token ? token.substring(0, 50) + '...' : '없음');
     
     // 🎯 Spring Boot STOMP 엔드포인트로 전송 (JWT 토큰 포함)
@@ -180,7 +181,7 @@ class StompWebSocketService {
     console.log(`🎯 전송자 정보: ID=${this.currentUserId}, 닉네임=${this.currentUserNickname}`); // 🎯 디버깅 로그
     
     // 🎯 JWT 토큰 가져오기
-    const token = localStorage.getItem('accessToken');
+    const token = getAccessToken();
     console.log('🎯 메시지 전송 JWT 토큰:', token ? token.substring(0, 50) + '...' : '없음');
     
     // 🎯 Spring Boot STOMP 엔드포인트로 전송 (JWT 토큰 포함)
@@ -226,7 +227,7 @@ class StompWebSocketService {
     let currentUserIdFromToken = this.currentUserId;
     
     try {
-      const currentToken = localStorage.getItem('accessToken');
+      const currentToken = getAccessToken();
       if (currentToken) {
         const base64Url = currentToken.split('.')[1];
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -244,7 +245,7 @@ class StompWebSocketService {
         } else {
           console.warn('🎯 JWT에 userId가 없음, 저장된 사용자 정보 사용');
           // fallback: 저장된 사용자 정보 사용
-          const userInfo = localStorage.getItem('userInfo');
+          const userInfo = getUserInfo();
           if (userInfo) {
             const user = JSON.parse(userInfo);
             currentUserIdFromToken = user.id;
@@ -338,7 +339,7 @@ class StompWebSocketService {
       };
 
       // 🎯 JWT 토큰 가져오기
-      const token = localStorage.getItem('accessToken');
+      const token = getAccessToken();
       console.log('🎯 LEAVE 메시지 JWT 토큰:', token ? token.substring(0, 50) + '...' : '없음');
       
       try {
