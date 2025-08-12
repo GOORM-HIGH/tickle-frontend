@@ -124,11 +124,14 @@ const SignInPage: React.FC = () => {
             비밀번호 찾기
           </Link> */}
           {/* <span>|</span> */}
-          <Link to="/sign-up" className="text-blue-600 hover:underline">
+          <Link to="/auth/sign-up" className="text-blue-600 hover:underline">
             회원가입
           </Link>
           <span>|</span>
-          <Link to="/host-sign-in" className="text-blue-600 hover:underline">
+          <Link
+            to="/auth/host-sign-in"
+            className="text-blue-600 hover:underline"
+          >
             사업자 회원가입
           </Link>
         </div>
