@@ -49,7 +49,7 @@ const SignInPage: React.FC = () => {
     try {
       const { email, password } = formData;
       const response = await axios.post(
-        "http://127.0.0.1:8081/api/v1/sign-in",
+        "https://api.tickle.kr/api/v1/sign-in",
         { email, password },
         {
           headers: { "Content-Type": "application/json" },
