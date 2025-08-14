@@ -50,7 +50,7 @@ const SignInPage: React.FC = () => {
     try {
       const { email, password } = formData;
       const response = await api.post(
-        "/sign-in",
+        "/api/v1/sign-in",
         { email, password }
         // {
         //   headers: { "Content-Type": "application/json" },
