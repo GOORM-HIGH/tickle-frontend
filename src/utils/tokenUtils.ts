@@ -2,8 +2,8 @@ import Cookies from "js-cookie";
 
 export const setAccessToken = (token: string) => {
   Cookies.set("accessToken", token, {
-    secure: false, // 🎯 localhost에서는 false로 설정
-    sameSite: "Lax", // 🎯 localhost에서는 Lax로 설정
+    secure: true, // 🎯 localhost에서는 false로 설정
+    sameSite: "None", // 🎯 localhost에서는 Lax로 설정
     expires: 1 / 24, // 1시간
   });
 };
@@ -19,8 +19,8 @@ export const removeTokens = () => {
 // 사용자 정보 관리 함수들
 export const setUserInfo = (userInfo: string) => {
   Cookies.set("userInfo", userInfo, {
-    secure: false, // 🎯 localhost에서는 false로 설정
-    sameSite: "Lax", // 🎯 localhost에서는 Lax로 설정
+    secure: true,
+    sameSite: "Strict",
     expires: 7, // 7일
   });
 };
