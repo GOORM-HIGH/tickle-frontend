@@ -1,0 +1,121 @@
+.ad-slider {
+  margin-bottom: 3rem;
+  padding: 0;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.slider-container {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.slider-wrapper {
+  display: flex;
+  width: 300%;
+  height: 100%;
+  transition: transform 0.5s ease-in-out;
+}
+
+.slide {
+  position: relative;
+  width: 33.333%;
+  height: 100%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
+
+/* 이전/다음 버튼 */
+.slider-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.slider-button:hover {
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.slider-button.prev {
+  left: 20px;
+}
+
+.slider-button.next {
+  right: 20px;
+}
+
+/* 인디케이터 */
+.slider-indicators {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+}
+
+.indicator {
+  width: 1px;
+  height: 1px;
+  border-radius: 100%;
+  border: none;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.indicator.active {
+  background: white;
+}
+
+.indicator:hover {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .slider-container {
+    height: 300px;
+  }
+  
+  .slide-content {
+    padding: 1.5rem;
+  }
+  
+  .slide-content h2 {
+    font-size: 1.4rem;
+  }
+  
+  .slide-content p {
+    font-size: 0.9rem;
+  }
+  
+  .slider-button {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+} 
