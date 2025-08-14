@@ -2,7 +2,8 @@ import axios from 'axios';
 import { getAccessToken } from '../utils/tokenUtils';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8081',
+  baseURL: 'https://api.tickle.kr/api/v1',
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },

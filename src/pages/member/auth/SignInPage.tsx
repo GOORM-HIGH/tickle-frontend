@@ -7,6 +7,7 @@ import Button from "../../../components/common/Button";
 import { setAccessToken } from "../../../utils/tokenUtils";
 import { validateEmail, validatePassword } from "../../../utils/validations";
 import { useAuth } from "../../../hooks/useAuth";
+import api from "../../../services/api";
 
 const SignInPage: React.FC = () => {
   const navigate = useNavigate();
@@ -48,12 +49,12 @@ const SignInPage: React.FC = () => {
 
     try {
       const { email, password } = formData;
-      const response = await axios.post(
-        "https://api.tickle.kr/api/v1/sign-in",
-        { email, password },
-        {
-          headers: { "Content-Type": "application/json" },
-        }
+      const response = await api.post(
+        "/sign-in",
+        { email, password }
+        // {
+        //   headers: { "Content-Type": "application/json" },
+        // }
       );
 
       console.log(response.data);
