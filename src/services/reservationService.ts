@@ -59,7 +59,7 @@ export const reservationService = {
 
   // 예매 취소
   cancelReservation: async (reservationId: number): Promise<ReservationCancelResponseDto> => {
-    const response = await api.delete<{data: ReservationCancelResponseDto}>(`/api/v1/reservation/${reservationId}`);
+    const response = await api.post<{data: ReservationCancelResponseDto}>(`/api/v1/reservation/${reservationId}`);
     return response.data.data;
   },
 
@@ -85,16 +85,6 @@ export const reservationService = {
   getMyReservations: async (): Promise<ReservationResponse[]> => {
     const response = await api.get<{data: ReservationResponse[]}>('/api/v1/reservation/my');
     return response.data.data;
-  },
-
-  // 좌석 선점 (기존 호환성)
-  reserveSeats: async (performanceId: number, seatIds: string[]): Promise<void> => {
-    await api.post(`/api/v1/performances/${performanceId}/seats/reserve`, { seatIds });
-  },
-
-  // 좌석 선점 해제 (기존 호환성)
-  releaseSeats: async (performanceId: number, seatIds: string[]): Promise<void> => {
-    await api.delete(`/api/v1/performances/${performanceId}/seats/reserve`, { data: { seatIds } });
   }
 };
 
