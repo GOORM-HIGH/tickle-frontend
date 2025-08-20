@@ -186,19 +186,53 @@ export const ChatMessage: React.FC<Props> = ({
     }
 
     if (message.messageType === 'IMAGE') {
+      const fileName = message.fileName || '이미지';
+      
+      const handleImageDownload = async () => {
+        try {
+          console.log('🖼️ 이미지 다운로드 시작:', fileName);
+          const blob = await chatService.downloadFile(chatRoomId, message.id);
+          
+          // Blob을 사용하여 파일 다운로드
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = fileName;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+          
+          console.log('✅ 이미지 다운로드 완료:', fileName);
+        } catch (error) {
+          console.error('❌ 이미지 다운로드 실패:', error);
+          alert('이미지 다운로드에 실패했습니다.');
+        }
+      };
+      
       return (
-        <div>
-          <img 
-            src={message.content} 
-            alt="채팅 이미지"
-            style={{
-              maxWidth: '200px',
-              maxHeight: '200px',
-              borderRadius: '8px',
-              cursor: 'pointer'
-            }}
-            onClick={() => window.open(message.content, '_blank')}
-          />
+        <div style={{ position: 'relative', display: 'inline-block' }}>
+          <div style={{
+            width: '200px',
+            height: '150px',
+            backgroundColor: 'rgba(0,0,0,0.05)',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: '1px solid rgba(0,0,0,0.1)',
+            cursor: 'pointer'
+          }}
+          onClick={handleImageDownload}
+          >
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '24px', marginBottom: '8px' }}>🖼️</div>
+              <div style={{ fontSize: '12px', color: '#666' }}>{fileName}</div>
+              <div style={{ fontSize: '10px', color: '#007bff', marginTop: '4px' }}>
+                클릭하여 다운로드
+              </div>
+            </div>
+          </div>
         </div>
       );
     }
@@ -206,6 +240,28 @@ export const ChatMessage: React.FC<Props> = ({
     if (message.messageType === 'FILE') {
       const fileName = message.fileName || message.content.split('/').pop() || '파일';
       const fileSize = message.fileSize ? formatFileSize(message.fileSize) : '';
+      
+      const handleFileDownload = async () => {
+        try {
+          console.log('📁 파일 다운로드 시작:', fileName);
+          const blob = await chatService.downloadFile(chatRoomId, message.id);
+          
+          // Blob을 사용하여 파일 다운로드
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = fileName;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+          
+          console.log('✅ 파일 다운로드 완료:', fileName);
+        } catch (error) {
+          console.error('❌ 파일 다운로드 실패:', error);
+          alert('파일 다운로드에 실패했습니다.');
+        }
+      };
       
       return (
         <div style={{
@@ -215,9 +271,10 @@ export const ChatMessage: React.FC<Props> = ({
           padding: '8px',
           backgroundColor: 'rgba(0,0,0,0.05)',
           borderRadius: '6px',
-          cursor: 'pointer'
+          cursor: 'pointer',
+          border: '1px solid rgba(0,0,0,0.1)'
         }}
-        onClick={() => window.open(message.content, '_blank')}
+        onClick={handleFileDownload}
         >
           📎 {fileName}
           {fileSize && (
@@ -225,6 +282,9 @@ export const ChatMessage: React.FC<Props> = ({
               ({fileSize})
             </span>
           )}
+          <span style={{ fontSize: '10px', color: '#007bff', marginLeft: 'auto' }}>
+            다운로드
+          </span>
         </div>
       );
     }
