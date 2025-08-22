@@ -33,7 +33,7 @@ export default function InfoTab() {
     hostBizBank: "",
     hostBizDepositor: "",
     hostBizBankNumber: "",
-    contractCharge: 0, // ✅ UI에선 '퍼센트' 값을 유지 (0~20)
+    contractCharge: 0, // UI에선 '퍼센트' 값을 유지 (0~20)
     memberRole: "MEMBER",
   });
 
@@ -54,7 +54,7 @@ export default function InfoTab() {
 
       const dto = res.data.data;
 
-      // ✅ 서버는 소수(예: 0.05) → UI는 퍼센트(5)로 변환해서 상태에 저장
+      // 서버는 소수(예: 0.05) → UI는 퍼센트(5)로 변환해서 상태에 저장
       const raw = Number(dto.contractCharge);
       const percent = Number.isFinite(raw) ? Math.round(raw * 100) : 0;
 
@@ -79,7 +79,7 @@ export default function InfoTab() {
 
     setFormData((prev) => {
       if (name === "contractCharge") {
-        return { ...prev, [name]: Number(value) }; // ✅ Select가 string을 주면 number로 변환
+        return { ...prev, [name]: Number(value) }; // Select가 string을 주면 number로 변환
       }
       return { ...prev, [name]: value };
     });
@@ -154,13 +154,13 @@ export default function InfoTab() {
         img: uploadedUrl ?? undefined,
       };
 
-      // ✅ 서버는 소수 기대 → UI 퍼센트를 소수로 변환하여 전송
+      // 서버는 소수 기대 → UI 퍼센트를 소수로 변환하여 전송
       if (formData.memberRole === "HOST") {
         const percent = Number(formData.contractCharge);
         if (!Number.isNaN(percent)) payload.charge = percent / 100;
       }
 
-      // ✅ 백엔드 사양에 맞춰 PathVariable로 이메일 전달
+              // 백엔드 사양에 맞춰 PathVariable로 이메일 전달
       await api.post<ApiResponse<void>>(
         `/api/v1/members/${encodeURIComponent(formData.email)}`,
         payload,

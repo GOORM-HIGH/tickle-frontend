@@ -10,7 +10,7 @@ export interface ChatRoom {
   maxParticipants: number;
   participantCount?: number;
   unreadCount?: number;
-  unreadMessageCount?: number;  // ✅ 백엔드 응답과 일치
+  unreadMessageCount?: number;  // 백엔드 응답과 일치
   createdAt?: string;
   updatedAt?: string;
   lastMessage?: {

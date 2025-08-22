@@ -149,7 +149,7 @@ export default function MyInfo() {
         if (!Number.isNaN(chargeNum)) payload.charge = chargeNum;
       }
 
-      // ✅ 백엔드 사양에 맞춰 PathVariable로 이메일 전달
+              // 백엔드 사양에 맞춰 PathVariable로 이메일 전달
       await api.post<ApiResponse<void>>(
         `/api/v1/members/${encodeURIComponent(formData.email)}`,
         payload,

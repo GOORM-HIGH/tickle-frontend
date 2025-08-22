@@ -298,7 +298,7 @@ export const ChatMessage: React.FC<Props> = ({
 
   return (
     <div
-      data-message-id={message.id} // 🎯 메시지 ID 추가
+      data-message-id={message.id} // 메시지 ID 추가
       style={{
         marginBottom: '15px',
         display: 'flex',

@@ -5,7 +5,7 @@ interface AuthCardProps {
   children: React.ReactNode;
   minWidth?: string;
 
-  // ✅ 추가: 배치/높이/클래스 제어
+  // 추가: 배치/높이/클래스 제어
   centered?: boolean; // 가운데 정렬 여부 (기본 true)
   fullHeight?: boolean; // min-h-screen 적용 여부 (기본 true)
   containerClassName?: string; // 컨테이너에 추가 Tailwind

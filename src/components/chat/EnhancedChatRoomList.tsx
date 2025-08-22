@@ -21,7 +21,7 @@ export const EnhancedChatRoomList: React.FC<Props> = ({
 
   // 채팅방 정렬 (중복 제거 포함)
   const getSortedRooms = () => {
-    // 🎯 중복 제거 (chatRoomId 기준)
+    // 중복 제거 (chatRoomId 기준)
     const uniqueRooms = chatRooms.filter((room, index, self) => 
       index === self.findIndex(r => r.chatRoomId === room.chatRoomId)
     );
@@ -124,7 +124,7 @@ export const EnhancedChatRoomList: React.FC<Props> = ({
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {sortedRooms.map((room) => {
-            // 🎯 백엔드에서 계산된 unreadMessageCount 사용
+            // 백엔드에서 계산된 unreadMessageCount 사용
             const unreadCount = room.unreadMessageCount || 0;
             const isSelected = selectedRoomId === room.chatRoomId;
             
