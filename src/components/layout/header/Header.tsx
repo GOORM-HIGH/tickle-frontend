@@ -41,17 +41,17 @@ export default function Header() {
 
     const eventSource = connect({
       onMessage: (msg: RealtimeNotification) => {
-        console.log("알림 수신:", msg);
+        console.log("실시간 알림이 수신되었습니다.");
         setShouldRefreshNotificationList(true);
       },
       onError: (err) => {
-        console.error("SSE 오류:", err);
+        console.error("서버와 실시간 통신 중 오류가 발생했습니다\n", err);
       },
     });
 
     return () => {
       eventSource.close();
-      console.log("SSE 연결 종료");
+      console.log("실시간 통신 종료");
     };
   }, []);
 
