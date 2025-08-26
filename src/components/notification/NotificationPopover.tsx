@@ -35,7 +35,7 @@ export default function NotificationPopover({
             return (
               <li
                 key={notification.id}
-                // ✅ 읽지 않은 경우에만 클릭 이벤트 추가
+                // 읽지 않은 경우에만 클릭 이벤트 추가
                 onClick={
                   isUnread ? () => handleClick(notification.id) : undefined
                 }

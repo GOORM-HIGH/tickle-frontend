@@ -36,7 +36,7 @@ type SignUpRequest = {
   hostContractCharge?: number; // 또는 string (백엔드 BigDecimal이면 string 권장)
 };
 
-// ✅ 실제 마이페이지에 보여줄 "유저 정보" 모델 (상태에 저장할 타입)
+// 실제 마이페이지에 보여줄 "유저 정보" 모델 (상태에 저장할 타입)
 type MemberInfo = {
   email: string;
   nickname: string;

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { LoginResponse } from '../../types/auth';
 
 interface Props {
-  onLogin: (email: string, password: string) => Promise<LoginResponse>; // 🎯 반환 타입 수정
+  onLogin: (email: string, password: string) => Promise<LoginResponse>; // 반환 타입 수정
   loading: boolean;
 }
 

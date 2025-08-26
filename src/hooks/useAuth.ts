@@ -3,7 +3,7 @@ import { authService } from '../services/authService';
 import { LoginResponse } from '../types/auth';
 import { getAccessToken, setAccessToken, setUserInfo } from '../utils/tokenUtils';
 
-// 🎯 JWT 토큰 디코딩 함수
+// JWT 토큰 디코딩 함수
 const decodeJWT = (token: string) => {
   try {
     const base64Url = token.split('.')[1];
@@ -32,7 +32,7 @@ export const useAuth = () => {
     
     if (token) {
       try {
-        // 🎯 JWT에서 정보 추출
+        // JWT에서 정보 추출
         const decoded = decodeJWT(token);
         console.log('🔍 useAuth - JWT 디코딩 결과:', decoded);
         
@@ -74,7 +74,7 @@ export const useAuth = () => {
       // 쿠키에 토큰 저장
       setAccessToken(response.accessToken);
       
-      // 🎯 사용자 정보 저장
+              // 사용자 정보 저장
       if (response.user) {
         setUserInfo(JSON.stringify(response.user));
         setCurrentUser({ 

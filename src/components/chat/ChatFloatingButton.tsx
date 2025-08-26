@@ -15,7 +15,7 @@ const ChatFloatingButton: React.FC = () => {
   const [selectedRoom, setSelectedRoom] = useState<ChatRoom | null>(null);
   const [reservations, setReservations] = useState<any[]>([]);
   const [reservationLoading, setReservationLoading] = useState(false);
-  const [showSearch, setShowSearch] = useState(false); // 🎯 검색 상태 추가
+  const [showSearch, setShowSearch] = useState(false); // 검색 상태 추가
 
   const handleClick = () => {
     if (currentUser) {
@@ -36,20 +36,20 @@ const ChatFloatingButton: React.FC = () => {
   const handleRoomClick = (room: ChatRoom) => {
     setSelectedRoom(room);
     setCurrentView('room');
-    setShowSearch(false); // 🎯 검색 상태 초기화
+    setShowSearch(false); // 검색 상태 초기화
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setCurrentView('list');
     setSelectedRoom(null);
-    setShowSearch(false); // 🎯 검색 상태 초기화
+    setShowSearch(false); // 검색 상태 초기화
   };
 
   const handleBackToList = () => {
     setCurrentView('list');
     setSelectedRoom(null);
-    setShowSearch(false); // 🎯 검색 상태 초기화
+    setShowSearch(false); // 검색 상태 초기화
   };
 
   const handleOpenReservations = () => {
@@ -101,21 +101,21 @@ const ChatFloatingButton: React.FC = () => {
     try {
       setReservationLoading(true);
       
-      // 🎯 채팅방 참여 API 호출
+      // 채팅방 참여 API 호출
       console.log("🔥 joinChatRoom API 호출 시작...");
       const newChatRoom = await chatService.joinChatRoom(reservation.performanceId);
       console.log("✅ 채팅방 참여 성공:", newChatRoom);
       
-      // 🎯 즉시 채팅방 목록에 추가
+      // 즉시 채팅방 목록에 추가
       addChatRoom(newChatRoom);
       
-      // 🎯 채팅방 목록 새로고침
+      // 채팅방 목록 새로고침
       console.log("🔥 loadMyChatRooms 호출...");
       await loadMyChatRooms();
       
       alert("채팅방에 참여했습니다!");
       
-      // 🎯 채팅방으로 이동
+      // 채팅방으로 이동
       setSelectedRoom(newChatRoom);
       setCurrentView('room');
       
@@ -155,13 +155,13 @@ const ChatFloatingButton: React.FC = () => {
     loadReservations();
   }, []);
 
-  // 🎯 채팅방 목록 새로고침 이벤트 리스너
+  // 채팅방 목록 새로고침 이벤트 리스너
   useEffect(() => {
     const handleChatRoomListRefresh = () => {
       console.log('🔄 ChatFloatingButton - 채팅방 목록 새로고침 이벤트 수신');
       loadMyChatRooms();
       
-      // 🎯 읽지 않은 메시지 카운트 재계산
+      // 읽지 않은 메시지 카운트 재계산
       setTimeout(() => {
         console.log('🔄 읽지 않은 메시지 카운트 재계산');
         loadMyChatRooms();
@@ -435,8 +435,8 @@ const ChatFloatingButton: React.FC = () => {
                   onClose={handleBackToList}
                   onMessageUpdate={handleMessageUpdate}
                   onMessageDelete={handleMessageDelete}
-                  showSearch={showSearch} // 🎯 검색 상태 전달
-                  onSearchToggle={setShowSearch} // 🎯 검색 토글 함수 전달
+                  showSearch={showSearch} // 검색 상태 전달
+                  onSearchToggle={setShowSearch} // 검색 토글 함수 전달
                 />
               </div>
             )}

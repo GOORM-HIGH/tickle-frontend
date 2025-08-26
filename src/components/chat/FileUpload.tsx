@@ -182,7 +182,7 @@ export const FileUpload: React.FC<Props> = ({ onFileUploaded, onError }) => {
               클릭하거나 파일을 여기에 드래그하세요
             </div>
             <div style={{ fontSize: '11px', color: '#999', marginTop: '5px' }}>
-              이미지, PDF, 텍스트 파일 (최대 10MB)
+              이미지, PDF, 텍스트 파일 (최대 10MB) - NAS 저장
             </div>
           </div>
         )}

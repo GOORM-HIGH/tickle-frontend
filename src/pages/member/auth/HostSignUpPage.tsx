@@ -86,7 +86,7 @@ const HostSignUpPage: React.FC = () => {
     }
 
     setFormData((prev) => {
-      // ✅ 수수료율은 select에서 string으로 오므로 number로 캐스팅
+              // 수수료율은 select에서 string으로 오므로 number로 캐스팅
       if (name === "hostContractCharge") {
         return { ...prev, hostContractCharge: Number(value) };
       }
@@ -231,7 +231,7 @@ const HostSignUpPage: React.FC = () => {
       const birthday = toInstant(formData.birthday, false);
       const imageUrl = await uploadProfileImage();
 
-      // ✅ 퍼센트(number) → BigDecimal 문자열("0.05") 변환
+              // 퍼센트(number) → BigDecimal 문자열("0.05") 변환
       const hostContractCharge =
         formData.role === "HOST"
           ? toBigDecimalString(formData.hostContractCharge ?? 0, 2)

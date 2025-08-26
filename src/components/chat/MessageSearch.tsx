@@ -5,7 +5,7 @@ interface Props {
   messages: ChatMessage[];
   onSearchResult: (filteredMessages: ChatMessage[]) => void;
   onClose: () => void;
-  onMessageClick?: (messageId: number) => void; // 🎯 메시지 클릭 핸들러 추가
+  onMessageClick?: (messageId: number) => void; // 메시지 클릭 핸들러 추가
 }
 
 export const MessageSearch: React.FC<Props> = ({
@@ -57,7 +57,7 @@ export const MessageSearch: React.FC<Props> = ({
     return () => clearTimeout(timeoutId);
   }, [searchTerm, searchBy]);
 
-  // 🎯 검색창이 열릴 때 자동 포커스
+  // 검색창이 열릴 때 자동 포커스
   useEffect(() => {
     if (searchInputRef.current) {
       searchInputRef.current.focus();
@@ -101,7 +101,7 @@ export const MessageSearch: React.FC<Props> = ({
 
   // 검색 결과 클릭
   const handleResultClick = (message: ChatMessage) => {
-    // 🎯 메시지 클릭 핸들러 호출
+    // 메시지 클릭 핸들러 호출
     if (onMessageClick) {
       onMessageClick(message.id);
     }
@@ -145,7 +145,7 @@ export const MessageSearch: React.FC<Props> = ({
         alignItems: 'center',
         gap: '8px',
         marginBottom: '10px',
-        paddingRight: '32px' // 🎯 X 버튼 공간 확보
+        paddingRight: '32px' // X 버튼 공간 확보
       }}>
         <div style={{ fontSize: '18px' }}>🔍</div>
         <input
