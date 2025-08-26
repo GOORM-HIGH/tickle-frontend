@@ -52,9 +52,6 @@ const SignInPage: React.FC = () => {
       const response = await api.post(
         "/api/v1/sign-in",
         { email, password }
-        // {
-        //   headers: { "Content-Type": "application/json" },
-        // }
       );
 
       console.log(response.data);
