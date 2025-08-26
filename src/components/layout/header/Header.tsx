@@ -6,7 +6,7 @@ import AuthMenu from "../../common/header/AuthMenu";
 import FeatureMenu from "../../common/header/FeatureMenu";
 import GenreMenu from "../../common/header/GenreMenu";
 import { getAccessToken, removeTokens } from "../../../utils/tokenUtils";
-import { connectSSE } from "../../../utils/connectSSE";
+import { connect } from "../../../utils/realtimeUtils";
 
 export default function Header() {
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -38,13 +38,20 @@ export default function Header() {
     if (!token) return;
 
     setIsSignIn(true);
-    const eventSource = connectSSE(token, () => {
-      setShouldRefreshNotificationList(true);
+
+    const eventSource = connect({
+      onMessage: (msg: RealtimeNotification) => {
+        console.log("알림 수신:", msg);
+        setShouldRefreshNotificationList(true);
+      },
+      onError: (err) => {
+        console.error("SSE 오류:", err);
+      },
     });
 
     return () => {
       eventSource.close();
-      console.log("🔌 SSE 연결 종료");
+      console.log("SSE 연결 종료");
     };
   }, []);
 
