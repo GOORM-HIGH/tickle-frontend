@@ -9,7 +9,7 @@ import { MdEmojiEvents } from "react-icons/md";
 
 interface FeatureMenuProps {
   isSignIn: boolean;
-  shouldRefreshNotificationList?: boolean; // SSE 알림 수신 여부
+  shouldRefreshNotificationList?: boolean; // 실시간알림 수신 여부
   onNotificationRefreshed?: () => void; // 알림 새로고침 후 콜백
 }
 
@@ -36,9 +36,9 @@ export default function FeatureMenu({
   const fetchNotificationList = async () => {
     try {
       const token = getAccessToken();
+      
       if (!token) return;
 
-      // 헤더는 인터셉터가 자동 주입하므로 두번째 인자 제거
       const { data } = await api.get("/api/v1/notifications");
       const raw = Array.isArray(data?.data) ? data.data : [];
       const formatted = raw.map((item: any) => ({
