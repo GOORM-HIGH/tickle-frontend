@@ -1,15 +1,13 @@
-import axios from 'axios';
-import { getAccessToken } from '../utils/tokenUtils';
+import axios from "axios";
+import { getAccessToken } from "../utils/tokenUtils";
 
 const api = axios.create({
-  baseURL: 'https://api.tickle.kr',
+  baseURL: import.meta.env.VITE_API_BASE_URL ?? "https://tickle/kr",
   withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  headers: { "Content-Type": "application/json" },
 });
 
-// JWT 토큰 자동 추가
+// 요청 인터셉터: 토큰 자동 주입
 api.interceptors.request.use((config) => {
   const token = getAccessToken();
   if (token) {
@@ -18,17 +16,19 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// 401 오류 시 로그인 페이지로 리다이렉트
-// api.interceptors.response.use(
-//   (response) => response,
-//   (error) => {
-//     console.error('API 오류:', error.response?.status, error.response?.data);
-//     if (error.response?.status === 401) {
-//     console.log('인증 오류: 토큰이 유효하지 않습니다.');
-//       localStorage.removeItem('accessToken');
-//     }
-//     return Promise.reject(error);
-//   }
-// );
+// 401 처리: 토큰 제거
+api.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    const status = err.response?.status;
+    if (status === 401) {
+      console.error("인증 오류: 토큰이 유효하지 않습니다.");
+      localStorage.removeItem("accessToken");
+    } else {
+      console.error("API 오류:", status, err.response?.data);
+    }
+    return Promise.reject(err);
+  }
+);
 
 export default api;
