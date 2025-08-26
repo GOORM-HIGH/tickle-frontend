@@ -35,24 +35,20 @@ export default function FeatureMenu({
 
   const fetchNotificationList = async () => {
     try {
-      const accessToken = getAccessToken();
-      if (!accessToken) return;
+      const token = getAccessToken();
+      if (!token) return;
 
-      const response = await api.get("/api/v1/notifications", {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-        withCredentials: true,
-      });
-
-      const formatted = response.data.data.map((item: any) => ({
+      // 헤더는 인터셉터가 자동 주입하므로 두번째 인자 제거
+      const { data } = await api.get("/api/v1/notifications");
+      const raw = Array.isArray(data?.data) ? data.data : [];
+      const formatted = raw.map((item: any) => ({
         ...item,
-        isRead: item.read,
+        isRead: item.read ?? item.isRead ?? false,
       }));
 
       setNotificationList(formatted);
     } catch (error) {
-      console.error("❌ 알림 API 조회 실패:", error);
+      console.error("알림 API 조회 실패:", error);
     }
   };
 
