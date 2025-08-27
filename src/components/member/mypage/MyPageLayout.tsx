@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import Sidebar from "./../../../feat-mypage/components/Sidebar";
+import Sidebar from "./Sidebar.tsx";
 import { MyPageTab } from "./../../../pages/member/mypage/constants/tabs";
 
 const tabToPath: Record<MyPageTab, string> = {

@@ -1,5 +1,5 @@
 import React from 'react';
-import Sidebar from './Sidebar';
+import Sidebar from '../../components/member/mypage/Sidebar.tsx';
 import MainContent from './MainContent';
 import { MyPageTab } from '../constants/tabs';
 import { PointHistoryResponse } from '../../services/pointService';

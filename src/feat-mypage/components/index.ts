@@ -1,7 +1,7 @@
 export { default as MyPageContent } from './MyPageContent';
 export { default as MyPagePopups } from './MyPagePopups';
 export { default as LoadingState } from './LoadingState';
-export { default as Sidebar } from './Sidebar';
+export { default as Sidebar } from '../../components/member/mypage/Sidebar.tsx';
 export { default as NavigationMenu } from './NavigationMenu';
 export { default as MainContent } from './MainContent';
 export { default as ProfileSection } from './ProfileSection';
