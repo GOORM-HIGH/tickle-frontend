@@ -7,9 +7,9 @@ import { useAuth } from "../../../../hooks/useAuth.ts";
 import {
   scrapService,
   PerformanceScrapDto,
-} from "../../../../home/api/scrapService.ts";
-import SectionHeader from "../../../../home/components/mypage/SectionHeader.tsx";
-import ScrapGrid from "../../../../home/components/mypage/ScrapGrid.tsx";
+} from "../../../../services/scrapService.ts";
+import SectionHeader from "../../../../components/mypage/SectionHeader.tsx";
+import ScrapGrid from "../../../../components/mypage/ScrapGrid.tsx";
 import { useScrollToTop } from "../../../../hooks/useScrollToTop.ts";
 
 import "../../../../types/styles/mypage/ScrapPage.css";

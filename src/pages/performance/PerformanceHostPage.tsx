@@ -1,10 +1,10 @@
 import React from 'react';
-import PerformanceHostDashboard from '../../feat-mypage/components/tabs/PerformanceHostDashboard';
 
 const PerformanceHostPage: React.FC = () => {
   return (
     <>
-      <PerformanceHostDashboard />
+      <h2>공연 호스트 페이지</h2>
+      <p>호스트 대시보드는 준비 중입니다.</p>
     </>
   );
 };

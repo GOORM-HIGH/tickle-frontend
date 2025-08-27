@@ -5,13 +5,10 @@ import { Bookmark } from "lucide-react";
 
 import { useAuth } from "../../../hooks/useAuth.ts";
 import { useScrollToTop } from "../../../hooks/useScrollToTop.ts";
-import {
-    scrapService,
-    PerformanceScrapDto,
-} from "../../../home/api/scrapService.ts";
+import { scrapService, PerformanceScrapDto } from "../../../services/scrapService.ts";
 
-import SectionHeader from "../../../home/components/mypage/SectionHeader.tsx";
-import ScrapGrid from "../../../home/components/mypage/ScrapGrid.tsx";
+import SectionHeader from "../../../components/mypage/SectionHeader.tsx";
+import ScrapGrid from "../../../components/mypage/ScrapGrid.tsx";
 
 const MyScrapedPerformancesPages: React.FC = () => {
     useScrollToTop();
