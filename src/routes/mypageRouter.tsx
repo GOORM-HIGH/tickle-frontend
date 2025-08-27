@@ -7,8 +7,8 @@ import MyPointPage from "../pages/member/mypage/MyPointHistories";
 import MyScrapedPerformancePage from "../pages/member/mypage/MyScrapedPerformancePage";
 import MyReservationHistoriesPage from "../pages/member/mypage/MyReservationPage";
 import MyCoponPage from "../pages/member/mypage/MyCoponPage";
-import MyPerforamnceDashboardPage from "../pages/member/mypage/MyPerforamnceDashBoardPage";
-import MySettlementDashboardPage from "../pages/member/mypage/MySettlementDashBoardPage";
+import MyPerforamnceDashboardPage from "../pages/member/mypage/MyPerforamnceDashboardPage";
+import MySettlementDashboardPage from "../pages/member/mypage/MySettlementDashboardPage";
 
 const MypageRouter: React.FC = () => {
   return (

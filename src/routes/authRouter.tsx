@@ -12,17 +12,10 @@ import MyPageLayout from "../components/member/mypage/MyPageLayout";
 const AuthRouter: React.FC = () => {
   return (
     <Routes>
-      {/* 여기서부터는 /auth 하위 상대경로 */}
       <Route path="sign-in" element={<SignInPage />} />
       <Route path="sign-up" element={<SignUpPage />} />
       <Route path="find-password" element={<FindPasswordPage />} />
       <Route path="host-sign-up" element={<HostSignUpPage />} />
-
-      {/* 마이페이지 레이아웃 + 중첩 */}
-      <Route path="my-page/*" element={<MyPageLayout />}>
-        <Route index element={<Navigate to="info" replace />} />
-        <Route path="info" element={<MyInfoPage />} />
-      </Route>
     </Routes>
   );
 };
