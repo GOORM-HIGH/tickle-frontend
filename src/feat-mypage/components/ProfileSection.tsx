@@ -1,4 +1,3 @@
-// src/feat-mypage/components/ProfileSection.tsx
 import React, { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 import { getAccessToken } from "../../utils/tokenUtils";
