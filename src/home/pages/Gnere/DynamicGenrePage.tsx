@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import Layout from '../../../components/layout/Layout';
 import GenreRanking from '../../components/genre/GenreRanking';
 import GenreBrowse from '../../components/genre/GenreBrowse';
 import { useScrollToTop } from '../../../hooks/useScrollToTop';
@@ -48,28 +47,28 @@ const DynamicGenrePage: React.FC = () => {
 
   if (loading) {
     return (
-      <Layout>
+      <>
         <div style={{ padding: '4rem 2rem', textAlign: 'center' }}>
           <div>장르 정보를 불러오는 중...</div>
         </div>
-      </Layout>
+      </>
     );
   }
 
   if (error || !genreInfo) {
     return (
-      <Layout>
+      <>
         <div style={{ padding: '4rem 2rem', textAlign: 'center' }}>
           <div style={{ color: '#ef4444' }}>
             {error || '장르 정보를 찾을 수 없습니다.'}
           </div>
         </div>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       <div style={{ padding: '4rem 2rem' }}>
         <h1 style={{ 
           fontSize: '2rem', 
@@ -83,7 +82,7 @@ const DynamicGenrePage: React.FC = () => {
         <GenreRanking category={genreId!} />
         <GenreBrowse category={genreId!} />
       </div>
-    </Layout>
+    </>
   );
 };
 

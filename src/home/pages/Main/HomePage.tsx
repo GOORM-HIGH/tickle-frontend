@@ -9,11 +9,11 @@ const HomePage: React.FC = () => {
   useScrollToTop();
   
   return (
-    <Layout>
+    <>
       <AdSlider />
       <PopularPerformances />
       <ComingSoon />
-    </Layout>
+    </>
   );
 };
 

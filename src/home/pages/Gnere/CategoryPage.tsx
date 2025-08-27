@@ -12,7 +12,7 @@ interface GenrePageProps {
 const GenrePage: React.FC<GenrePageProps> = ({ category, categoryName }) => {
   useScrollToTop();
   return (
-    <Layout>
+    <>
       <div style={{ padding: '4rem 2rem' }}>
         <h1 style={{ 
           fontSize: '2rem', 
@@ -26,7 +26,7 @@ const GenrePage: React.FC<GenrePageProps> = ({ category, categoryName }) => {
         <GenreRanking category={category} />
         <GenreBrowse category={category} />
       </div>
-    </Layout>
+    </>
   );
 };
 
