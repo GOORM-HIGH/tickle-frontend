@@ -1,20 +1,20 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import MyPage from '../feat-mypage/pages/MyPage';
-import PointHistoryPage from '../feat-mypage/pages/PointHistoryPage';
-import PointChargePage from '../feat-mypage/pages/PointChargePage';
-import { EventForm } from '../feat-mypage/components';
+// routes/MypageRouter.tsx (수정본)
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import MyPage from "../feat-mypage/pages/MyPage";
+import PointHistoryPage from "../feat-mypage/pages/PointHistoryPage";
+import PointChargePage from "../feat-mypage/pages/PointChargePage";
+import { EventForm } from "../feat-mypage/components";
 
 const MypageRouter: React.FC = () => {
   return (
     <Routes>
-      {/* 마이페이지 메인 */}
-      <Route path="/" element={<MyPage />} />
-
-      {/* 포인트 관련 라우트 */}
-      <Route path="/point/history" element={<PointHistoryPage />} />
-      <Route path="/point/charge" element={<PointChargePage />} />
-      <Route path="/event/create" element={<EventForm />} />
+      <Route path="/" element={<MyPage />}>
+        <Route index element={<Navigate to="points" replace />} />
+        <Route path="points" element={<PointHistoryPage />} />
+        <Route path="point/charge" element={<PointChargePage />} />
+        <Route path="event/create" element={<EventForm />} />
+      </Route>
     </Routes>
   );
 };
