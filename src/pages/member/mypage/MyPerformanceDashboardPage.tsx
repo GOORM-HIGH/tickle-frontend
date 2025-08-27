@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
 import { usePerformances } from "../../../hooks/mypage/usePerformances";
 import { useScrollToTop } from "../../../hooks/useScrollToTop";
-import { PerformanceListItem } from "../../../home/types/performance";
-import { MY_PAGE_TABS } from "../../../feat-mypage/constants/tabs";
+import { PerformanceListItem } from "../../../types/performance";
+import { MyPageTabs } from "../../../constants/myPageTabs.ts";
 import "../../../styles/PerformanceHostPage.css";
 import MyPageCard from "../../../components/member/mypage/MyPageCard";
 
@@ -17,10 +17,9 @@ export default function MyPerformanceDashboardPage() {
   const {
     performances,
     loading,
-    handleDeletePerformance, // 삭제 함수
-    handleEditPerformance, // 수정(라우팅) 함수
-    loadMyPerformances, // 필요 시 수동 재조회
-  } = usePerformances(MY_PAGE_TABS.PERFORMANCES, !!isHost);
+    handleDeletePerformance,
+    handleEditPerformance,
+  } = usePerformances(MyPageTabs.PERFORMANCE_DASHBOARD, !!isHost);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);

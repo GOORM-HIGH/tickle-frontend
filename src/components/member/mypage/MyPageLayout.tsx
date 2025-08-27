@@ -1,10 +1,10 @@
 import React, { useMemo, useCallback } from "react";
 import { Outlet, useLocation, useNavigate, NavLink } from "react-router-dom";
 import Sidebar from "../../../components/member/mypage/Sidebar";
-import { MyPageTab } from "../../../pages/member/mypage/constants/tabs";
+import { MyPageTabs } from "../../../constants/myPageTabs.ts";
 
 // 탭 → 경로 매핑
-const tabToPath: Record<MyPageTab, string> = {
+const tabToPath: Record<MyPageTabs, string> = {
   INFO: "/mypage/info",
   RESERVATION_HISTORIES: "/mypage/reservationhistories",
   SCRAPED_PERFORMANCES: "/mypage/scraped-performance",
@@ -15,19 +15,19 @@ const tabToPath: Record<MyPageTab, string> = {
 };
 
 // 경로 → 탭 매핑
-const pathToTab = (pathname: string): MyPageTab => {
+const pathToTab = (pathname: string): MyPageTabs => {
   const entries = Object.entries(tabToPath).sort(
     (a, b) => b[1].length - a[1].length // 경로가 긴 것부터 매칭
   );
 
   for (const [key, path] of entries) {
     if (pathname.startsWith(path)) {
-      return key as MyPageTab;
+      return key as MyPageTabs;
     }
   }
 
   // 매칭 실패 시 기본 탭
-  return MyPageTab.INFO;
+  return MyPageTabs.INFO;
 };
 
 type Props = {
@@ -45,7 +45,7 @@ export default function MyPageLayout({ currentBalance, onChargeClick }: Props) {
   );
 
   const handleTabChange = useCallback(
-    (tab: MyPageTab) => {
+    (tab: MyPageTabs) => {
       const to = tabToPath[tab];
       if (to && to !== location.pathname) navigate(to);
     },

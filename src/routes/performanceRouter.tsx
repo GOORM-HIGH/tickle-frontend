@@ -1,15 +1,15 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import HomePage from '../pages/main/HomePage';
-import MusicalPage from '../pages/Gnere/MusicalPage';
-import PlayPage from '../pages/Gnere/PlayPage';
-import ConcertPage from '../pages/Gnere/ConcertPage';
-import ClassicalPage from '../pages/Gnere/ClassicalPage';
-import DancePage from '../pages/Gnere/DancePage';
-import CircusPage from '../pages/Gnere/CircusPage';
-import ComplexPage from '../pages/Gnere/ComplexPage';
-import TraditionalPage from '../pages/Gnere/TraditionalPage';
-import PopularDancePage from '../pages/Gnere/PopularDancePage';
+import MusicalPage from '../pages/genre/MusicalPage';
+import PlayPage from '../pages/genre/PlayPage';
+import ConcertPage from '../pages/genre/ConcertPage';
+import ClassicalPage from '../pages/genre/ClassicalPage';
+import DancePage from '../pages/genre/DancePage';
+import CircusPage from '../pages/genre/CircusPage';
+import ComplexPage from '../pages/genre/ComplexPage';
+import TraditionalPage from '../pages/genre/TraditionalPage';
+import PopularDancePage from '../pages/genre/PopularDancePage';
 import PerformanceDetailPage from '../pages/performance/PerformanceDetailPage';
 import PerformanceCreatePage from '../pages/performance/PerformanceCreatePage';
 import PerformanceHostPage from '../pages/performance/PerformanceHostPage';
@@ -17,7 +17,7 @@ import PerformanceEditPage from '../pages/performance/PerformanceEditPage';
 import SearchPage from '../pages/main/SearchPage';
 import ReservationPage from '../pages/reservation/ReservationPage';
 
-import DynamicGenrePage from '../pages/Gnere/DynamicGenrePage';
+import DynamicGenrePage from '../pages/genre/DynamicGenrePage';
 
 const PerformanceRouter: React.FC = () => {
   return (

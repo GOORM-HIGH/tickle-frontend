@@ -1,11 +1,11 @@
 import { useState, useCallback } from 'react';
-import { MyPageTab } from '../../feat-mypage/constants/tabs.ts';
+import { MyPageTabs } from "../../constants/myPageTabs.ts";
 
 export const useUI = () => {
-  const [activeTab, setActiveTab] = useState<MyPageTab>('info');
+  const [activeTab, setActiveTab] = useState<MyPageTabs>(MyPageTabs.INFO);
   const [showChargePopup, setShowChargePopup] = useState(false);
 
-  const handleTabChange = useCallback((tab: MyPageTab) => {
+  const handleTabChange = useCallback((tab: MyPageTabs) => {
     setActiveTab(tab);
   }, []);
 
@@ -21,11 +21,11 @@ export const useUI = () => {
     // 상태
     activeTab,
     showChargePopup,
-    
+
     // 액션
     setActiveTab: handleTabChange,
     setShowChargePopup,
     handleChargeClick,
-    handleCloseChargePopup
+    handleCloseChargePopup,
   };
 };

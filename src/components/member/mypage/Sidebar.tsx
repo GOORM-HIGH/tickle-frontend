@@ -1,14 +1,15 @@
 import React from "react";
 
 import NavigationMenu from "./NavigationMenu.tsx";
+
+import { MyPageTabs } from "../../../constants/myPageTabs.ts";
 import ProfileSection from "./ProfileSection.tsx";
-import {MyPageTab} from "../../../pages/member/mypage/constants/tabs.ts";
 
 interface SidebarProps {
   currentBalance: number;
-  activeTab: MyPageTab;
+  activeTab: MyPageTabs;
   onChargeClick: () => void;
-  onTabChange: (tab: MyPageTab) => void;
+  onTabChange: (tab: MyPageTabs) => void;
   onNavigate: (path: string) => void;
 }
 
