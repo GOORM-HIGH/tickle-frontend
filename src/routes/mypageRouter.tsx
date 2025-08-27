@@ -5,7 +5,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import MyInfoPage from "../pages/member/mypage/MyInfoPage";
 import MyPointPage from "../pages/member/mypage/MyPointHistories";
 import MyScrapedPerformancePage from "../pages/member/mypage/MyScrapedPerformancePage";
-import MyReservationHistoriesPage from "../pages/member/mypage/MyReservationPage";
+import MyReservationHistoriesPage from "../pages/member/mypage/MyReservationHistoriesPage.tsx";
 import MyCoponPage from "../pages/member/mypage/MyCoponPage";
 import MyPerforamnceDashboardPage from "../pages/member/mypage/MyPerforamnceDashboardPage";
 import MySettlementDashboardPage from "../pages/member/mypage/MySettlementDashboardPage";
