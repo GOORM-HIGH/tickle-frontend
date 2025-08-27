@@ -6,12 +6,14 @@ import EventRouter from './eventRouter';
 import MypageRouter from './mypageRouter';
 import PointRouter from './pointRouter';
 import ChatRouter from './chatRouter';
+import Layout from '../components/layout/Layout';
 
 const TotalRouter: React.FC = () => {
   return (
     <Routes>
       <Route path="/auth/*" element={<AuthRouter />} />
 
+      <Route element={<Layout />}>
       {/* 루트 경로를 /performance로 리다이렉트 */}
       <Route path="/" element={<Navigate to="/performance" replace />} />
       <Route path="/mypage/*" element={<MypageRouter />} />
@@ -24,6 +26,8 @@ const TotalRouter: React.FC = () => {
       
       {/* 이벤트 관련 라우트 */}
       <Route path="/event/*" element={<EventRouter />} />
+      </Route>
+
       
       {/* 채팅 관련 라우트 */}
       <Route path="/chat/*" element={<ChatRouter />} />
