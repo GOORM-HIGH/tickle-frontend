@@ -1,4 +1,3 @@
-// pages/mypage/MyPageLayout.tsx
 import { NavLink, Outlet } from "react-router-dom";
 
 const linkBase = "block rounded-xl px-4 py-3 transition";

@@ -1,7 +1,9 @@
-import React from 'react';
-import ProfileSection from './ProfileSection';
-import NavigationMenu from './NavigationMenu';
-import { MyPageTab } from '../constants/tabs';
+// feat-mypage/components/Sidebar.tsx
+import React from "react";
+
+import NavigationMenu from "../../../feat-mypage/components/NavigationMenu.tsx";
+import { MyPageTab } from "../../../feat-mypage/constants/tabs.ts";
+import ProfileSection from "../../../feat-mypage/components/ProfileSection.tsx";
 
 interface SidebarProps {
   currentBalance: number;
@@ -16,16 +18,16 @@ const Sidebar: React.FC<SidebarProps> = ({
   activeTab,
   onChargeClick,
   onTabChange,
-  onNavigate
+  onNavigate,
 }) => {
   return (
     <div className="sidebar">
       <div className="sidebar-content">
-        <ProfileSection 
+        <ProfileSection
           currentBalance={currentBalance}
           onChargeClick={onChargeClick}
         />
-        <NavigationMenu 
+        <NavigationMenu
           activeTab={activeTab}
           onTabChange={onTabChange}
           onNavigate={onNavigate}
@@ -35,4 +37,4 @@ const Sidebar: React.FC<SidebarProps> = ({
   );
 };
 
-export default Sidebar; 
+export default Sidebar;

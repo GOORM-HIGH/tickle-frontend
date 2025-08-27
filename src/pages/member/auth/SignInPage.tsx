@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import AuthCard from "../../../components/member/AuthCard";
-import AuthInput from "../../../components/member/AuthInput";
+import AuthCard from "../../../components/member/auth/AuthCard";
+import AuthInput from "../../../components/member/auth/AuthInput";
 import Button from "../../../components/common/Button";
 import { setAccessToken } from "../../../utils/tokenUtils";
 import { validateEmail, validatePassword } from "../../../utils/validations";

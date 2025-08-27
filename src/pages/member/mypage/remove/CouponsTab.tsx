@@ -1,10 +1,10 @@
 // pages/mypage/CouponsTab.tsx
 import { useEffect, useState, useMemo } from "react";
 import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
-import { CouponResponseDto } from "../../../types/reservation";
-import { PagingResponse } from "../../../types/coupon";
-import { getAccessToken } from "../../../utils/tokenUtils";
-import api from "../../../services/api";
+import { CouponResponseDto } from "../../../../types/reservation.ts";
+import { PagingResponse } from "../../../../types/coupon";
+import { getAccessToken } from "../../../../utils/tokenUtils.ts";
+import api from "../../../../services/api.ts";
 
 // 전역에 이미 있다면 제거하세요.
 type ApiResponse<T> = { data: T };

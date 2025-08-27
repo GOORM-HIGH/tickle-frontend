@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import Button from "../common/Button";
+import Button from "../../common/Button";
 
 interface ProfileImageUploaderProps {
   imageUrl?: string;

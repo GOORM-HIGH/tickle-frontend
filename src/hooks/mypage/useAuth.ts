@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth as useGlobalAuth } from '../../hooks/useAuth';
-import { getAccessToken } from '../../utils/tokenUtils';
+import { useAuth as useGlobalAuth } from '../useAuth.ts';
+import { getAccessToken } from '../../utils/tokenUtils.ts';
 
 export const useMyPageAuth = () => {
   const navigate = useNavigate();

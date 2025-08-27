@@ -14,7 +14,7 @@ import Header from '../../components/layout/header/Header';
 import Footer from '../../components/layout/footer/Footer';
 import { ChargePopup, ReceiptPopup } from '../components';
 import { PointResponse } from '../../services/pointService';
-import '../styles/history.css';
+import '../../types/styles/mypage/history.css';
 
 // Mock data
 const mockPointHistory = [

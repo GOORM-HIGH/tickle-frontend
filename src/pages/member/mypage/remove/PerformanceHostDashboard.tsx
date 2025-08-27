@@ -1,11 +1,12 @@
+// TODO: 제거해야되는 페이지
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../../hooks/useAuth';
-import { usePerformances } from '../../hooks/usePerformances';
-import { MY_PAGE_TABS } from '../../constants/tabs';
-import '../../styles/PerformanceHostPage.css';
-import { useScrollToTop } from '../../../hooks/useScrollToTop';
-import { PerformanceListItem } from '../../../types/performance';
+import { useAuth } from '../../../../hooks/useAuth.ts';
+import { usePerformances } from '../../../../hooks/mypage/usePerformances.ts';
+import { MY_PAGE_TABS } from '../../../../feat-mypage/constants/tabs.ts';
+import '../../../../types/styles/mypage/PerformanceHostPage.css';
+import { useScrollToTop } from '../../../../hooks/useScrollToTop.ts';
+import { PerformanceListItem } from '../../../../home/types/performance.ts';
 
 interface PerformanceHostDashboardProps {
   performances: PerformanceListItem[];
