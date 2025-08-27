@@ -1,7 +1,8 @@
+// feat-mypage/components/Sidebar.tsx
 import React from "react";
 import ProfileSection from "./ProfileSection";
-import NavigationMenu from "./../../components/member/mypage/NavigationMenu";
-import { MyPageTab } from "../constants/tabs";
+import NavigationMenu from "./NavigationMenu";
+import { MyPageTab } from "../constants/tabs"; // ← 이 경로가 다르면 위의 단일 소스 경로로 맞춰주세요.
 
 interface SidebarProps {
   currentBalance: number;

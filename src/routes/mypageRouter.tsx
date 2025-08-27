@@ -3,7 +3,7 @@ import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import MyPage from "../feat-mypage/pages/MyPage";
 import MyInfoPage from "../pages/member/mypage/MyInfoPage";
-import MyPointPage from "../pages/member/mypage/MyPoint";
+import MyPointPage from "../pages/member/mypage/MyPointHistories";
 import MyScrapedPerformancePage from "../pages/member/mypage/MyScrapedPerformancePage";
 import MyReservationHistoriesPage from "../pages/member/mypage/MyReservationPage";
 import MyCoponPage from "../pages/member/mypage/MyCoponPage";
