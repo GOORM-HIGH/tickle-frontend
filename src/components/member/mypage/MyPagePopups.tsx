@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
-import ChargePopup from './ChargePopup';
-import ReceiptPopup from './ReceiptPopup';
-import { PointResponse } from '../../services/pointService';
+import ChargePopup from './ChargePopup.tsx';
+import ReceiptPopup from './ReceiptPopup.tsx';
+import { PointResponse } from '../../../services/pointService.ts';
 
 interface ChargeResult {
   success: boolean;

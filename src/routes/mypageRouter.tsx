@@ -4,10 +4,10 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 import MyInfoPage from "../pages/member/mypage/MyInfoPage";
 import MyPointPage from "../pages/member/mypage/MyPointHistories";
-import MyScrapedPerformancePage from "../pages/member/mypage/MyScrapedPerformancePage";
+import MyScrapedPerformancesPages from "../pages/member/mypage/MyScrapedPerformancesPages.tsx";
 import MyReservationHistoriesPage from "../pages/member/mypage/MyReservationHistoriesPage.tsx";
 import MyCoponPage from "../pages/member/mypage/MyCoponPage";
-import MyPerforamnceDashboardPage from "../pages/member/mypage/MyPerforamnceDashboardPage";
+import MyPerformanceDashboardPage from "../pages/member/mypage/MyPerformanceDashboardPage.tsx";
 import MySettlementDashboardPage from "../pages/member/mypage/MySettlementDashboardPage";
 import MyPage from "../pages/member/mypage/MyPage";
 
@@ -23,11 +23,11 @@ const MypageRouter: React.FC = () => {
         />
         <Route
           path="scraped-performance"
-          element={<MyScrapedPerformancePage />}
+          element={<MyScrapedPerformancesPages />}
         />
         <Route
           path="performance-dashboard"
-          element={<MyPerforamnceDashboardPage />}
+          element={<MyPerformanceDashboardPage />}
         />
         <Route path="coupons" element={<MyCoponPage />} />
         <Route path="settlement" element={<MySettlementDashboardPage />} />

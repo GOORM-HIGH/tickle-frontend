@@ -1,8 +1,8 @@
 // pages/member/mypage/ChargePopup.tsx (경로는 실제 프로젝트 위치 그대로)
 import React, { useState } from "react";
-import { pointService, PointResponse } from "../../services/pointService";
+import { pointService, PointResponse } from "../../../services/pointService.ts";
 import { Bootpay } from "@bootpay/client-js";
-import styles from "../styles/history.module.css";
+import styles from "../../../types/styles/mypage/history.module.css";
 
 interface ChargePopupProps {
   currentBalance: number;

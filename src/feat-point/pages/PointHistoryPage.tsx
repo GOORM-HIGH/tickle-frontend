@@ -4,7 +4,7 @@ import { ArrowLeft, History, Plus, Filter } from 'lucide-react';
 import Header from '../../components/layout/header/Header';
 import Footer from '../../components/layout/footer/Footer';
 import { pointService, PointSimpleResponseDto, PagingResponse } from '../../services/pointService';
-import '../../feat-mypage/styles/MyPage.css';
+import '../../types/styles/mypage/MyPage.css';
 
 export const PointHistoryPage: React.FC = () => {
   const navigate = useNavigate();
