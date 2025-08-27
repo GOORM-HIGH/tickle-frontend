@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
-import { getAccessToken } from "../../utils/tokenUtils";
-import api from "../../services/api";
+import { getAccessToken } from "../../../utils/tokenUtils.ts";
+import api from "../../../services/api.ts";
 
 interface ProfileSectionProps {
   currentBalance: number;

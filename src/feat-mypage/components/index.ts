@@ -4,7 +4,7 @@ export { default as LoadingState } from '../../components/member/mypage/LoadingS
 export { default as Sidebar } from '../../components/member/mypage/Sidebar.tsx';
 export { default as NavigationMenu } from './NavigationMenu';
 export { default as MainContent } from './MainContent';
-export { default as ProfileSection } from './ProfileSection';
+export { default as ProfileSection } from '../../components/member/mypage/ProfileSection.tsx';
 export { default as PointHistorySection } from './PointHistorySection';
 // export { default as TransactionTable } from './TransactionTable';
 export { default as ChargePopup } from '../../components/member/mypage/ChargePopup.tsx';

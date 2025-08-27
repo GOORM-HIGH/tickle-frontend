@@ -1,9 +1,8 @@
-// feat-mypage/components/Sidebar.tsx
 import React from "react";
 
-import NavigationMenu from "../../../feat-mypage/components/NavigationMenu.tsx";
-import { MyPageTab } from "../../../feat-mypage/constants/tabs.ts";
-import ProfileSection from "../../../feat-mypage/components/ProfileSection.tsx";
+import NavigationMenu from "./NavigationMenu.tsx";
+import ProfileSection from "./ProfileSection.tsx";
+import {MyPageTab} from "../../../pages/member/mypage/constants/tabs.ts";
 
 interface SidebarProps {
   currentBalance: number;
