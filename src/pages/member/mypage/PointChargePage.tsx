@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, CreditCard, Wallet, Plus, Check } from "lucide-react";
 import Header from "../../../components/layout/header/Header";
 import Footer from "../../../components/layout/footer/Footer";
-import { ReceiptPopup } from "../../../feat-mypage/components";
+
 import { PointResponse, pointService } from "../../../services/pointService";
 import { useAuth } from "../../../hooks/useAuth";
 import styles from "../styles/carge.module.css";
+import ReceiptPopup from "../../../components/member/mypage/ReceiptPopup.tsx";
 
 interface ChargeAmount {
   id: number;

@@ -12,9 +12,10 @@ import {
 } from 'lucide-react';
 import Header from '../../components/layout/header/Header';
 import Footer from '../../components/layout/footer/Footer';
-import { ChargePopup, ReceiptPopup } from '../components';
 import { PointResponse } from '../../services/pointService';
 import '../../styles/history.css';
+import ReceiptPopup from "../../components/member/mypage/ReceiptPopup.tsx";
+import ChargePopup from "../../components/member/mypage/ChargePopup.tsx";
 
 // Mock data
 const mockPointHistory = [
