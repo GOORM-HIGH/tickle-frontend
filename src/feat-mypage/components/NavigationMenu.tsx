@@ -11,48 +11,48 @@ import {
   Wallet,
   Ticket,
 } from "lucide-react";
-import { MyPageTab } from "./../../pages/member/mypage/constants/tabs";
+import { MyPageTabs } from "./../../pages/member/mypage/constants/tabs";
 
 type Props = {
-  activeTab: MyPageTab;
-  onTabChange: (tab: MyPageTab) => void;
+  activeTab: MyPageTabs;
+  onTabChange: (tab: MyPageTabs) => void;
   onNavigate: (path: string) => void;
 };
 
 const items: ReadonlyArray<{
-  tab: MyPageTab;
+  tab: MyPageTabs;
   to: string;
   label: string;
   Icon: React.ComponentType<{ size?: number; className?: string }>;
 }> = [
-  { tab: MyPageTab.INFO, to: "info", label: "내 정보", Icon: User },
+  { tab: MyPageTabs.INFO, to: "info", label: "내 정보", Icon: User },
   {
-    tab: MyPageTab.RESERVATION_HISTORIES,
+    tab: MyPageTabs.RESERVATION_HISTORIES,
     to: "reservationhistories",
     label: "예매/취소 내역",
     Icon: History,
   },
   {
-    tab: MyPageTab.SCRAPED_PERFORMANCES,
+    tab: MyPageTabs.SCRAPED_PERFORMANCES,
     to: "scraped-performance",
     label: "스크랩한 공연",
     Icon: Heart,
   },
   {
-    tab: MyPageTab.PERFORMANCE_DASHBOARD,
+    tab: MyPageTabs.PERFORMANCE_DASHBOARD,
     to: "performance-dashboard",
     label: "공연 관리",
     Icon: Settings,
   }, // BarChart3 로 교체 가능
-  { tab: MyPageTab.COUPONS, to: "coupons", label: "쿠폰", Icon: Ticket },
+  { tab: MyPageTabs.COUPONS, to: "coupons", label: "쿠폰", Icon: Ticket },
   {
-    tab: MyPageTab.SETTLEMENT_DASHBOARD,
+    tab: MyPageTabs.SETTLEMENT_DASHBOARD,
     to: "settlement",
     label: "정산내역",
     Icon: Wallet,
   },
   {
-    tab: MyPageTab.POINTS,
+    tab: MyPageTabs.POINTS,
     to: "points",
     label: "포인트 사용내역",
     Icon: CreditCard,

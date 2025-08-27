@@ -1,4 +1,4 @@
-export enum MyPageTab {
+export enum MyPageTabs {
   INFO = "INFO",
   RESERVATION_HISTORIES = "RESERVATION_HISTORIES",
   SCRAPED_PERFORMANCES = "SCRAPED_PERFORMANCES",
@@ -8,12 +8,12 @@ export enum MyPageTab {
   POINTS = "POINTS",
 }
 
-export const TAB_PATHS: Record<MyPageTab, string> = {
-  [MyPageTab.INFO]: "info",
-  [MyPageTab.RESERVATION_HISTORIES]: "reservationhistories",
-  [MyPageTab.SCRAPED_PERFORMANCES]: "scraped-performance",
-  [MyPageTab.PERFORMANCE_DASHBOARD]: "performance-dashboard",
-  [MyPageTab.COUPONS]: "coupons",
-  [MyPageTab.SETTLEMENT_DASHBOARD]: "settlement",
-  [MyPageTab.POINTS]: "points",
+export const TAB_PATHS: Record<MyPageTabs, string> = {
+  [MyPageTabs.INFO]: "info",
+  [MyPageTabs.RESERVATION_HISTORIES]: "reservationhistories",
+  [MyPageTabs.SCRAPED_PERFORMANCES]: "scraped-performance",
+  [MyPageTabs.PERFORMANCE_DASHBOARD]: "performance-dashboard",
+  [MyPageTabs.COUPONS]: "coupons",
+  [MyPageTabs.SETTLEMENT_DASHBOARD]: "settlement",
+  [MyPageTabs.POINTS]: "points",
 };

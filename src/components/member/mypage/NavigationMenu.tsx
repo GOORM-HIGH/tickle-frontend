@@ -10,32 +10,32 @@ import {
   Wallet,
 } from "lucide-react";
 import {
-  MyPageTab,
+  MyPageTabs,
   TAB_PATHS,
 } from "./../../../pages/member/mypage/constants/tabs";
 
 type Props = {
-  activeTab: MyPageTab;
-  onTabChange: (tab: MyPageTab) => void;
+  activeTab: MyPageTabs;
+  onTabChange: (tab: MyPageTabs) => void;
   onNavigate: (path: string) => void;
 };
 
 const items: ReadonlyArray<{
-  tab: MyPageTab;
+  tab: MyPageTabs;
   label: string;
   Icon: React.ComponentType<{ size?: number; className?: string }>;
 }> = [
-  { tab: MyPageTab.INFO, label: "내 정보", Icon: User },
+  { tab: MyPageTabs.INFO, label: "내 정보", Icon: User },
   {
-    tab: MyPageTab.RESERVATION_HISTORIES,
+    tab: MyPageTabs.RESERVATION_HISTORIES,
     label: "예매/취소 내역",
     Icon: History,
   },
-  { tab: MyPageTab.SCRAPED_PERFORMANCES, label: "스크랩한 공연", Icon: Heart },
-  { tab: MyPageTab.PERFORMANCE_DASHBOARD, label: "공연 관리", Icon: Settings },
-  { tab: MyPageTab.COUPONS, label: "쿠폰", Icon: CreditCard },
-  { tab: MyPageTab.SETTLEMENT_DASHBOARD, label: "정산내역", Icon: Wallet },
-  { tab: MyPageTab.POINTS, label: "포인트 사용내역", Icon: CreditCard },
+  { tab: MyPageTabs.SCRAPED_PERFORMANCES, label: "스크랩한 공연", Icon: Heart },
+  { tab: MyPageTabs.PERFORMANCE_DASHBOARD, label: "공연 관리", Icon: Settings },
+  { tab: MyPageTabs.COUPONS, label: "쿠폰", Icon: CreditCard },
+  { tab: MyPageTabs.SETTLEMENT_DASHBOARD, label: "정산내역", Icon: Wallet },
+  { tab: MyPageTabs.POINTS, label: "포인트 사용내역", Icon: CreditCard },
 ] as const;
 
 export default function NavigationMenu({ onTabChange }: Props) {
