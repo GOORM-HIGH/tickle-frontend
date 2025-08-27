@@ -6,7 +6,7 @@ import Footer from '../../components/layout/footer/Footer';
 import { ReceiptPopup } from '../components';
 import { PointResponse, pointService } from '../../services/pointService';
 import { useAuth } from '../../hooks/useAuth';
-import styles from '../../types/styles/mypage/carge.module.css';
+import styles from '../../styles/carge.module.css';
 
 interface ChargeAmount {
   id: number;

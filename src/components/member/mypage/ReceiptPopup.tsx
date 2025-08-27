@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Check, Download, Share2, X, Receipt, CreditCard, User, Clock, Hash } from 'lucide-react';
 import { PointResponse } from '../../../services/pointService.ts';
-import styles from '../../../types/styles/mypage/history.module.css';
+import styles from '../../../styles/history.module.css';
 
 interface ReceiptPopupProps {
   receiptData: PointResponse;

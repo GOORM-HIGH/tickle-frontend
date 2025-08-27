@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { pointService, PointResponse } from "../../../services/pointService.ts";
 import { Bootpay } from "@bootpay/client-js";
-import styles from "../../../types/styles/mypage/history.module.css";
+import styles from "../../../styles/history.module.css";
 
 interface ChargePopupProps {
   currentBalance: number;

@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../../types/styles/mypage/history.module.css';
+import styles from '../../styles/history.module.css';
 import { PointHistory } from '../types';
 
 interface TransactionTableProps {

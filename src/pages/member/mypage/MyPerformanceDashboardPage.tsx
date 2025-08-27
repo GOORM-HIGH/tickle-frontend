@@ -5,7 +5,7 @@ import { usePerformances } from "../../../hooks/mypage/usePerformances";
 import { useScrollToTop } from "../../../hooks/useScrollToTop";
 import { PerformanceListItem } from "../../../home/types/performance";
 import { MY_PAGE_TABS } from "../../../feat-mypage/constants/tabs";
-import "../../../types/styles/mypage/PerformanceHostPage.css";
+import "../../../styles/PerformanceHostPage.css";
 import MyPageCard from "../../../components/member/mypage/MyPageCard";
 
 export default function MyPerformanceDashboardPage() {

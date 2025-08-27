@@ -12,7 +12,7 @@ import SectionHeader from "../../../../components/mypage/SectionHeader.tsx";
 import ScrapGrid from "../../../../components/mypage/ScrapGrid.tsx";
 import { useScrollToTop } from "../../../../hooks/useScrollToTop.ts";
 
-import "../../../../types/styles/mypage/ScrapPage.css";
+import "../../../../styles/ScrapPage.css";
 
 const ScrapPage: React.FC = () => {
   useScrollToTop();

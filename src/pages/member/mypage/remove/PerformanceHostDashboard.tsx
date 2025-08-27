@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../../hooks/useAuth.ts';
 import { usePerformances } from '../../../../hooks/mypage/usePerformances.ts';
 import { MY_PAGE_TABS } from '../../../../feat-mypage/constants/tabs.ts';
-import '../../../../types/styles/mypage/PerformanceHostPage.css';
+import '../../../../styles/PerformanceHostPage.css';
 import { useScrollToTop } from '../../../../hooks/useScrollToTop.ts';
 import { PerformanceListItem } from '../../../../home/types/performance.ts';
 
