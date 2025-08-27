@@ -138,10 +138,10 @@ const MyPage: React.FC = () => {
   }
 
   return (
-    <Layout>
+    <>
       <MyPageContent {...myPageContentProps} />
       <MyPagePopups {...myPagePopupsProps} />
-    </Layout>
+    </>
   );
 };
 

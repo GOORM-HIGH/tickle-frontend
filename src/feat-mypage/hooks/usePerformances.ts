@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { performanceApi } from '../../home/api/performanceApi';
-import { PerformanceListItem } from '../../home/types/performance';
+import { performanceApi } from '../../services/performanceApi';
+import { PerformanceListItem } from '../../types/performance';
 import { MY_PAGE_TABS } from '../constants/tabs';
 
 export const usePerformances = (activeTab: string, isHost: boolean) => {

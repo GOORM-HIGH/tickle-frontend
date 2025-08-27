@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Bookmark } from 'lucide-react';
 import Cookies from 'js-cookie';
 import { useAuth } from '../../../hooks/useAuth';
-import { scrapService, PerformanceScrapDto } from '../../../home/api/scrapService';
-import SectionHeader from '../../../home/components/mypage/SectionHeader';
-import ScrapGrid from '../../../home/components/mypage/ScrapGrid';
+import { scrapService, PerformanceScrapDto } from '../../../services/scrapService';
+import SectionHeader from '../../../components/mypage/SectionHeader';
+import ScrapGrid from '../../../components/mypage/ScrapGrid';
 import { useScrollToTop } from '../../../hooks/useScrollToTop';
 
 import '../../styles/ScrapPage.css';
