@@ -1,8 +1,9 @@
-import React, { useMemo } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import Sidebar from "./Sidebar.tsx";
-import { MyPageTab } from "./../../../pages/member/mypage/constants/tabs";
+import React, { useMemo, useCallback } from "react";
+import { Outlet, useLocation, useNavigate, NavLink } from "react-router-dom";
+import Sidebar from "../../../components/member/mypage/Sidebar";
+import { MyPageTab } from "../../../pages/member/mypage/constants/tabs";
 
+// 탭 → 경로 매핑
 const tabToPath: Record<MyPageTab, string> = {
   INFO: "/mypage/info",
   RESERVATION_HISTORIES: "/mypage/reservationhistories",
@@ -13,15 +14,19 @@ const tabToPath: Record<MyPageTab, string> = {
   POINTS: "/mypage/points",
 };
 
+// 경로 → 탭 매핑
 const pathToTab = (pathname: string): MyPageTab => {
   const entries = Object.entries(tabToPath).sort(
-    (a, b) => b[1].length - a[1].length
+    (a, b) => b[1].length - a[1].length // 경로가 긴 것부터 매칭
   );
-  for (const [tabKey, path] of entries) {
+
+  for (const [key, path] of entries) {
     if (pathname.startsWith(path)) {
-      return tabKey as MyPageTab;
+      return key as MyPageTab;
     }
   }
+
+  // 매칭 실패 시 기본 탭
   return MyPageTab.INFO;
 };
 
@@ -39,30 +44,35 @@ export default function MyPageLayout({ currentBalance, onChargeClick }: Props) {
     [location.pathname]
   );
 
-  const handleTabChange = (tab: MyPageTab) => {
-    const to = tabToPath[tab];
-    if (to && to !== location.pathname) {
-      navigate(to);
-    }
-  };
+  const handleTabChange = useCallback(
+    (tab: MyPageTab) => {
+      const to = tabToPath[tab];
+      if (to && to !== location.pathname) navigate(to);
+    },
+    [navigate, location.pathname]
+  );
 
-  const handleNavigate = (path: string) => {
-    if (path && path !== location.pathname) {
-      navigate(path);
-    }
-  };
+  const handleNavigate = useCallback(
+    (path: string) => {
+      if (path && path !== location.pathname) navigate(path);
+    },
+    [navigate, location.pathname]
+  );
 
   return (
-    <div className="mypage">
-      <div className="page-container">
-        <Sidebar
-          currentBalance={currentBalance}
-          activeTab={activeTab}
-          onChargeClick={onChargeClick}
-          onTabChange={handleTabChange}
-          onNavigate={handleNavigate}
-        />
-        <div className="main-content">
+    <div className="min-h-screen bg-[#f8fafc] font-sans">
+      {/* 헤더 (생략) */}
+      <div className="max-w-[1400px] mx-auto p-8 gap-8 min-h-[calc(100vh-120px)] flex max-[1024px]:flex-col">
+        <aside className="w-[350px] min-w-[350px] max-[1024px]:w-full">
+          <Sidebar
+            currentBalance={currentBalance}
+            activeTab={activeTab}
+            onChargeClick={onChargeClick}
+            onTabChange={handleTabChange}
+            onNavigate={handleNavigate}
+          />
+        </aside>
+        <div className="flex-1 rounded-[24px] p-12">
           <Outlet />
         </div>
       </div>
