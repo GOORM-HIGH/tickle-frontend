@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { performanceApi, GenreDto } from "../../../home/api/performanceApi";
+import { performanceApi, GenreDto } from "../../../services/performanceApi";
 
 interface GenreMenuProps {
   variant?: 'dropdown' | 'inline';

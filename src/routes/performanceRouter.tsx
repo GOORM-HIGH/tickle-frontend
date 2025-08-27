@@ -1,23 +1,23 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import HomePage from '../home/pages/Main/HomePage';
-import MusicalPage from '../home/pages/Gnere/MusicalPage';
-import PlayPage from '../home/pages/Gnere/PlayPage';
-import ConcertPage from '../home/pages/Gnere/ConcertPage';
-import ClassicalPage from '../home/pages/Gnere/ClassicalPage';
-import DancePage from '../home/pages/Gnere/DancePage';
-import CircusPage from '../home/pages/Gnere/CircusPage';
-import ComplexPage from '../home/pages/Gnere/ComplexPage';
-import TraditionalPage from '../home/pages/Gnere/TraditionalPage';
-import PopularDancePage from '../home/pages/Gnere/PopularDancePage';
-import PerformanceDetailPage from '../home/pages/Performance/PerformanceDetailPage';
-import PerformanceCreatePage from '../home/pages/Performance/PerformanceCreatePage';
-import PerformanceHostPage from '../home/pages/Performance/PerformanceHostPage';
-import PerformanceEditPage from '../home/pages/Performance/PerformanceEditPage';
-import SearchPage from '../home/pages/Main/SearchPage';
+import HomePage from '../pages/main/HomePage';
+import MusicalPage from '../pages/Gnere/MusicalPage';
+import PlayPage from '../pages/Gnere/PlayPage';
+import ConcertPage from '../pages/Gnere/ConcertPage';
+import ClassicalPage from '../pages/Gnere/ClassicalPage';
+import DancePage from '../pages/Gnere/DancePage';
+import CircusPage from '../pages/Gnere/CircusPage';
+import ComplexPage from '../pages/Gnere/ComplexPage';
+import TraditionalPage from '../pages/Gnere/TraditionalPage';
+import PopularDancePage from '../pages/Gnere/PopularDancePage';
+import PerformanceDetailPage from '../pages/performance/PerformanceDetailPage';
+import PerformanceCreatePage from '../pages/performance/PerformanceCreatePage';
+import PerformanceHostPage from '../pages/performance/PerformanceHostPage';
+import PerformanceEditPage from '../pages/performance/PerformanceEditPage';
+import SearchPage from '../pages/main/SearchPage';
 import ReservationPage from '../pages/reservation/ReservationPage';
 
-import DynamicGenrePage from '../home/pages/Gnere/DynamicGenrePage';
+import DynamicGenrePage from '../pages/Gnere/DynamicGenrePage';
 
 const PerformanceRouter: React.FC = () => {
   return (

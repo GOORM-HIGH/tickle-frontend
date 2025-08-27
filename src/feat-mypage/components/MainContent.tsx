@@ -1,5 +1,5 @@
 import React from "react";
-import { PerformanceListItem } from "../../home/types/performance";
+import { PerformanceListItem } from "../../types/performance";
 import { PointHistoryResponse } from "../../services/pointService";
 import {
   InfoTab,
