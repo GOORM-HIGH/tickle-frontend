@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, useRef } from 'react';
-import { PointResponse } from '../../services/pointService';
+import { PointResponse } from '../../services/pointService.ts';
 
 export const usePopups = () => {
   const [receiptData, setReceiptData] = useState<PointResponse | null>(null);

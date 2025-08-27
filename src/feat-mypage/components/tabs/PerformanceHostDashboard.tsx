@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../hooks/useAuth';
-import { usePerformances } from '../../hooks/usePerformances';
+import { usePerformances } from '../../../hooks/mypage/usePerformances.ts';
 import { MY_PAGE_TABS } from '../../constants/tabs';
 import '../../styles/PerformanceHostPage.css';
 import { useScrollToTop } from '../../../hooks/useScrollToTop';

@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { PointResponse, pointService, PointHistoryResponse, PagingResponse } from '../../services/pointService';
-import { useAuth } from '../../hooks/useAuth';
+import { PointResponse, pointService, PointHistoryResponse, PagingResponse } from '../../services/pointService.ts';
+import { useAuth } from '../useAuth.ts';
 
 interface ChargeResult {
   success: boolean;

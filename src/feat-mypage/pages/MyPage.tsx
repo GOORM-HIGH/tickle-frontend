@@ -1,9 +1,9 @@
 import React, { useCallback } from "react";
 import { MyPagePopups, LoadingState } from "../components";
-import { useMyPageAuth } from "../hooks/useAuth";
-import { usePoints } from "../hooks/usePoints";
-import { useUI } from "../hooks/useUI";
-import { usePopups } from "../hooks/usePopups";
+import { useMyPageAuth } from "../../hooks/mypage/useAuth.ts";
+import { usePoints } from "../../hooks/mypage/usePoints.ts";
+import { useUI } from "../../hooks/mypage/useUI.ts";
+import { usePopups } from "../../hooks/mypage/usePopups.ts";
 import "../styles/MyPage.css";
 import MyPageLayout from "../../components/member/mypage/MyPageLayout";
 
