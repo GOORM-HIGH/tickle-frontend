@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
 import { useAuth } from '../../hooks/useAuth';
-import { PERFORMANCE_GENRES } from '../../components/performance/constants/performance';
 import { PerformanceFormData } from '../../types/performance';
 import { performanceApi, UpdatePerformanceRequestDto } from '../../services/performanceApi';
 import { useScrollToTop } from '../../hooks/useScrollToTop';
@@ -31,6 +30,7 @@ const PerformanceEditForm: React.FC = () => {
   const [imagePreview, setImagePreview] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
+  const [genreTitle, setGenreTitle] = useState<string>('');
 
   useEffect(() => {
     const hasToken = !!Cookies.get('accessToken');
@@ -50,14 +50,13 @@ const PerformanceEditForm: React.FC = () => {
         const response = await performanceApi.getPerformanceDetail(+performanceId);
         const res = response.data;
 
-        const genreTitle = res.genreTitle || '기타';
-        const genre = PERFORMANCE_GENRES.find(g => g.name === genreTitle);
-        const genreId = genre ? genre.id : 0;
+        const genreTitleFromApi = res.genreTitle || '기타';
+        setGenreTitle(genreTitleFromApi);
         const hallType = res.hallType || 'A';
 
         setFormData({
           title: res.title,
-          genreId,
+          genreId: 0, // 장르는 변경 불가
           date: res.date?.split('T')[0] || '',
           runtime: res.runtime || 0,
           hallType,
@@ -117,15 +116,10 @@ const PerformanceEditForm: React.FC = () => {
 
     const requestData: UpdatePerformanceRequestDto = {
       title: formData.title,
-      genreId: formData.genreId,
       date: formatDateToISO(formData.date),
       runtime: formData.runtime,
-      hallType: formData.hallType,
-      hallAddress: formData.hallAddress,
-      startDate: formatDateToISO(formData.startDate),
-      endDate: formatDateToISO(formData.endDate),
-      isEvent: formData.isEvent,
       img: imagePreview === '/default-performance.png' ? '' : formData.img,
+      isEvent: formData.isEvent,
     };
 
     try {

@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
 import { useAuth } from '../../hooks/useAuth';
-import { performanceApi, CreatePerformanceRequestDto } from '../../services/performanceApi';
-import { PERFORMANCE_GENRES, HALL_TYPES, VENUE_LOCATIONS } from '../../components/performance/constants/performance';
+import { performanceApi, CreatePerformanceRequestDto, GenreDto } from '../../services/performanceApi';
+import { HALL_TYPES, VENUE_LOCATIONS } from '../../components/performance/constants/performance';
 import { PerformanceFormData } from '../../types/performance';
 import { useScrollToTop } from '../../hooks/useScrollToTop';
 
@@ -31,7 +31,33 @@ const PerformanceCreateForm: React.FC = () => {
   const [selectedVenue, setSelectedVenue] = useState<string>('');
   const [customAddress, setCustomAddress] = useState<string>('');
   const [imagePreview, setImagePreview] = useState<string>('');
+  const [genres, setGenres] = useState<GenreDto[]>([]);
+  const [loading, setLoading] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // 장르 목록을 API에서 가져오기
+  useEffect(() => {
+    const fetchGenres = async () => {
+      try {
+        console.log('장르 목록을 가져오는 중...');
+        const response = await performanceApi.getGenres();
+        console.log('API 응답:', response);
+        if (response.data) {
+          console.log('장르 데이터:', response.data);
+          setGenres(response.data);
+        } else {
+          console.log('응답에 data가 없습니다:', response);
+        }
+      } catch (error) {
+        console.error('장르 목록을 가져오는데 실패했습니다:', error);
+        setGenres([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGenres();
+  }, []);
 
   useEffect(() => {
     console.log('🔍 인증 상태:', { isLoggedIn, currentUser, token: Cookies.get('accessToken') });
@@ -170,11 +196,17 @@ const PerformanceCreateForm: React.FC = () => {
                   <label htmlFor="genreId">공연장르</label>
                   <select id="genreId" name="genreId" value={formData.genreId} onChange={handleInputChange} required>
                     <option value="">장르를 선택해주세요</option>
-                    {PERFORMANCE_GENRES.map(genre => (
-                      <option key={genre.id} value={genre.id}>
-                        {genre.name}
-                      </option>
-                    ))}
+                    {loading ? (
+                      <option disabled>장르 목록을 불러오는 중...</option>
+                    ) : genres.length > 0 ? (
+                      genres.map(genre => (
+                        <option key={genre.genreId} value={Number(genre.genreId)}>
+                          {genre.title}
+                        </option>
+                      ))
+                    ) : (
+                      <option disabled>장르 목록을 불러올 수 없습니다</option>
+                    )}
                   </select>
                 </div>
 
