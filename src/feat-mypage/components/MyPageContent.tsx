@@ -3,7 +3,7 @@ import Sidebar from './Sidebar';
 import MainContent from './MainContent';
 import { MyPageTab } from '../constants/tabs';
 import { PointHistoryResponse } from '../../services/pointService';
-import { PerformanceListItem } from '../../home/types/performance';
+import { PerformanceListItem } from '../../types/performance';
 
 interface MyPageContentProps {
   currentBalance: number;

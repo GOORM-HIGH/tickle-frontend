@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Calendar, Clock, MapPin, Gift, Upload, Plus, Ticket, Search } from 'lucide-react';
 import Layout from '../../components/layout/Layout';
 import styles from '../styles/eventForm.module.css';
-import { performanceApi, PerformanceHostDto, SeatDto, TicketEventCreateRequestDto } from '../../home/api/performanceApi';
+import { performanceApi, PerformanceHostDto, SeatDto, TicketEventCreateRequestDto } from '../../services/performanceApi';
 
 interface EventFormData {
   performanceId: number;

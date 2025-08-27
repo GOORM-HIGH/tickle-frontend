@@ -5,7 +5,7 @@ import { usePerformances } from '../../hooks/usePerformances';
 import { MY_PAGE_TABS } from '../../constants/tabs';
 import '../../styles/PerformanceHostPage.css';
 import { useScrollToTop } from '../../../hooks/useScrollToTop';
-import { PerformanceListItem } from '../../../home/types/performance';
+import { PerformanceListItem } from '../../../types/performance';
 
 interface PerformanceHostDashboardProps {
   performances: PerformanceListItem[];
