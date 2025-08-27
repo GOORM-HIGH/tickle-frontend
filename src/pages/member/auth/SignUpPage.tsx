@@ -8,9 +8,9 @@ import {
   validatePassword,
 } from "../../../utils/validations";
 import { toInstant } from "../../../utils/dateUtils";
-import ProfileImageUploader from "../../../components/member/ProfileImageUploader";
-import AuthInput from "../../../components/member/AuthInput";
-import AuthCard from "../../../components/member/AuthCard";
+import ProfileImageUploader from "../../../components/member/auth/ProfileImageUploader";
+import AuthInput from "../../../components/member/auth/AuthInput";
+import AuthCard from "../../../components/member/auth/AuthCard";
 import Button from "../../../components/common/Button";
 
 const SignUpPage: React.FC = () => {

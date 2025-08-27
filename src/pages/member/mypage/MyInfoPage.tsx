@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import { getAccessToken } from "../../../utils/tokenUtils";
 import api from "../../../services/api";
 
-import AuthCard from "../../../components/member/AuthCard";
-import ProfileImageUploader from "../../../components/member/ProfileImageUploader";
-import AuthInput from "../../../components/member/AuthInput";
+import AuthCard from "../../../components/member/auth/AuthCard";
+import ProfileImageUploader from "../../../components/member/auth/ProfileImageUploader";
+import AuthInput from "../../../components/member/auth/AuthInput";
 import Button from "../../../components/common/Button";
 import Select from "../../../components/common/Select";
 

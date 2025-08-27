@@ -15,11 +15,12 @@ import {
 } from "../../../utils/validations";
 import { toInstant } from "../../../utils/dateUtils";
 import { toBigDecimalString } from "../../../utils/numberUtils";
-import ProfileImageUploader from "../../../components/member/ProfileImageUploader";
-import AuthInput from "../../../components/member/AuthInput";
-import AuthCard from "../../../components/member/AuthCard";
+
 import Button from "../../../components/common/Button";
 import Select from "../../../components/common/Select";
+import AuthCard from "../../../components/member/auth/AuthCard";
+import AuthInput from "../../../components/member/auth/AuthInput";
+import ProfileImageUploader from "../../../components/member/auth/ProfileImageUploader";
 
 const bankList: string[] = [
   "국민은행",
