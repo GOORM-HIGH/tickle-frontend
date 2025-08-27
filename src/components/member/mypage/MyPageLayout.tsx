@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from "react";
 import { Outlet, useLocation, useNavigate, NavLink } from "react-router-dom";
 import Sidebar from "../../../components/member/mypage/Sidebar";
-import { MyPageTabs } from "../../../pages/member/mypage/constants/tabs";
+import { MyPageTabs } from "../../../constants/myPageTabs.ts";
 
 // 탭 → 경로 매핑
 const tabToPath: Record<MyPageTabs, string> = {

@@ -2,7 +2,7 @@ import React from "react";
 
 import NavigationMenu from "./NavigationMenu.tsx";
 
-import { MyPageTabs } from "../../../pages/member/mypage/constants/tabs.ts";
+import { MyPageTabs } from "../../../constants/myPageTabs.ts";
 import ProfileSection from "./ProfileSection.tsx";
 
 interface SidebarProps {

@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { performanceApi } from '../../services/performanceApi';
 import { PerformanceListItem } from '../../types/performance';
-import { MyPageTabs } from '../../pages/member/mypage/constants/tabs';
+import { MyPageTabs } from '../../constants/myPageTabs.ts';
 
 export const usePerformances = (activeTab: MyPageTabs, isHost: boolean) => {
   const navigate = useNavigate();

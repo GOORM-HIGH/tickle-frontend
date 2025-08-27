@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { MyPageTabs } from "../../pages/member/mypage/constants/tabs";
+import { MyPageTabs } from "../../constants/myPageTabs.ts";
 
 export const useUI = () => {
   const [activeTab, setActiveTab] = useState<MyPageTabs>(MyPageTabs.INFO);

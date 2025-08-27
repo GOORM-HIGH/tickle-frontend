@@ -12,7 +12,7 @@ import {
 import {
   MyPageTabs,
   TAB_PATHS,
-} from "./../../../pages/member/mypage/constants/tabs";
+} from "../../../constants/myPageTabs.ts";
 
 type Props = {
   activeTab: MyPageTabs;

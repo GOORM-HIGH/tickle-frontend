@@ -4,7 +4,7 @@ import { useAuth } from "../../../hooks/useAuth";
 import { usePerformances } from "../../../hooks/mypage/usePerformances";
 import { useScrollToTop } from "../../../hooks/useScrollToTop";
 import { PerformanceListItem } from "../../../types/performance";
-import { MyPageTabs } from "./constants/tabs.ts";
+import { MyPageTabs } from "../../../constants/myPageTabs.ts";
 import "../../../styles/PerformanceHostPage.css";
 import MyPageCard from "../../../components/member/mypage/MyPageCard";
 
