@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { settlementService } from '../../../services/settlementService';
+import { settlementService } from '../../../../services/settlementService.ts';
 import {
   SettlementResponseDto,
   PagingResponse,
   PeriodType,
   ViewType,
   SettlementStatus
-} from '../../../types/settlement';
-import api from '../../../services/api';
+} from '../../../../types/settlement.ts';
+import api from '../../../../services/api.ts';
 
 // 기존 타입을 새로운 타입으로 교체
 type SettlementData = SettlementResponseDto;

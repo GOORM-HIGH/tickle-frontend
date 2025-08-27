@@ -6,7 +6,7 @@ import MyInfoPage from "../pages/member/mypage/MyInfoPage";
 import MyPointPage from "../pages/member/mypage/MyPointHistories";
 import MyScrapedPerformancesPages from "../pages/member/mypage/MyScrapedPerformancesPages.tsx";
 import MyReservationHistoriesPage from "../pages/member/mypage/MyReservationHistoriesPage.tsx";
-import MyCoponPage from "../pages/member/mypage/MyCoponPage";
+import MyCouponsPage from "../pages/member/mypage/MyCouponsPage.tsx";
 import MyPerformanceDashboardPage from "../pages/member/mypage/MyPerformanceDashboardPage.tsx";
 import MySettlementDashboardPage from "../pages/member/mypage/MySettlementDashboardPage";
 import MyPage from "../pages/member/mypage/MyPage";
@@ -29,7 +29,7 @@ const MypageRouter: React.FC = () => {
           path="performance-dashboard"
           element={<MyPerformanceDashboardPage />}
         />
-        <Route path="coupons" element={<MyCoponPage />} />
+        <Route path="coupons" element={<MyCouponsPage />} />
         <Route path="settlement" element={<MySettlementDashboardPage />} />
         <Route path="points" element={<MyPointPage />} />
       </Route>
