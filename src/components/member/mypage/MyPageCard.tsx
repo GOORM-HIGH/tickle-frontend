@@ -1,4 +1,7 @@
 import React from "react";
+import { useAuth } from "../../../hooks/useAuth";
+
+type UserRole = "USER" | "HOST" | "ADMIN";
 
 interface MyPageCardProps {
   title?: string;
@@ -10,7 +13,20 @@ interface MyPageCardProps {
   fullHeight?: boolean; // min-h-screen 적용 여부 (기본 true)
   containerClassName?: string; // 컨테이너에 추가 Tailwind
   cardClassName?: string; // 카드에 추가 Tailwind
+  // ✅ 추가: 이 카드 자체를 볼 수 있는 역할
+  visibleFor?: UserRole[];
+  // ✅ 추가: 권한 없을 때 대체 UI (없으면 아무것도 렌더 안 함)
+  fallbackWhenHidden?: React.ReactNode;
 }
+
+const normalizeRole = (raw?: string): UserRole | undefined => {
+  if (!raw) return undefined;
+  const r = raw.replace(/^ROLE_/, "").toUpperCase();
+  return (["USER", "HOST", "ADMIN"] as const).includes(r as UserRole)
+    ? (r as UserRole)
+    : undefined;
+};
+
 
 const MyPageCard: React.FC<MyPageCardProps> = ({
   title,
@@ -20,7 +36,19 @@ const MyPageCard: React.FC<MyPageCardProps> = ({
   fullHeight = true,
   containerClassName = "",
   cardClassName = "",
+  visibleFor,                // ✅
+  fallbackWhenHidden = null, // ✅
+
 }) => {
+
+  const { currentUser } = useAuth();
+  const role = normalizeRole(currentUser?.role);
+
+  // ✅ 역할 제한이 있고, 내 역할이 허용되지 않으면 렌더링 차단
+  if (visibleFor && (!role || !visibleFor.includes(role))) {
+    return <>{fallbackWhenHidden}</>;
+  }
+
   const containerBase = "flex justify-center bg-gray-50";
   const vertical = centered ? "items-center" : "items-start";
   const height = fullHeight ? "min-h-screen" : "";

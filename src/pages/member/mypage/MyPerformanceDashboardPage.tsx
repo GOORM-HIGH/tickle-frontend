@@ -81,6 +81,13 @@ export default function MyPerformanceDashboardPage() {
       fullHeight={false}
       containerClassName="bg-transparent justify-start items-stretch"
       cardClassName="min-h-[calc(100vh-200px)] w-full"
+      visibleFor={["HOST"]}
+      fallbackWhenHidden={
+        <div className="p-12 text-center">
+        <h2 className="text-xl font-semibold">권한이 없습니다</h2>
+        <p className="text-gray-500 mt-2">HOST 권한이 필요합니다.</p>
+        </div>
+      }
     >
       <div className="page-header">
         <h2 className="page-title">내가 생성한 공연</h2>
