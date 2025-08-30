@@ -328,28 +328,20 @@ export const performanceApi = {
     return response.data;
   },
 
-  // 내가 생성한 공연 목록 조회
-  getMyPerformances: async (): Promise<ResultResponse<PerformanceHostDto[]>> => {
+  getMyPerformances: async (
+    page: number = 0,
+    size: number = 12
+  ): Promise<ResultResponse<PagingResponse<PerformanceHostDto>>> => {
     const response = await api.get('/api/v1/performance/host', {
+      params: { page, size },
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-      }
+      },
     });
     return response.data;
   },
-
-  // HOST 권한으로 생성한 공연 목록 조회
-  getHostPerformances: async (): Promise<ResultResponse<PerformanceHostDto[]>> => {
-    const response = await api.get('/api/v1/performance/host', {
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      }
-    });
-    return response.data;
-  },
-
+    
   // 공연 좌석 정보 조회
   getPerformanceSeats: async (performanceId: number): Promise<ResultResponse<SeatsResponseDto>> => {
     const response = await api.get(`/api/v1/reservation/${performanceId}/seats`, {

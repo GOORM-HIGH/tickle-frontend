@@ -1,12 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
-import { usePerformances } from "../../../hooks/mypage/usePerformances";
 import { useScrollToTop } from "../../../hooks/useScrollToTop";
-import { PerformanceListItem } from "../../../types/performance";
-import { MyPageTabs } from "../../../constants/myPageTabs.ts";
-import "../../../styles/PerformanceHostPage.css";
 import MyPageCard from "../../../components/member/mypage/MyPageCard";
+import { performanceApi, PerformanceHostDto, ResultResponse, PagingResponse } from "../../../services/performanceApi";
+import "../../../styles/PerformanceHostPage.css";
 
 export default function MyPerformanceDashboardPage() {
   useScrollToTop();
@@ -14,16 +12,37 @@ export default function MyPerformanceDashboardPage() {
   const { isLoggedIn, currentUser } = useAuth();
   const isHost = currentUser?.role === "HOST";
 
-  const {
-    performances,
-    loading,
-    handleDeletePerformance,
-    handleEditPerformance,
-  } = usePerformances(MyPageTabs.PERFORMANCE_DASHBOARD, !!isHost);
+  const [page, setPage] = useState(0);
+  const [size] = useState(12);
+  const [totalPages, setTotalPages] = useState(0);
+  const [isLast, setIsLast] = useState(false);
+
+  const [performances, setPerformances] = useState<PerformanceHostDto[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchPage = async (targetPage: number) => {
+    setLoading(true);
+    try {
+      const res: ResultResponse<PagingResponse<PerformanceHostDto>> =
+        await performanceApi.getMyPerformances(targetPage, size);
+
+      setPerformances(res.data.content);
+      setPage(res.data.page);
+      setTotalPages(res.data.totalPages);
+      setIsLast(res.data.isLast);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isHost) fetchPage(0);
+  }, [isHost]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("ko-KR", {
+    // 서버가 Z(UTC)로 내려주므로 KST 표시가 필요하면 toLocaleString으로 충분
+    return date.toLocaleString("ko-KR", {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
@@ -33,6 +52,13 @@ export default function MyPerformanceDashboardPage() {
   };
 
   const handleCreatePerformance = () => navigate("/performance/create");
+  const handleEditPerformance = (id: number) => navigate(`/performance/edit/${id}`);
+  const handleDeletePerformance = async (id: number) => {
+    if (!confirm("정말 삭제하시겠습니까?")) return;
+    await performanceApi.deletePerformance(id);
+    // 현재 페이지 갱신
+    fetchPage(page);
+  };
 
   // 권한 체크
   if (!isLoggedIn || !isHost) {
@@ -68,7 +94,7 @@ export default function MyPerformanceDashboardPage() {
           <div className="loading-spinner" />
           <p>공연 목록을 불러오는 중...</p>
         </div>
-      ) : !Array.isArray(performances) || performances.length === 0 ? (
+      ) : performances.length === 0 ? (
         <div className="empty-container">
           <div className="empty-icon">🎭</div>
           <h3>생성한 공연이 없습니다</h3>
@@ -78,65 +104,86 @@ export default function MyPerformanceDashboardPage() {
           </button>
         </div>
       ) : (
+        <>
         <div className="performance-grid">
-          {performances.map((performance: PerformanceListItem) => (
+          {performances.map((performance) => (
             <div key={performance.performanceId} className="performance-card">
               <div className="performance-create-image">
                 {performance.img ? (
                   <img
-                    src={performance.img}
+                    src={performance.img}   // ✅ 여기서는 그냥 응답에 있는 img 필드 사용
                     alt={performance.title}
                     className="performance-create-img"
                     loading="lazy"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = "/images/fallback-poster.png"; // 실패 시 대체 이미지
+                    }}
                   />
                 ) : (
                   <div className="no-image">🎭</div>
                 )}
               </div>
 
-              <div className="performance-info">
-                <h3 className="performance-title">{performance.title}</h3>
-                <div className="performance-details">
-                  <div className="detail-item">
-                    <span className="label">공연일:</span>
-                    <span className="value">
-                      {formatDate(performance.date)}
-                    </span>
+                <div className="performance-info">
+                  <h3 className="performance-title">{performance.title}</h3>
+                  <div className="performance-details">
+                    <div className="detail-item">
+                      <span className="label">공연일:</span>
+                      <span className="value">{formatDate(performance.date)}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="label">상태:</span>
+                      <span
+                        className={`status-badge ${String(
+                          performance.statusDescription || ""
+                        ).toLowerCase()}`}
+                      >
+                        {performance.statusDescription}
+                      </span>
+                    </div>
                   </div>
-                  <div className="detail-item">
-                    <span className="label">상태:</span>
-                    <span
-                      className={`status-badge ${String(
-                        performance.status || ""
-                      ).toLowerCase()}`}
-                    >
-                      {performance.status}
-                    </span>
-                  </div>
-                </div>
 
-                <div className="performance-actions">
-                  <button
-                    className="edit-button"
-                    onClick={() =>
-                      handleEditPerformance(performance.performanceId)
-                    }
-                  >
-                    수정
-                  </button>
-                  <button
-                    className="delete-button"
-                    onClick={() =>
-                      handleDeletePerformance(performance.performanceId)
-                    }
-                  >
-                    삭제
-                  </button>
+                  <div className="performance-actions">
+                    <button
+                      className="edit-button"
+                      onClick={() => handleEditPerformance(performance.performanceId)}
+                    >
+                      수정
+                    </button>
+                    <button
+                      className="delete-button"
+                      onClick={() => handleDeletePerformance(performance.performanceId)}
+                    >
+                      삭제
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+
+          {/* ✅ 간단 페이지네이션 */}
+          <div className="pagination">
+            <button
+              className="pager"
+              disabled={page <= 0}
+              onClick={() => fetchPage(page - 1)}
+            >
+              ← 이전
+            </button>
+            <span className="page-info">
+              {page + 1} / {totalPages}
+            </span>
+            <button
+              className="pager"
+              disabled={isLast}
+              onClick={() => fetchPage(page + 1)}
+            >
+              다음 →
+            </button>
+          </div>
+        </>
       )}
     </MyPageCard>
   );
