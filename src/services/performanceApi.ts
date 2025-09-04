@@ -119,6 +119,17 @@ export interface ComingSoonCard {
   endDate: string;
 }
 
+export interface Cursor {
+  lastDate: string;
+  lastId: number;
+}
+
+export interface CursorPage<T> {
+  items: T[];
+  nextCursor: Cursor | null;
+  hasNext: boolean;
+}
+
 // 백엔드 응답을 프론트엔드 타입으로 변환하는 함수
 export const mapPerformanceDtoToCard = (dto: PerformanceDto): PerformanceCard => {
   return {
@@ -292,16 +303,35 @@ export const performanceApi = {
   },
 
   // 공연 검색
-  searchPerformances: async (keyword: string, page: number = 0, size: number = 8): Promise<ResultResponse<PagingResponse<PerformanceDto>>> => {
-    const response = await api.get(`/api/v1/performance/search/${encodeURIComponent(keyword)}`, {
-      params: {
-        page,
-        size
-      },
+  searchPerformancesByCursor: async (
+    keyword: string,
+    cursorDate: string | null,
+    cursorId: number | null,
+    size: number = 20
+  ): Promise<CursorPage<PerformanceDto>> => {
+    const params: Record<string, any> = { keyword, size };
+    if (cursorDate) params.cursorDate = cursorDate;
+    if (cursorId) params.cursorId = cursorId;
+
+    const response = await api.get('/api/v1/performance/search', {
+      params,
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      }
+        Accept: 'application/json',
+      },
+    });
+
+    return response.data;
+  },
+
+  // 검색 결과 총 개수
+  countPerformancesByKeyword: async (keyword: string): Promise<number> => {
+    const response = await api.get('/api/v1/performances/search/count', {
+      params: { keyword },
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
     });
     return response.data;
   },
