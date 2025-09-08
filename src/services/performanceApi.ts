@@ -128,6 +128,7 @@ export interface CursorPage<T> {
   items: T[];
   nextCursor: Cursor | null;
   hasNext: boolean;
+  totalCount: number;
 }
 
 // 백엔드 응답을 프론트엔드 타입으로 변환하는 함수
@@ -248,12 +249,6 @@ export const performanceApi = {
     return response.data;
   },
 
-  // 이미지 프록시 API
-  getImageProxy: (imageUrl: string): string => {
-    // 백엔드 프록시 API를 통해 이미지 로드
-    return `http://localhost:8081/api/v1/image/proxy?url=${encodeURIComponent(imageUrl)}`;
-  },
-
   // 공연 상세 정보 조회
   getPerformanceDetail: async (performanceId: number): Promise<ResultResponse<PerformanceDetailDto>> => {
     const response = await api.get(`/api/v1/performance/${performanceId}`, {
@@ -321,18 +316,6 @@ export const performanceApi = {
       },
     });
 
-    return response.data;
-  },
-
-  // 검색 결과 총 개수
-  countPerformancesByKeyword: async (keyword: string): Promise<number> => {
-    const response = await api.get('/api/v1/performances/search/count', {
-      params: { keyword },
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-    });
     return response.data;
   },
 

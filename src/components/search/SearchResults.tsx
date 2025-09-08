@@ -23,6 +23,7 @@ const SearchResults: React.FC = () => {
   const [visibleCount, setVisibleCount] = useState<number>(0); // 현재 화면에 보여줄 카드 개수
   const [cursor, setCursor] = useState<Cursor | null>(null);
   const [hasNext, setHasNext] = useState(false);
+  const [totalCount, setTotalCount] = useState<number>(0);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -51,6 +52,7 @@ const SearchResults: React.FC = () => {
         setCursor(null);
         setHasNext(false);
         setHasShownLoadMore(false);
+        setTotalCount(0);
 
         const res = await performanceApi.searchPerformancesByCursor(
           keyword,
@@ -68,6 +70,7 @@ const SearchResults: React.FC = () => {
           setPerformances(converted);
           setCursor(res.nextCursor);
           setHasNext(res.hasNext);
+          setTotalCount(res.totalCount);
 
           // 첫 화면은 4개만 노출
           setVisibleCount(Math.min(4, converted.length));
@@ -190,7 +193,9 @@ const SearchResults: React.FC = () => {
   return (
     <div className="search-browse">
       <div className="search-keyword">{keyword}</div>
-      <div className="search-count">검색 결과({performances.length})</div>
+      <div className="search-count">
+        검색 결과({totalCount >= 10000 ? '10000+' : totalCount.toLocaleString()})
+      </div>
       <hr style={{ margin: '20px 0px' }} />
 
       {visibleList.length === 0 ? (
