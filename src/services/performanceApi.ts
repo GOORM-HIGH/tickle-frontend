@@ -124,11 +124,16 @@ export interface Cursor {
   lastId: number;
 }
 
-export interface CursorPage<T> {
+export interface CursorPageResponse<T> {
   items: T[];
   nextCursor: Cursor | null;
   hasNext: boolean;
-  totalCount: number;
+}
+
+export interface SearchCountResponse {
+  keyword: string;
+  count: number;
+  generatedAt: string;
 }
 
 // 백엔드 응답을 프론트엔드 타입으로 변환하는 함수
@@ -297,19 +302,32 @@ export const performanceApi = {
     return response.data;
   },
 
-  // 공연 검색
-  searchPerformancesByCursor: async (
+  // 공연 검색 (커서 페이징)
+  searchPerformances: async (
     keyword: string,
-    cursorDate: string | null,
-    cursorId: number | null,
-    size: number = 20
-  ): Promise<CursorPage<PerformanceDto>> => {
+    size: number = 20,
+    cursorDate?: string,
+    cursorId?: number
+  ): Promise<CursorPageResponse<PerformanceDto>> => {
     const params: Record<string, any> = { keyword, size };
     if (cursorDate) params.cursorDate = cursorDate;
     if (cursorId) params.cursorId = cursorId;
 
     const response = await api.get('/api/v1/performance/search', {
       params,
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+    });
+
+    return response.data;
+  },
+
+  // 검색 결과 카운트
+  getSearchCount: async (keyword: string): Promise<SearchCountResponse> => {
+    const response = await api.get('/api/v1/performance/search/count', {
+      params: { keyword },
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',

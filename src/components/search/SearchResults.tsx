@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 
-import { performanceApi, PerformanceDto } from '../../services/performanceApi';
+import { performanceApi, PerformanceDto, SearchCountResponse } from '../../services/performanceApi';
 import { useTimeConversion } from '../../hooks/useTimeConversion';
 
 import '../../styles/SearchPage.css';
@@ -23,14 +23,39 @@ const SearchResults: React.FC = () => {
   const [visibleCount, setVisibleCount] = useState<number>(0); // 현재 화면에 보여줄 카드 개수
   const [cursor, setCursor] = useState<Cursor | null>(null);
   const [hasNext, setHasNext] = useState(false);
-  const [totalCount, setTotalCount] = useState<number>(0);
+  const [totalCount, setTotalCount] = useState<number>(0); // 전체 검색 결과 수
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [countLoading, setCountLoading] = useState(true);
 
-  // “더보기” 버튼을 눌러 첫 페이지 나머지 4개를 펼쳤는지 여부
+  // "더보기" 버튼을 눌러 첫 페이지 나머지 4개를 펼쳤는지 여부
   const [hasShownLoadMore, setHasShownLoadMore] = useState(false);
+
+  // 검색 결과 카운트 조회
+  useEffect(() => {
+    const fetchCount = async () => {
+      if (!keyword.trim()) {
+        setTotalCount(0);
+        setCountLoading(false);
+        return;
+      }
+
+      try {
+        setCountLoading(true);
+        const countRes = await performanceApi.getSearchCount(keyword);
+        setTotalCount(countRes.count);
+      } catch (err) {
+        console.error('Error fetching search count:', err);
+        setTotalCount(0);
+      } finally {
+        setCountLoading(false);
+      }
+    };
+
+    fetchCount();
+  }, [keyword]);
 
   // 초기 검색 (첫 페이지)
   useEffect(() => {
@@ -52,14 +77,8 @@ const SearchResults: React.FC = () => {
         setCursor(null);
         setHasNext(false);
         setHasShownLoadMore(false);
-        setTotalCount(0);
 
-        const res = await performanceApi.searchPerformancesByCursor(
-          keyword,
-          null,
-          null,
-          PAGE_SIZE
-        );
+        const res = await performanceApi.searchPerformances(keyword, PAGE_SIZE);
 
         if (res) {
           const converted = res.items.map((p: PerformanceDto) => ({
@@ -70,7 +89,6 @@ const SearchResults: React.FC = () => {
           setPerformances(converted);
           setCursor(res.nextCursor);
           setHasNext(res.hasNext);
-          setTotalCount(res.totalCount);
 
           // 첫 화면은 4개만 노출
           setVisibleCount(Math.min(4, converted.length));
@@ -130,11 +148,11 @@ const SearchResults: React.FC = () => {
     try {
       setLoadingMore(true);
 
-      const res = await performanceApi.searchPerformancesByCursor(
+      const res = await performanceApi.searchPerformances(
         keyword,
+        PAGE_SIZE,
         cursor.lastDate,
-        cursor.lastId,
-        PAGE_SIZE
+        cursor.lastId
       );
 
       if (res) {
@@ -190,11 +208,19 @@ const SearchResults: React.FC = () => {
   // 보여줄 목록
   const visibleList = performances.slice(0, visibleCount);
 
+  // 카운트 표시 포맷팅 함수
+  const formatCount = (count: number): string => {
+    if (count > 3000) {
+      return '3000+';
+    }
+    return count.toString();
+  };
+
   return (
     <div className="search-browse">
       <div className="search-keyword">{keyword}</div>
       <div className="search-count">
-        검색 결과({totalCount >= 10000 ? '10000+' : totalCount.toLocaleString()})
+        검색 결과({countLoading ? '...' : formatCount(totalCount)})
       </div>
       <hr style={{ margin: '20px 0px' }} />
 
