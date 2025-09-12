@@ -124,7 +124,7 @@ export interface Cursor {
   lastId: number;
 }
 
-export interface CursorPageResponse<T> {
+export interface CursorPage<T> {
   items: T[];
   nextCursor: Cursor | null;
   hasNext: boolean;
@@ -287,13 +287,19 @@ export const performanceApi = {
     return response.data;
   },
 
-  // 장르별 공연 목록 조회 (페이징)
-  getPerformancesByGenre: async (genreId: number, page: number = 0, size: number = 8): Promise<ResultResponse<PagingResponse<PerformanceDto>>> => {
+  // 장르별 공연 목록 조회 (커서 페이징)
+  getPerformancesByGenre: async (
+    genreId: number, 
+    limit: number = 20,
+    cursorDate?: string,
+    cursorId?: number
+  ): Promise<CursorPage<PerformanceDto>> => {
+    const params: Record<string, any> = { limit };
+    if (cursorDate) params.cursorDate = cursorDate;
+    if (cursorId) params.cursorId = cursorId;
+
     const response = await api.get(`/api/v1/performance/genre/${genreId}`, {
-      params: {
-        page,
-        size
-      },
+      params,
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -308,7 +314,7 @@ export const performanceApi = {
     size: number = 20,
     cursorDate?: string,
     cursorId?: number
-  ): Promise<CursorPageResponse<PerformanceDto>> => {
+  ): Promise<CursorPage<PerformanceDto>> => {
     const params: Record<string, any> = { keyword, size };
     if (cursorDate) params.cursorDate = cursorDate;
     if (cursorId) params.cursorId = cursorId;

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 
-import { performanceApi, PerformanceDto, SearchCountResponse } from '../../services/performanceApi';
+import { performanceApi, PerformanceDto, SearchCountResponse, CursorPage } from '../../services/performanceApi';
 import { useTimeConversion } from '../../hooks/useTimeConversion';
 
 import '../../styles/SearchPage.css';
@@ -92,6 +92,12 @@ const SearchResults: React.FC = () => {
 
           // 첫 화면은 4개만 노출
           setVisibleCount(Math.min(4, converted.length));
+        } else {
+          // 응답이 없거나 빈 경우
+          setPerformances([]);
+          setCursor(null);
+          setHasNext(false);
+          setVisibleCount(0);
         }
       } catch (err) {
         setError('검색 결과를 불러오는데 실패했습니다.');
@@ -110,36 +116,6 @@ const SearchResults: React.FC = () => {
     setHasShownLoadMore(true);
     setVisibleCount(Math.min(PAGE_SIZE, performances.length));
   };
-
-  // 무한 스크롤
-  useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
-
-    const handleScroll = () => {
-      if (!hasShownLoadMore || !hasNext || loadingMore) return;
-
-      const bottomThreshold = 1000; // px
-      if (
-        window.innerHeight + document.documentElement.scrollTop >=
-        document.documentElement.offsetHeight - bottomThreshold
-      ) {
-        loadMoreResults();
-      }
-    };
-
-    const debouncedHandleScroll = () => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(handleScroll, 100);
-    };
-
-    if (hasShownLoadMore) {
-      window.addEventListener('scroll', debouncedHandleScroll);
-      return () => {
-        window.removeEventListener('scroll', debouncedHandleScroll);
-        clearTimeout(timeoutId);
-      };
-    }
-  }, [hasShownLoadMore, hasNext, loadingMore]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // 다음 페이지 로드
   const loadMoreResults = async () => {
@@ -180,6 +156,33 @@ const SearchResults: React.FC = () => {
       setLoadingMore(false);
     }
   };
+
+  // Intersection Observer를 사용한 무한 스크롤
+  const loadMoreRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const loadMoreElement = loadMoreRef.current;
+    if (!loadMoreElement || !hasShownLoadMore || !hasNext || loadingMore) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting && hasShownLoadMore && hasNext && !loadingMore && cursor) {
+          loadMoreResults();
+        }
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '100px'
+      }
+    );
+
+    observer.observe(loadMoreElement);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [hasShownLoadMore, hasNext, loadingMore, cursor, loadMoreResults]);
 
   if (loading) {
     return (
@@ -224,7 +227,7 @@ const SearchResults: React.FC = () => {
       </div>
       <hr style={{ margin: '20px 0px' }} />
 
-      {visibleList.length === 0 ? (
+      {!loading && !countLoading && totalCount === 0 ? (
         <div className="empty-browse">
           <div className="empty-icon">🔍</div>
           <h3>검색 결과가 없습니다</h3>
@@ -255,10 +258,15 @@ const SearchResults: React.FC = () => {
             </div>
           )}
 
-          {hasShownLoadMore && loadingMore && (
-            <div className="loading-more">
-              <div className="loading-spinner"></div>
-              <p>더 많은 결과를 불러오는 중...</p>
+          {/* 무한 스크롤 트리거 요소 */}
+          {hasShownLoadMore && hasNext && (
+            <div ref={loadMoreRef} className="load-more-trigger">
+              {loadingMore && (
+                <div className="loading-more">
+                  <div className="loading-spinner"></div>
+                  <p>더 많은 결과를 불러오는 중...</p>
+                </div>
+              )}
             </div>
           )}
         </>
