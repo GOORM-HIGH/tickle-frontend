@@ -191,6 +191,22 @@
   margin: 0;
 }
 
+/* 무한 스크롤 트리거 요소 - 보이지 않게 설정 */
+.load-more-trigger {
+  height: 1px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  visibility: hidden;
+}
+
+/* 무한 스크롤 로딩 상태 */
+.load-more-trigger .loading-more {
+  visibility: visible;
+  height: auto;
+  padding: 2rem;
+}
+
 .load-more-container {
   display: flex;
   justify-content: center;

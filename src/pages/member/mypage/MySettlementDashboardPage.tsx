@@ -335,7 +335,17 @@ export default function MySettlementDashboardPage() {
     };
 
     return (
-        <MyPageCard minWidth="1000px" cardClassName="min-h-[calc(100vh-200px)]">
+        <MyPageCard 
+            minWidth="1000px" 
+            cardClassName="min-h-[calc(100vh-200px)]" 
+            visibleFor={["HOST"]}
+            fallbackWhenHidden={
+              <div className="p-12 text-center">
+              <h2 className="text-xl font-semibold">권한이 없습니다</h2>
+              <p className="text-gray-500 mt-2">HOST 권한이 필요합니다.</p>
+              </div>
+            }      
+        >
             <div className="tab-content p-2 sm:p-4 md:p-6">
                 {/* 회사 정보 */}
                 <div className="mb-6">

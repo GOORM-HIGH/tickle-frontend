@@ -190,12 +190,6 @@
   box-shadow: none;
 }
 
-.reserve-button.btn-not-started:hover,
-.reserve-button.btn-ended:hover {
-  background: inherit;
-}
-
-
 .loading, .error {
   text-align: center;
   padding: 4rem 2rem;

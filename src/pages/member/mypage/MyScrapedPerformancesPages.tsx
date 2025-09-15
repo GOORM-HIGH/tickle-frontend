@@ -9,6 +9,7 @@ import { scrapService, PerformanceScrapDto } from "../../../services/scrapServic
 
 import SectionHeader from "../../../components/member/mypage/SectionHeader.tsx";
 import ScrapGrid from "../../../components/member/mypage/ScrapGrid.tsx";
+import "../../../styles/ScrapPage.css";
 
 const MyScrapedPerformancesPages: React.FC = () => {
     useScrollToTop();

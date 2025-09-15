@@ -24,8 +24,12 @@ export default function Header() {
           searchKeyword.trim()
         )}`
       );
+  
+      // 🔹 검색 후 input 비우기
+      setSearchKeyword('');
     }
   };
+  
 
   const handleSignOut = () => {
     removeTokens();

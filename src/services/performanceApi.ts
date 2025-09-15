@@ -119,6 +119,23 @@ export interface ComingSoonCard {
   endDate: string;
 }
 
+export interface Cursor {
+  lastDate: string;
+  lastId: number;
+}
+
+export interface CursorPage<T> {
+  items: T[];
+  nextCursor: Cursor | null;
+  hasNext: boolean;
+}
+
+export interface SearchCountResponse {
+  keyword: string;
+  count: number;
+  generatedAt: string;
+}
+
 // 백엔드 응답을 프론트엔드 타입으로 변환하는 함수
 export const mapPerformanceDtoToCard = (dto: PerformanceDto): PerformanceCard => {
   return {
@@ -237,12 +254,6 @@ export const performanceApi = {
     return response.data;
   },
 
-  // 이미지 프록시 API
-  getImageProxy: (imageUrl: string): string => {
-    // 백엔드 프록시 API를 통해 이미지 로드
-    return `http://localhost:8081/api/v1/image/proxy?url=${encodeURIComponent(imageUrl)}`;
-  },
-
   // 공연 상세 정보 조회
   getPerformanceDetail: async (performanceId: number): Promise<ResultResponse<PerformanceDetailDto>> => {
     const response = await api.get(`/api/v1/performance/${performanceId}`, {
@@ -276,13 +287,19 @@ export const performanceApi = {
     return response.data;
   },
 
-  // 장르별 공연 목록 조회 (페이징)
-  getPerformancesByGenre: async (genreId: number, page: number = 0, size: number = 8): Promise<ResultResponse<PagingResponse<PerformanceDto>>> => {
+  // 장르별 공연 목록 조회 (커서 페이징)
+  getPerformancesByGenre: async (
+    genreId: number, 
+    limit: number = 20,
+    cursorDate?: string,
+    cursorId?: number
+  ): Promise<CursorPage<PerformanceDto>> => {
+    const params: Record<string, any> = { limit };
+    if (cursorDate) params.cursorDate = cursorDate;
+    if (cursorId) params.cursorId = cursorId;
+
     const response = await api.get(`/api/v1/performance/genre/${genreId}`, {
-      params: {
-        page,
-        size
-      },
+      params,
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -291,18 +308,38 @@ export const performanceApi = {
     return response.data;
   },
 
-  // 공연 검색
-  searchPerformances: async (keyword: string, page: number = 0, size: number = 8): Promise<ResultResponse<PagingResponse<PerformanceDto>>> => {
-    const response = await api.get(`/api/v1/performance/search/${encodeURIComponent(keyword)}`, {
-      params: {
-        page,
-        size
-      },
+  // 공연 검색 (커서 페이징)
+  searchPerformances: async (
+    keyword: string,
+    size: number = 20,
+    cursorDate?: string,
+    cursorId?: number
+  ): Promise<CursorPage<PerformanceDto>> => {
+    const params: Record<string, any> = { keyword, size };
+    if (cursorDate) params.cursorDate = cursorDate;
+    if (cursorId) params.cursorId = cursorId;
+
+    const response = await api.get('/api/v1/performance/search', {
+      params,
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      }
+        Accept: 'application/json',
+      },
     });
+
+    return response.data;
+  },
+
+  // 검색 결과 카운트
+  getSearchCount: async (keyword: string): Promise<SearchCountResponse> => {
+    const response = await api.get('/api/v1/performance/search/count', {
+      params: { keyword },
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+    });
+
     return response.data;
   },
 
@@ -328,28 +365,20 @@ export const performanceApi = {
     return response.data;
   },
 
-  // 내가 생성한 공연 목록 조회
-  getMyPerformances: async (): Promise<ResultResponse<PerformanceHostDto[]>> => {
+  getMyPerformances: async (
+    page: number = 0,
+    size: number = 12
+  ): Promise<ResultResponse<PagingResponse<PerformanceHostDto>>> => {
     const response = await api.get('/api/v1/performance/host', {
+      params: { page, size },
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-      }
+      },
     });
     return response.data;
   },
-
-  // HOST 권한으로 생성한 공연 목록 조회
-  getHostPerformances: async (): Promise<ResultResponse<PerformanceHostDto[]>> => {
-    const response = await api.get('/api/v1/performance/host', {
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      }
-    });
-    return response.data;
-  },
-
+    
   // 공연 좌석 정보 조회
   getPerformanceSeats: async (performanceId: number): Promise<ResultResponse<SeatsResponseDto>> => {
     const response = await api.get(`/api/v1/reservation/${performanceId}/seats`, {
