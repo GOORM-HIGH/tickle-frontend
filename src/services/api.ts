@@ -2,7 +2,7 @@ import axios from "axios";
 import { getAccessToken } from "../utils/tokenUtils";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ?? "https://tickle/kr",
+  baseURL: import.meta.env.VITE_API_BASE_URL ?? "https://api.tickle/kr",
   withCredentials: true,
   headers: { "Content-Type": "application/json" },
 });
