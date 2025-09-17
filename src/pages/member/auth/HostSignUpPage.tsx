@@ -158,7 +158,7 @@ const HostSignUpPage: React.FC = () => {
       }
 
       await axios.post(
-        "https://api.tickle/api/v1/auth/email-verification",
+        "https://api.tickle.kr/api/v1/auth/email-verification",
         { email: formData.email },
         { headers: { "Content-Type": "application/json" } }
       );
