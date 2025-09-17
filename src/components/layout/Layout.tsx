@@ -1,24 +1,16 @@
-import React, { ReactNode } from 'react';
+import { Outlet } from 'react-router-dom';
 import Header from './header/Header';
 import Footer from './footer/Footer';
 import ChatFloatingButton from '../chat/ChatFloatingButton';
 import './Layout.css';
 
-interface LayoutProps {
-  children: ReactNode;
-}
-
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+export default function Layout() {
   return (
     <div className="layout">
       <Header />
-      <main className="layout-main">
-        {children}
-      </main>
+      <main className="layout-main"><Outlet /></main>
       <Footer />
       <ChatFloatingButton />
     </div>
   );
 };
-
-export default Layout; 

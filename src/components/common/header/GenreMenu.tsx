@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useRef } from "react";
 import { Link } from "react-router-dom";
-import { performanceApi, GenreDto } from "../../../home/api/performanceApi";
+import { performanceApi, GenreDto } from "../../../services/performanceApi";
 
 interface GenreMenuProps {
   variant?: 'dropdown' | 'inline';
@@ -10,6 +10,8 @@ export default function GenreMenu({ variant = 'dropdown' }: GenreMenuProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [genres, setGenres] = useState<GenreDto[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const fetched = useRef(false);
 
   // 장르 목록을 API에서 가져오기
   useEffect(() => {

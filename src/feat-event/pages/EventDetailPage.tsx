@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Header from '../../components/layout/header/Header';
-import Footer from '../../components/layout/footer/Footer';
 import { EVENT_DETAILS } from '../../constants/eventData';
 import { shareEvent } from '../../utils/eventUtils';
 import { getTicketEventDetail, TicketEventDetailResponseDto, applyTicketEvent, TicketApplyResponseDto, getRandomEvents, RandomEventResponseDto } from '../api/eventApi';
@@ -29,21 +27,21 @@ export default function EventDetailPage() {
 
   useEffect(() => {
     console.log('EventDetailPage - eventId:', eventId);
-    
+
     const fetchEventDetail = async () => {
       if (!eventId) {
         setError('이벤트 ID가 없습니다.');
         setLoading(false);
         return;
       }
-      
+
       try {
         setLoading(true);
         const [eventDetailResponse, randomEventsResponse] = await Promise.all([
           getTicketEventDetail(Number(eventId)),
           getRandomEvents()
         ]);
-        
+
         setApiEventDetail(eventDetailResponse);
         setRandomEvents(randomEventsResponse.content);
         console.log('API 이벤트 상세 정보:', eventDetailResponse);
@@ -71,7 +69,7 @@ export default function EventDetailPage() {
       setLoading(true);
       const response: TicketApplyResponseDto = await applyTicketEvent(Number(eventId));
       console.log('응모 결과:', response);
-      
+
       setIsWinner(response.isWinner);
       setResultMessage(response.message);
       setShowResultPopup(true);
@@ -107,7 +105,6 @@ export default function EventDetailPage() {
   if (loading) {
     return (
       <>
-        <Header />
         <div className={styles['concert-event-detail-page']}>
           <div className={styles.container}>
             <div style={{ textAlign: 'center', padding: '4rem' }}>
@@ -116,7 +113,6 @@ export default function EventDetailPage() {
             </div>
           </div>
         </div>
-        <Footer />
       </>
     );
   }
@@ -124,14 +120,13 @@ export default function EventDetailPage() {
   if (error || !apiEventDetail) {
     return (
       <>
-        <Header />
         <div className={styles['concert-event-detail-page']}>
           <div className={styles.container}>
             <div style={{ textAlign: 'center', padding: '4rem' }}>
               <div style={{ fontSize: '2rem', marginBottom: '1rem', color: '#dc2626' }}>❌</div>
               <h2>오류가 발생했습니다</h2>
               <p>{error || '이벤트 정보를 찾을 수 없습니다.'}</p>
-              <button 
+              <button
                 onClick={() => navigate('/event')}
                 style={{
                   marginTop: '1rem',
@@ -148,14 +143,12 @@ export default function EventDetailPage() {
             </div>
           </div>
         </div>
-        <Footer />
       </>
     );
   }
 
   return (
     <>
-      <Header />
       <div className={styles['concert-event-detail-page']}>
         <div className={styles.container}>
           <EventHeader
@@ -173,18 +166,18 @@ export default function EventDetailPage() {
               { icon: 'Award', text: apiEventDetail.seatGrade }
             ]}
           />
-          
+
           <div className={styles['main-section']}>
             <div className={styles['poster-section']}>
               <div className={styles['poster-container']}>
-                <img 
-                  src={apiEventDetail.performanceImg || 'https://picsum.photos/400/600?random=1'} 
+                <img
+                  src={apiEventDetail.performanceImg || 'https://picsum.photos/400/600?random=1'}
                   alt={apiEventDetail.performanceTitle}
                   className={styles['event-poster']}
                 />
               </div>
             </div>
-            
+
             <EventDetails
               eventDetail={apiEventDetail}
               eventRules={[
@@ -199,9 +192,9 @@ export default function EventDetailPage() {
               eventStatusName={apiEventDetail.eventStatusName}
             />
           </div>
-          
+
           <PromotionalBanner />
-          
+
           <RecommendedEvents
             events={randomEvents}
             onEventClick={handleEventClick}
@@ -216,8 +209,6 @@ export default function EventDetailPage() {
         message={resultMessage}
         onClose={handleClosePopup}
       />
-
-      <Footer />
     </>
   );
 } 

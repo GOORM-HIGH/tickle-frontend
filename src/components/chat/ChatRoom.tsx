@@ -49,7 +49,7 @@ export const ChatRoom: React.FC<Props> = ({
     messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
   }, []);
 
-  // 🎯 자동 스크롤 체크
+  // 자동 스크롤 체크
   const shouldAutoScroll = useCallback(() => {
     if (!messagesContainerRef.current) return false;
     
@@ -73,13 +73,13 @@ export const ChatRoom: React.FC<Props> = ({
     }
   }, []);
 
-  // 🎯 메시지 변경 시 부모 컴포넌트에 알림
+  // 메시지 변경 시 부모 컴포넌트에 알림
   useEffect(() => {
     // 메시지 변경 시 displayedMessages 업데이트
     setDisplayedMessages(messages);
   }, [messages]);
 
-  // 🎯 초기 메시지가 있으면 로딩 상태 해제
+  // 초기 메시지가 있으면 로딩 상태 해제
   useEffect(() => {
     if (messages.length > 0) {
       setIsLoading(false);
@@ -148,16 +148,16 @@ export const ChatRoom: React.FC<Props> = ({
     }
   }, [room.chatRoomId]);
 
-  // 🎯 채팅방 입장 시 자동 읽음 처리
+  // 채팅방 입장 시 자동 읽음 처리
   useEffect(() => {
     if (messages.length > 0 && !isLoading) {
       const lastMessage = messages[messages.length - 1];
-      // 🎯 메시지 ID가 유효한 경우에만 읽음 처리
+      // 메시지 ID가 유효한 경우에만 읽음 처리
       if (lastMessage.id && lastMessage.id > 0) {
-        console.log(`📖 채팅방 입장 시 자동 읽음 처리: 메시지 ID ${lastMessage.id}`);
+        console.log(`채팅방 입장 시 자동 읽음 처리: 메시지 ID ${lastMessage.id}`);
         handleMarkAsRead(lastMessage.id);
       } else {
-        console.log(`⚠️ 유효하지 않은 메시지 ID: ${lastMessage.id}, 읽음 처리 건너뜀`);
+        console.log(`유효하지 않은 메시지 ID: ${lastMessage.id}, 읽음 처리 건너뜀`);
       }
     }
   }, [messages, isLoading, handleMarkAsRead]);
@@ -168,21 +168,21 @@ export const ChatRoom: React.FC<Props> = ({
     console.log(`🚪 현재 메시지 개수: ${messages.length}`);
     
     if (messages.length > 0) {
-      // 🎯 화면에 보이는 메시지들 중 마지막 메시지 찾기
+      // 화면에 보이는 메시지들 중 마지막 메시지 찾기
       const visibleMessages = messages.filter(msg => !msg.isDeleted);
       const lastVisibleMessage = visibleMessages[visibleMessages.length - 1];
       
       if (lastVisibleMessage && lastVisibleMessage.id && lastVisibleMessage.id > 0) {
-        console.log(`🚪 화면 마지막 메시지 읽음 처리 시작: ID=${lastVisibleMessage.id}, 내용="${lastVisibleMessage.content}"`);
+        console.log(`화면 마지막 메시지 읽음 처리 시작: ID=${lastVisibleMessage.id}, 내용="${lastVisibleMessage.content}"`);
         
         try {
           await chatService.markAsRead(room.chatRoomId, lastVisibleMessage.id);
-          console.log(`✅ 읽음 처리 완료: 채팅방 ${room.chatRoomId}, 메시지 ${lastVisibleMessage.id}`);
+          console.log(`읽음 처리 완료: 채팅방 ${room.chatRoomId}, 메시지 ${lastVisibleMessage.id}`);
         } catch (error) {
-          console.error(`❌ 읽음 처리 실패:`, error);
+          console.error(`읽음 처리 실패:`, error);
         }
       } else {
-        console.log(`🚪 유효하지 않은 메시지 ID: ${lastVisibleMessage?.id}, 읽음 처리 건너뜀`);
+        console.log(`유효하지 않은 메시지 ID: ${lastVisibleMessage?.id}, 읽음 처리 건너뜀`);
       }
     } else {
       console.log(`🚪 읽을 메시지가 없음: 채팅방 ${room.chatRoomId}`);
@@ -197,9 +197,9 @@ export const ChatRoom: React.FC<Props> = ({
     // 현재 채팅방의 메시지만 처리
     if (message.chatRoomId === room.chatRoomId) {
       setMessages(prev => {
-        // 🎯 삭제된 메시지 처리
+        // 삭제된 메시지 처리
         if (message.isDeleted) {
-          console.log(`🗑️ 삭제된 메시지 처리: ID=${message.id}`);
+          console.log(`삭제된 메시지 처리: ID=${message.id}`);
           return prev.map(existingMessage => 
             existingMessage.id === message.id 
               ? { ...existingMessage, isDeleted: true, content: '삭제된 메시지입니다.' }
@@ -207,29 +207,29 @@ export const ChatRoom: React.FC<Props> = ({
           );
         }
         
-        // 🎯 중복 메시지 제거 (messageId 기준)
+        // 중복 메시지 제거 (messageId 기준)
         const isDuplicate = prev.some(existingMessage => existingMessage.id === message.id);
         if (isDuplicate) {
-          console.log(`⚠️ 중복 메시지 무시: ID=${message.id}`);
+          console.log(`중복 메시지 무시: ID=${message.id}`);
           return prev;
         }
         
-        // 🎯 추가 중복 체크 (내용과 시간으로도 체크)
+        // 추가 중복 체크 (내용과 시간으로도 체크)
         const isContentDuplicate = prev.some(existingMessage => 
           existingMessage.content === message.content && 
           Math.abs(new Date(existingMessage.createdAt).getTime() - new Date(message.createdAt).getTime()) < 1000
         );
         
         if (isContentDuplicate) {
-          console.log(`⚠️ 내용 중복 메시지 무시: ID=${message.id}, 내용="${message.content}"`);
+          console.log(`내용 중복 메시지 무시: ID=${message.id}, 내용="${message.content}"`);
           return prev;
         }
         
-        console.log(`✅ 새 메시지 추가: ID=${message.id}, 발신자=${message.senderNickname}, 내 메시지=${message.isMyMessage}`);
+        console.log(`새 메시지 추가: ID=${message.id}, 발신자=${message.senderNickname}, 내 메시지=${message.isMyMessage}`);
         return [...prev, message];
       });
     } else {
-      console.log(`⚠️ 다른 채팅방 메시지 무시: ${message.chatRoomId} vs ${room.chatRoomId}`);
+      console.log(`다른 채팅방 메시지 무시: ${message.chatRoomId} vs ${room.chatRoomId}`);
     }
   }, [room.chatRoomId]);
 

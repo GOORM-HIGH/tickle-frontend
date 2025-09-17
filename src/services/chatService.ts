@@ -10,7 +10,7 @@ export interface ChatRoom {
   maxParticipants: number;
   participantCount?: number;
   unreadCount?: number;
-  unreadMessageCount?: number;  // ✅ 백엔드 응답과 일치
+  unreadMessageCount?: number;  // 백엔드 응답과 일치
   createdAt?: string;
   updatedAt?: string;
   lastMessage?: {
@@ -171,7 +171,7 @@ export const chatService = {
     const formData = new FormData();
     formData.append('file', file);
     
-    const response = await api.post<{data: {fileId: string; fileName: string; fileUrl: string}}>('/api/v1/chat/files/upload', formData, {
+    const response = await api.post<{data: {fileId: string; fileName: string; fileUrl: string}}>('/api/v1/files/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

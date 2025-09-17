@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import AuthCard from "../../../components/member/AuthCard";
-import AuthInput from "../../../components/member/AuthInput";
+import AuthCard from "../../../components/member/auth/AuthCard";
+import AuthInput from "../../../components/member/auth/AuthInput";
 import Button from "../../../components/common/Button";
 import { setAccessToken } from "../../../utils/tokenUtils";
 import { validateEmail, validatePassword } from "../../../utils/validations";
@@ -52,9 +52,6 @@ const SignInPage: React.FC = () => {
       const response = await api.post(
         "/api/v1/sign-in",
         { email, password }
-        // {
-        //   headers: { "Content-Type": "application/json" },
-        // }
       );
 
       console.log(response.data);
@@ -62,12 +59,10 @@ const SignInPage: React.FC = () => {
       const { accessToken, user } = response.data;
       setAccessToken(accessToken);
 
-      // 🎯 사용자 정보도 localStorage에 저장
       if (user) {
         localStorage.setItem("userInfo", JSON.stringify(user));
       }
 
-      // 🎯 페이지 새로고침으로 useAuth 상태 업데이트
       window.location.href = "/performance";
     } catch (error: any) {
       let errorMessage: string = "";
