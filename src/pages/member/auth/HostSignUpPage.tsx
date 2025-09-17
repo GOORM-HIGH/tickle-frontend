@@ -248,7 +248,7 @@ const HostSignUpPage: React.FC = () => {
       console.log("payload:", payload);
 
       const response = await axios.post(
-        "https://api.tickle/api/v1/sign-up",
+        "https://api.tickle.kr/api/v1/sign-up",
         payload,
         {
           headers: { "Content-Type": "application/json" },
