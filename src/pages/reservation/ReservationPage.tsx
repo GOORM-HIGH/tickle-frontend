@@ -6,7 +6,7 @@ import CouponSelection from '../../components/reservation/CouponSelection';
 import ReservationComplete from '../../components/reservation/ReservationComplete';
 import { SeatInfoResponseDto, PaymentCalculationInfo, ReservationResponse } from '../../types/reservation';
 import { reservationService } from '../../services/reservationService';
-import { performanceApi, PerformanceDetailDto } from '../../home/api/performanceApi';
+import { performanceApi, PerformanceDetailDto } from '../../services/performanceApi';
 import { useTimeConversion } from '../../hooks/useTimeConversion';
 import './ReservationPage.css';
 
@@ -111,22 +111,22 @@ const ReservationPage: React.FC = () => {
 
   if (loading) {
     return (
-      <Layout>
+      <>
         <div className="loading">공연 정보를 불러오는 중...</div>
-      </Layout>
+      </>
     );
   }
 
   if (error) {
     return (
-      <Layout>
+      <>
         <div className="error">
           {error}
           <button onClick={() => navigate(-1)} className="back-button">
             뒤로 가기
           </button>
         </div>
-      </Layout>
+      </>
     );
   }
 
@@ -173,7 +173,7 @@ const ReservationPage: React.FC = () => {
   };
 
   return (
-    <Layout>
+    <>
       <div className="reservation-page">
         {/* 진행 단계 표시 */}
         {currentStep !== 'complete' && (
@@ -198,7 +198,7 @@ const ReservationPage: React.FC = () => {
         {/* 현재 단계 렌더링 */}
         {renderCurrentStep()}
       </div>
-    </Layout>
+    </>
   );
 };
 

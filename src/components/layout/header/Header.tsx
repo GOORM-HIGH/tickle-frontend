@@ -6,7 +6,7 @@ import AuthMenu from "../../common/header/AuthMenu";
 import FeatureMenu from "../../common/header/FeatureMenu";
 import GenreMenu from "../../common/header/GenreMenu";
 import { getAccessToken, removeTokens } from "../../../utils/tokenUtils";
-import { connectSSE } from "../../../utils/connectSSE";
+import { connect } from "../../../utils/realtimeUtils";
 
 export default function Header() {
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -24,8 +24,12 @@ export default function Header() {
           searchKeyword.trim()
         )}`
       );
+  
+      // 🔹 검색 후 input 비우기
+      setSearchKeyword('');
     }
   };
+  
 
   const handleSignOut = () => {
     removeTokens();
@@ -38,13 +42,20 @@ export default function Header() {
     if (!token) return;
 
     setIsSignIn(true);
-    const eventSource = connectSSE(token, () => {
-      setShouldRefreshNotificationList(true);
+
+    const eventSource = connect({
+      onMessage: (msg: RealtimeNotification) => {
+        console.log("실시간 알림이 수신되었습니다.");
+        setShouldRefreshNotificationList(true);
+      },
+      onError: (err) => {
+        console.error("서버와 실시간 통신 중 오류가 발생했습니다\n", err);
+      },
     });
 
     return () => {
       eventSource.close();
-      console.log("🔌 SSE 연결 종료");
+      console.log("실시간 통신 종료");
     };
   }, []);
 

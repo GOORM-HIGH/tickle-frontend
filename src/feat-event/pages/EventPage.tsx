@@ -1,7 +1,5 @@
 // src/pages/EventPage.tsx
 import { useState, useEffect } from 'react';
-import Header from '../../components/layout/header/Header';
-import Footer from '../../components/layout/footer/Footer';
 import { getTicketEvents, TicketListResponseDto } from '../api/eventApi';
 import styles from '../styles/event.module.css';
 import { useScrollToTop } from '../../hooks/useScrollToTop';
@@ -54,18 +52,17 @@ export function EventPage() {
 
   return (
     <>
-      <Header />
       <HeroSection onTabChange={setActiveTab} />
       <main className={styles.main}>
         <div className={styles.container}>
-          <TabButtons 
+          <TabButtons
             activeTab={activeTab}
             onTabChange={setActiveTab}
             onTicketTabClick={handleTicketTabClick}
           />
 
           {activeTab === 'coupon' && <CouponEventSection />}
-          
+
           {activeTab === 'ticket' && (
             <TicketEventSection
               ticketEvents={ticketEvents}
@@ -80,7 +77,6 @@ export function EventPage() {
           )}
         </div>
       </main>
-      <Footer />
     </>
   );
 }

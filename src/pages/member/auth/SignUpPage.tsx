@@ -8,9 +8,9 @@ import {
   validatePassword,
 } from "../../../utils/validations";
 import { toInstant } from "../../../utils/dateUtils";
-import ProfileImageUploader from "../../../components/member/ProfileImageUploader";
-import AuthInput from "../../../components/member/AuthInput";
-import AuthCard from "../../../components/member/AuthCard";
+import ProfileImageUploader from "../../../components/member/auth/ProfileImageUploader";
+import AuthInput from "../../../components/member/auth/AuthInput";
+import AuthCard from "../../../components/member/auth/AuthCard";
 import Button from "../../../components/common/Button";
 
 const SignUpPage: React.FC = () => {
@@ -23,16 +23,7 @@ const SignUpPage: React.FC = () => {
     nickname: "",
     img: "",
     phoneNumber: "",
-    role: "MEMBER",
-    hostBizNumber: "",
-    hostBizCeoName: "",
-    hostBizName: "",
-    hostBizAddress: "",
-    hostBizEcommerceRegistrationNumber: "",
-    hostBizBankName: "",
-    hostBizDepositor: "",
-    hostBizBankNumber: "",
-    hostContractCharge: 0,
+    role: "MEMBER"
   });
 
   const [profileImage, setProfileImage] = useState<File | null>(null);
@@ -126,7 +117,7 @@ const SignUpPage: React.FC = () => {
       }
 
       await axios.post(
-        "http://127.0.0.1:8081/api/v1/auth/email-verification/confirm",
+        "https://api.tickle.kr/api/v1/auth/email-verification/confirm",
         { email: formData.email, code: emailAuthCode },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -144,7 +135,7 @@ const SignUpPage: React.FC = () => {
     imageData.append("file", profileImage);
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8081/api/v1/upload",
+        "https://api.tickle.kr/api/v1/upload",
         imageData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -170,7 +161,7 @@ const SignUpPage: React.FC = () => {
       const payload = { ...formData, img: imageUrl || "", birthday };
 
       const response = await axios.post(
-        "http://127.0.0.1:8081/api/v1/sign-up",
+        "https://api.tickle.kr/api/v1/sign-up",
         payload,
         { headers: { "Content-Type": "application/json" } }
       );
