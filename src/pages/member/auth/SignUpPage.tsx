@@ -23,16 +23,7 @@ const SignUpPage: React.FC = () => {
     nickname: "",
     img: "",
     phoneNumber: "",
-    role: "MEMBER",
-    hostBizNumber: "",
-    hostBizCeoName: "",
-    hostBizName: "",
-    hostBizAddress: "",
-    hostBizEcommerceRegistrationNumber: "",
-    hostBizBankName: "",
-    hostBizDepositor: "",
-    hostBizBankNumber: "",
-    hostContractCharge: 0,
+    role: "MEMBER"
   });
 
   const [profileImage, setProfileImage] = useState<File | null>(null);
