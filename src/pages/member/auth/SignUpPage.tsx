@@ -126,7 +126,7 @@ const SignUpPage: React.FC = () => {
       }
 
       await axios.post(
-        "https://tickle.kr/api/v1/auth/email-verification/confirm",
+        "https://api.tickle.kr/api/v1/auth/email-verification/confirm",
         { email: formData.email, code: emailAuthCode },
         { headers: { "Content-Type": "application/json" } }
       );
