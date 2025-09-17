@@ -144,7 +144,7 @@ const SignUpPage: React.FC = () => {
     imageData.append("file", profileImage);
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8081/api/v1/upload",
+        "https://api.tickle.kr/api/v1/upload",
         imageData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -170,7 +170,7 @@ const SignUpPage: React.FC = () => {
       const payload = { ...formData, img: imageUrl || "", birthday };
 
       const response = await axios.post(
-        "http://127.0.0.1:8081/api/v1/sign-up",
+        "https://api.tickle.kr/api/v1/sign-up",
         payload,
         { headers: { "Content-Type": "application/json" } }
       );
