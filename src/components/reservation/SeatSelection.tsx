@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { SeatInfoResponseDto, HallTypeAndSeatInfoResponseDto } from '../../types/reservation';
 import { reservationService } from '../../services/reservationService';
 import { generateSeatLayout, getSeatGradeColor, getSeatStatusStyle, HALL_SEAT_CONFIG } from '../../utils/seatLayoutUtils';
 import './SeatSelection.css';
+import { getAccessToken } from '../../utils/tokenUtils';
 
 interface SeatSelectionProps {
   performanceId: number;
@@ -21,11 +23,14 @@ const SeatSelection: React.FC<SeatSelectionProps> = ({
   onSeatSelection,
   onClose
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [seatData, setSeatData] = useState<HallTypeAndSeatInfoResponseDto | null>(null);
   const [selectedSeats, setSelectedSeats] = useState<SeatInfoResponseDto[]>([]);
   const [selectedCount, setSelectedCount] = useState(1);
   const [loading, setLoading] = useState(true);
   const [preempting, setPreempting] = useState(false);
+  const hasAlertedRef = useRef(false);
 
   // 좌석 정보 초기화
   useEffect(() => {
@@ -35,11 +40,33 @@ const SeatSelection: React.FC<SeatSelectionProps> = ({
   const initializeSeats = async () => {
     try {
       setLoading(true);
+      // 로그인 여부 확인 후 미로그인 시 이전 페이지로 이동 유도
+      const token = getAccessToken();
+      if (!token) {
+        if (!hasAlertedRef.current) {
+          hasAlertedRef.current = true;
+          alert('로그인이 필요합니다. 먼저 로그인해주세요.');
+        }
+        navigate(-1);
+        return;
+      }
       const data = await reservationService.getSeats(performanceId);
       setSeatData(data);
-    } catch (error) {
+    } catch (error: any) {
       console.error('좌석 정보 조회 실패:', error);
-      alert('좌석 정보를 불러오는데 실패했습니다.');
+      const status = error?.response?.status;
+      if (status === 401) {
+        if (!hasAlertedRef.current) {
+          hasAlertedRef.current = true;
+          alert('로그인이 필요합니다. 먼저 로그인해주세요.');
+        }
+        navigate(-1);
+        return;
+      }
+      if (!hasAlertedRef.current) {
+        hasAlertedRef.current = true;
+        alert('좌석 정보를 불러오는데 실패했습니다.');
+      }
     } finally {
       setLoading(false);
     }
