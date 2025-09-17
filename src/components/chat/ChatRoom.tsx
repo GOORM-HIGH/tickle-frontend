@@ -33,6 +33,9 @@ export const ChatRoom: React.FC<Props> = ({
   const [currentPage, setCurrentPage] = useState(0);
   const [showSearch, setShowSearch] = useState(false);
   const [displayedMessages, setDisplayedMessages] = useState<ChatMessageType[]>([]);
+  
+  // 검색이 아닐 때는 messages를 사용, 검색 중일 때는 displayedMessages 사용
+  const messagesToShow = showSearch ? displayedMessages : messages;
   const [lastConnected, setLastConnected] = useState<Date | undefined>();
   const [connectionAttempts, setConnectionAttempts] = useState(0);
   
@@ -76,6 +79,7 @@ export const ChatRoom: React.FC<Props> = ({
   // 메시지 변경 시 부모 컴포넌트에 알림
   useEffect(() => {
     // 메시지 변경 시 displayedMessages 업데이트
+    console.log(`📄 displayedMessages 업데이트: ${messages.length}개 메시지`);
     setDisplayedMessages(messages);
   }, [messages]);
 
@@ -126,6 +130,7 @@ export const ChatRoom: React.FC<Props> = ({
 
   // 검색 결과 처리
   const handleSearchResult = useCallback((filteredMessages: ChatMessageType[]) => {
+    console.log(`🔍 검색 결과 설정: ${filteredMessages.length}개 메시지`);
     setDisplayedMessages(filteredMessages);
   }, []);
 
@@ -193,10 +198,20 @@ export const ChatRoom: React.FC<Props> = ({
   const handleNewMessage = useCallback((message: ChatMessageType) => {
     console.log('📨 새 메시지 수신:', message);
     console.log(`🎯 현재 채팅방: ${room.chatRoomId}, 메시지 채팅방: ${message.chatRoomId}`);
+    console.log('📨 메시지 상세 정보:', {
+      id: message.id,
+      content: message.content,
+      senderNickname: message.senderNickname,
+      isMyMessage: message.isMyMessage,
+      messageType: message.messageType,
+      createdAt: message.createdAt
+    });
     
     // 현재 채팅방의 메시지만 처리
     if (message.chatRoomId === room.chatRoomId) {
       setMessages(prev => {
+        console.log(`📨 현재 메시지 개수: ${prev.length}`);
+        
         // 삭제된 메시지 처리
         if (message.isDeleted) {
           console.log(`삭제된 메시지 처리: ID=${message.id}`);
@@ -226,7 +241,9 @@ export const ChatRoom: React.FC<Props> = ({
         }
         
         console.log(`새 메시지 추가: ID=${message.id}, 발신자=${message.senderNickname}, 내 메시지=${message.isMyMessage}`);
-        return [...prev, message];
+        const newMessages = [...prev, message];
+        console.log(`📨 업데이트된 메시지 개수: ${newMessages.length}`);
+        return newMessages;
       });
     } else {
       console.log(`다른 채팅방 메시지 무시: ${message.chatRoomId} vs ${room.chatRoomId}`);
@@ -513,7 +530,7 @@ export const ChatRoom: React.FC<Props> = ({
         )}
 
         {/* 메시지 목록 */}
-        {displayedMessages.length === 0 ? (
+        {messagesToShow.length === 0 ? (
           <div style={{ textAlign: 'center', color: '#666', marginTop: '50px' }}>
             <div style={{ fontSize: '48px', marginBottom: '20px' }}>💬</div>
             <h3>메시지가 없습니다</h3>
@@ -521,7 +538,7 @@ export const ChatRoom: React.FC<Props> = ({
           </div>
         ) : (
           <>
-            {displayedMessages.map((message, index) => (
+            {messagesToShow.map((message, index) => (
               <ChatMessage
                 key={`${message.id}-${index}`}
                 message={message}

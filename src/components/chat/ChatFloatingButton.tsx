@@ -4,16 +4,23 @@ import { useChat } from '../../hooks/useChat';
 import { chatService } from '../../services/chatService';
 import { NotificationBadge } from './NotificationBadge';
 import { SimpleChatRoom } from './SimpleChatRoom';
-import { ChatRoomList } from './ChatRoomList';
 import type { ChatRoom } from '../../services/chatService';
 
 const ChatFloatingButton: React.FC = () => {
   const { currentUser } = useAuth();
-  const { chatRooms, totalUnreadCount, loadMyChatRooms, incrementUnreadCount, decrementUnreadCount, addChatRoom } = useChat();
+  const { chatRooms, totalUnreadCount, loadMyChatRooms, addChatRoom } = useChat();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentView, setCurrentView] = useState<'list' | 'room' | 'reservations'>('list');
   const [selectedRoom, setSelectedRoom] = useState<ChatRoom | null>(null);
-  const [reservations, setReservations] = useState<any[]>([]);
+  const [reservations, setReservations] = useState<Array<{
+    reservationId: number;
+    performanceId: number;
+    performanceTitle: string;
+    performanceDate: string;
+    reservationDate: string;
+    hasJoinedChat: boolean;
+    chatRoomId?: number;
+  }>>([]);
   const [reservationLoading, setReservationLoading] = useState(false);
   const [showSearch, setShowSearch] = useState(false); // 검색 상태 추가
 
@@ -94,7 +101,15 @@ const ChatFloatingButton: React.FC = () => {
     }
   };
 
-  const handleJoinChatFromReservation = async (reservation: any) => {
+  const handleJoinChatFromReservation = async (reservation: {
+    reservationId: number;
+    performanceId: number;
+    performanceTitle: string;
+    performanceDate: string;
+    reservationDate: string;
+    hasJoinedChat: boolean;
+    chatRoomId?: number;
+  }) => {
     console.log("🔥 채팅방 참여하기 버튼 클릭됨!", reservation);
     console.log("🔥 performanceId:", reservation.performanceId);
 

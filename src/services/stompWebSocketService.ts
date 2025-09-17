@@ -59,7 +59,7 @@ class StompWebSocketService {
     console.log(`사용자 정보 저장: ID=${userId}, 닉네임=${userNickname}, 토큰=${token?.substring(0, 20)}...`); // 디버깅 로그
 
     // SockJS 객체 생성 (Spring Boot 엔드포인트)
-    const socket = new SockJS('http://localhost:8081/ws');
+    const socket = new SockJS('http://localhost:8081/ws-sockjs');
     
     // STOMP 클라이언트 생성
     this.stompClient = new Client({
@@ -198,9 +198,13 @@ class StompWebSocketService {
    * 수신된 메시지 처리 (디버깅 강화)
    */
   private handleReceivedMessage(data: any): void {
-    if (!this.onMessageCallback) return;
-
     console.log('🎯 handleReceivedMessage 시작, 원본 데이터:', data);
+    console.log('🎯 onMessageCallback 존재 여부:', !!this.onMessageCallback);
+    
+    if (!this.onMessageCallback) {
+      console.error('❌ onMessageCallback이 설정되지 않았습니다!');
+      return;
+    }
 
     // 삭제 이벤트 처리
     if (data.type === 'DELETE') {
